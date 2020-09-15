@@ -16,7 +16,8 @@ import java.util.Set;
 import java.util.UUID;
 
 
-public class ProduceMachineDelayTask extends BukkitRunnable {
+public class ProduceRunnable implements Runnable {
+
     @Override
     public void run() {
         ProduceEvent produceEvent = new ProduceEvent();
@@ -96,7 +97,7 @@ public class ProduceMachineDelayTask extends BukkitRunnable {
         //////////////////////////////////////////////
     }
     
-    public FileConfiguration data() {
+    protected FileConfiguration data() {
         return JadGens.getInstance().getDataFile().data();
     }
     
