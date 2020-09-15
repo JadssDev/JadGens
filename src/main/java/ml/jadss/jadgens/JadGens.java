@@ -51,6 +51,9 @@ public class JadGens extends JavaPlugin {
             Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3JadGens &7>> &bEnabling &3&lCompatibility Mode&e..."));
         }
 
+        //Setting instance
+        instance = this;
+
         //Setup configs
         getConfig().options().copyDefaults();
         saveDefaultConfig();
@@ -78,9 +81,6 @@ public class JadGens extends JavaPlugin {
         if (hookedPlayerPoints) {
             Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3JadGens &7>> &eHooked into &bPlayerPoints&e!"));
         }
-
-        //Setting instance
-        instance = this;
 
         //Setup the shop
         if (!setupShop()) {
