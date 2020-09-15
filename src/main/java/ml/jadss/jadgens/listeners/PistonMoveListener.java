@@ -6,6 +6,7 @@ import ml.jadss.jadgens.utils.MachineLookup;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -23,7 +24,7 @@ public class PistonMoveListener implements Listener {
                 e.setCancelled(true);
                 for (Player nearPlayer : Bukkit.getOnlinePlayers()) {
                     if (nearPlayer.getLocation().distance(b.getLocation()) <= 5) {
-                        nearPlayer.sendMessage(ChatColor.translateAlternateColorCodes('&', JadGens.getInstance().getConfig().getString("messages.noPistonMoving")));
+                        nearPlayer.sendMessage(ChatColor.translateAlternateColorCodes('&', lang().getString("messages.noPistonMoving")));
                     }
                 }
                 return;
@@ -40,11 +41,13 @@ public class PistonMoveListener implements Listener {
                 e.setCancelled(true);
                 for (Player nearPlayer : Bukkit.getOnlinePlayers()) {
                     if (nearPlayer.getLocation().distance(b.getLocation()) <= 5) {
-                        nearPlayer.sendMessage(ChatColor.translateAlternateColorCodes('&', JadGens.getInstance().getConfig().getString("messages.noPistonMoving")));
+                        nearPlayer.sendMessage(ChatColor.translateAlternateColorCodes('&', lang().getString("messages.noPistonMoving")));
                     }
                 }
                 return;
             }
         }
     }
+
+    protected FileConfiguration lang() { return JadGens.getInstance().getLangFile().lang(); }
 }

@@ -8,6 +8,7 @@ import ml.jadss.jadgens.utils.Machine;
 import ml.jadss.jadgens.utils.MachineLimiter;
 import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -25,11 +26,11 @@ public class PlayerBuildListener implements Listener {
         NBTCompound nbtCompound = new NBTItem(item);
         MachineLimiter limiter = new MachineLimiter();
 
-        if (!JadGens.getInstance().getCompMode()) {
+        if (!JadGens.getInstance().getCompatibilityMode()) {
             if (nbtCompound.getBoolean("JadGens_machine")) {
                 if (!limiter.canPlaceMachine(pl)) {
                     e.setCancelled(true);
-                    pl.sendMessage(ChatColor.translateAlternateColorCodes('&', JadGens.getInstance().getConfig().getString("messages.machinesMessages.limitReached")));
+                    pl.sendMessage(ChatColor.translateAlternateColorCodes('&', lang().getString("messages.machinesMessages.limitReached")));
                     return;
                 }
                 int machineType = nbtCompound.getInteger("JadGens_machineType");
@@ -38,7 +39,7 @@ public class PlayerBuildListener implements Listener {
                 if(event.isCancelled()) { e.setCancelled(true); return; }
                 Machine machine = new Machine(block.getLocation(), machineType, pl.getUniqueId().toString());
                 machine.addToConfig();
-                pl.sendMessage(ChatColor.translateAlternateColorCodes('&', JadGens.getInstance().getConfig().getString("messages.machinesMessages.placed")));
+                pl.sendMessage(ChatColor.translateAlternateColorCodes('&', lang().getString("messages.machinesMessages.placed")));
                 return;
             }
         } else {
@@ -46,7 +47,7 @@ public class PlayerBuildListener implements Listener {
                 if (ChatColor.translateAlternateColorCodes('&', JadGens.getInstance().getConfig().getString("machines." + key + ".displayName")).equals(item.getItemMeta().getDisplayName())) {
                     if (!limiter.canPlaceMachine(pl)) {
                         e.setCancelled(true);
-                        pl.sendMessage(ChatColor.translateAlternateColorCodes('&', JadGens.getInstance().getConfig().getString("messages.machinesMessages.limitReached")));
+                        pl.sendMessage(ChatColor.translateAlternateColorCodes('&', lang().getString("messages.machinesMessages.limitReached")));
                         return;
                     }
                     int machineType = Integer.parseInt(key);
@@ -55,10 +56,12 @@ public class PlayerBuildListener implements Listener {
                     if(event.isCancelled()) { e.setCancelled(true); return; }
                     Machine machine = new Machine(block.getLocation(), machineType, pl.getUniqueId().toString());
                     machine.addToConfig();
-                    pl.sendMessage(ChatColor.translateAlternateColorCodes('&', JadGens.getInstance().getConfig().getString("messages.machinesMessages.placed")));
+                    pl.sendMessage(ChatColor.translateAlternateColorCodes('&', lang().getString("messages.machinesMessages.placed")));
                     return;
                 }
             }
         }
     }
+
+    protected FileConfiguration lang() { return JadGens.getInstance().getLangFile().lang(); }
 }

@@ -7,6 +7,7 @@ import ml.jadss.jadgens.utils.MachineLookup;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -30,17 +31,19 @@ public class PlayerBreakListener implements Listener {
         JadGens.getInstance().getServer().getPluginManager().callEvent(event);
         if (event.isCancelled()) { e.setCancelled(true); return; }
         e.setCancelled(true);
-        if (UUID.fromString(machine.getOwner()).equals(pl.getUniqueId()) || pl.hasPermission(JadGens.getInstance().getConfig().getString("messages.bypassPermission"))) {
+        if (UUID.fromString(machine.getOwner()).equals(pl.getUniqueId()) || pl.hasPermission(lang().getString("messages.bypassPermission"))) {
             if (pl.getInventory().firstEmpty() != -1) {
                 machine.removefromConfig();
                 pl.getInventory().addItem(machine.createItem(machine.getType()));
                 block.setType(Material.AIR);
-                pl.sendMessage(ChatColor.translateAlternateColorCodes('&', JadGens.getInstance().getConfig().getString("messages.machinesMessages.broken")));
+                pl.sendMessage(ChatColor.translateAlternateColorCodes('&', lang().getString("messages.machinesMessages.broken")));
             } else {
-                pl.sendMessage(ChatColor.translateAlternateColorCodes('&', JadGens.getInstance().getConfig().getString("messages.noInventorySpace")));
+                pl.sendMessage(ChatColor.translateAlternateColorCodes('&', lang().getString("messages.noInventorySpace")));
             }
         } else {
-            e.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', JadGens.getInstance().getConfig().getString("messages.machinesMessages.notTheOwner")));
+            e.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', lang().getString("messages.machinesMessages.notTheOwner")));
         }
     }
+
+    protected FileConfiguration lang() { return JadGens.getInstance().getLangFile().lang(); }
 }

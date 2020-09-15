@@ -8,6 +8,7 @@ import ml.jadss.jadgens.utils.Fuel;
 import ml.jadss.jadgens.utils.Machine;
 import ml.jadss.jadgens.utils.Shop;
 import org.bukkit.ChatColor;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -46,7 +47,7 @@ public class ShopListeners implements Listener {
                             pl.getInventory().addItem(new Machine().createItem(buyID));
                             pl.sendMessage(ChatColor.translateAlternateColorCodes('&', JadGens.getInstance().getConfig().getString("shop.purchaseSuccesfull")));
                         } else {
-                            pl.sendMessage(ChatColor.translateAlternateColorCodes('&', JadGens.getInstance().getConfig().getString("messages.noInventorySpace")));
+                            pl.sendMessage(ChatColor.translateAlternateColorCodes('&', lang().getString("messages.noInventorySpace")));
                         }
                     } else {
                         pl.sendMessage(ChatColor.translateAlternateColorCodes('&', JadGens.getInstance().getConfig().getString("shop.noMoney")));
@@ -58,7 +59,7 @@ public class ShopListeners implements Listener {
                             pl.getInventory().addItem(new Machine().createItem(buyID));
                             pl.sendMessage(ChatColor.translateAlternateColorCodes('&', JadGens.getInstance().getConfig().getString("shop.purchaseSuccesfull")));
                         } else {
-                            pl.sendMessage(ChatColor.translateAlternateColorCodes('&', JadGens.getInstance().getConfig().getString("messages.noInventorySpace")));
+                            pl.sendMessage(ChatColor.translateAlternateColorCodes('&', lang().getString("messages.noInventorySpace")));
                         }
                     } else {
                         pl.sendMessage(ChatColor.translateAlternateColorCodes('&', JadGens.getInstance().getConfig().getString("shop.noMoney")));
@@ -70,7 +71,7 @@ public class ShopListeners implements Listener {
                             pl.getInventory().addItem(new Machine().createItem(buyID));
                             pl.sendMessage(ChatColor.translateAlternateColorCodes('&', JadGens.getInstance().getConfig().getString("shop.purchaseSuccesfull")));
                         } else {
-                            pl.sendMessage(ChatColor.translateAlternateColorCodes('&', JadGens.getInstance().getConfig().getString("messages.noInventorySpace")));
+                            pl.sendMessage(ChatColor.translateAlternateColorCodes('&', lang().getString("messages.noInventorySpace")));
                         }
                     } else {
                         pl.sendMessage(ChatColor.translateAlternateColorCodes('&', JadGens.getInstance().getConfig().getString("shop.noMoney")));
@@ -91,7 +92,7 @@ public class ShopListeners implements Listener {
                             pl.getInventory().addItem(new Fuel().createItem(buyID));
                             pl.sendMessage(ChatColor.translateAlternateColorCodes('&', JadGens.getInstance().getConfig().getString("shop.purchaseSuccesfull")));
                         } else {
-                            pl.sendMessage(ChatColor.translateAlternateColorCodes('&', JadGens.getInstance().getConfig().getString("messages.noInventorySpace")));
+                            pl.sendMessage(ChatColor.translateAlternateColorCodes('&', lang().getString("messages.noInventorySpace")));
                         }
                     } else {
                         pl.sendMessage(ChatColor.translateAlternateColorCodes('&', JadGens.getInstance().getConfig().getString("shop.noMoney")));
@@ -103,7 +104,7 @@ public class ShopListeners implements Listener {
                             pl.getInventory().addItem(new Fuel().createItem(buyID));
                             pl.sendMessage(ChatColor.translateAlternateColorCodes('&', JadGens.getInstance().getConfig().getString("shop.purchaseSuccesfull")));
                         } else {
-                            pl.sendMessage(ChatColor.translateAlternateColorCodes('&', JadGens.getInstance().getConfig().getString("messages.noInventorySpace")));
+                            pl.sendMessage(ChatColor.translateAlternateColorCodes('&', lang().getString("messages.noInventorySpace")));
                         }
                     } else {
                         pl.sendMessage(ChatColor.translateAlternateColorCodes('&', JadGens.getInstance().getConfig().getString("shop.noMoney")));
@@ -115,14 +116,15 @@ public class ShopListeners implements Listener {
                             pl.getInventory().addItem(new Fuel().createItem(buyID));
                             pl.sendMessage(ChatColor.translateAlternateColorCodes('&', JadGens.getInstance().getConfig().getString("shop.purchaseSuccesfull")));
                         } else {
-                            pl.sendMessage(ChatColor.translateAlternateColorCodes('&', JadGens.getInstance().getConfig().getString("messages.noInventorySpace")));
+                            pl.sendMessage(ChatColor.translateAlternateColorCodes('&', lang().getString("messages.noInventorySpace")));
                         }
                     } else {
                         pl.sendMessage(ChatColor.translateAlternateColorCodes('&', JadGens.getInstance().getConfig().getString("shop.noMoney")));
                     }
                 }
             }
-
         }
     }
+
+    protected FileConfiguration lang() { return JadGens.getInstance().getLangFile().lang(); }
 }
