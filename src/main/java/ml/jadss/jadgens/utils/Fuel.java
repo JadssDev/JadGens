@@ -5,7 +5,6 @@ import ml.jadss.jadgens.nbt.NBTCompound;
 import ml.jadss.jadgens.nbt.NBTItem;
 import ml.jadss.jadgens.nbt.NbtApiException;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -27,7 +26,7 @@ public class Fuel {
     public Fuel(ItemStack item) {
         if (!item.hasItemMeta()) { this.type = null; this.drops = null; return; }
         NBTCompound nbtCompound = new NBTItem(item);
-        if (!JadGens.getInstance().getCompMode()) {
+        if (!JadGens.getInstance().getCompatibilityMode()) {
             if (nbtCompound.getBoolean("JadGens_fuel")) {
                 this.type = nbtCompound.getInteger("JadGens_fuelType");
                 this.drops = nbtCompound.getInteger("JadGens_drops");
@@ -61,7 +60,7 @@ public class Fuel {
     public boolean isFuel(ItemStack item) {
         if (item == null) return false;
         if (!item.getItemMeta().hasDisplayName()) return false;
-        if (!JadGens.getInstance().getCompMode()) {
+        if (!JadGens.getInstance().getCompatibilityMode()) {
             NBTCompound nbtCompound = new NBTItem(item);
             return nbtCompound.hasKey("JadGens_fuel");
         } else {
@@ -81,9 +80,12 @@ public class Fuel {
             lore.add(ChatColor.translateAlternateColorCodes('&', s));
         }
 
-        if (!JadGens.getInstance().getCompMode() && JadGens.getInstance().getConfig().getBoolean("fuels." + id + ".glow")) {
-            meta.addEnchant(Enchantment.DIG_SPEED, 1, true);
-            meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+        if (!JadGens.getInstance().getCompatibilityMode()) {
+            meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+            if (JadGens.getInstance().getConfig().getBoolean("fuels." + id + ".glow")) {
+                meta.addEnchant(Enchantment.DIG_SPEED, 1, true);
+                meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+            }
         }
 
         meta.setLore(lore);

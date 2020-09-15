@@ -150,10 +150,14 @@ public class Machine {
             lore.add(ChatColor.translateAlternateColorCodes('&', s));
         }
 
-        if (!JadGens.getInstance().getCompMode() && JadGens.getInstance().getConfig().getBoolean("machines." + id + ".glow")) {
-            meta.addEnchant(Enchantment.DIG_SPEED, 1, true);
-            meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+        if (JadGens.getInstance().getCompatibilityMode()) {
+            meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+            if (JadGens.getInstance().getConfig().getBoolean("machines." + id + ".glow")) {
+                meta.addEnchant(Enchantment.DIG_SPEED, 1, true);
+                meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+            }
         }
+
         meta.setLore(lore);
         machine.setItemMeta(meta);
 
