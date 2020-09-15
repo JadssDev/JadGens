@@ -4,88 +4,71 @@ import ml.jadss.jadgens.commands.JadGensCommand;
 import ml.jadss.jadgens.commands.TabCompleter;
 import ml.jadss.jadgens.listeners.*;
 import ml.jadss.jadgens.management.DataFile;
+import ml.jadss.jadgens.management.LangFile;
 import ml.jadss.jadgens.management.MetricsLite;
-import ml.jadss.jadgens.tasks.ProduceMachineDelayTask;
+import ml.jadss.jadgens.tasks.ProduceScheduler;
 import ml.jadss.jadgens.utils.PlaceHolders;
 import net.milkbowl.vault.economy.Economy;
 import org.black_ixx.playerpoints.PlayerPoints;
 import org.black_ixx.playerpoints.PlayerPointsAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitTask;
+
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 
 public class JadGens extends JavaPlugin {
 
+    //Files
     private DataFile dataFile;
-    public DataFile getDataFile() {
-        return dataFile;
-    }
-
+    private LangFile langFile;
     //hook booleans.
     private boolean hookedVault = false;
-    public boolean isHookedVault() {
-        return hookedVault;
-    }
-
     private boolean hookedPlaceHolderAPI = false;
-    public boolean isHookedPlaceHolderAPI() {
-        return hookedPlaceHolderAPI;
-    }
-
     private boolean hookedPlayerPoints = false;
-    public boolean isHookedPlayerPoints() {
-        return hookedPlayerPoints;
-    }
-
     //hooks
     private Economy eco;
-    public Economy getEco() {
-        return eco;
-    }
-
     private PlayerPointsAPI pointsAPI;
-    public PlayerPointsAPI getPointsAPI() {
-        return pointsAPI;
-    }
-
     private MetricsLite metrics;
-
     //tasks
-    private BukkitTask task;
-    public BukkitTask getTask() {
-        return task;
-    }
-    public void setTask(BukkitTask t) {
-        task = t;
-    }
-
+    private ScheduledFuture<?> producer;
+    //Instance
     private static JadGens instance;
-    public static JadGens getInstance() {
-        return instance;
-    }
-
+    //ScheduledExecutor
+    private final static ScheduledExecutorService executorService = Executors.newScheduledThreadPool(2);
     //Compatibility Mode
     public boolean compatibilityMode = false;
-    public boolean getCompMode() { return compatibilityMode; }
 
     @Override
     public void onEnable() {
+        //Compatibility Mode
         if (getServer().getBukkitVersion().contains("1.7")) {
             compatibilityMode = true;
             Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3JadGens &7>> &bEnabling &3&lCompatibility Mode&e..."));
         }
 
+        //Setup configs
         getConfig().options().copyDefaults();
         saveDefaultConfig();
         reloadConfig();
 
+        //Data File
+        dataFile = new DataFile();
+        dataFile.setupDataFile();
 
+        //Lang File
+        langFile = new LangFile();
+        langFile.setupLangFile();
+
+        //Hook into plugins
         hookVault();
         hookPlaceHolderAPI();
         hookPlayerPoints();
-
+        Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3JadGens &7>> &eHooked into &bXP&e!"));
         if (hookedVault) {
             Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3JadGens &7>> &eHooked into &bVault&e!"));
         }
@@ -96,43 +79,57 @@ public class JadGens extends JavaPlugin {
             Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3JadGens &7>> &eHooked into &bPlayerPoints&e!"));
         }
 
-        Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3JadGens &7>> &eHooked into &bXP&e!"));
-
+        //Setting instance
         instance = this;
 
+        //Setup the shop
         if (!setupShop()) {
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
 
-        dataFile = new DataFile();
-        dataFile.setupDataFile();
+        //Create the Scheduler
+        producer = new ProduceScheduler(getConfig().getInt("machinesConfig.machinesDelay")).getScheduledFuture();
 
-        task = new ProduceMachineDelayTask().runTaskTimer(this, 0L, getConfig().getLong("machinesConfig.machinesDelay") * 20);
-
+        //Setup the API
         setupAPIDebug();
+
+        //Register everything
         registerStuff();
 
-        if (!getCompMode()) { metrics = new MetricsLite(this, 8789); }
+        //Start metrics if compatibility mode = disabled.
+        if (!getCompatibilityMode()) { metrics = new MetricsLite(this, 8789); }
 
+        //Plugin enabled!
         Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3JadGens &7>> &3Plugin &bEnabled&7!"));
     }
 
     @Override
     public void onDisable() {
+        //Terminate the Scheduler
+        producer.cancel(false);
+
+        //Disable hooks
+        eco = null;
+        pointsAPI = null;
+        metrics = null;
+
+        //Disabling the instance
+        instance = null;
+
+        //Plugin DISABLED!
         Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3JadGens &7>> &bDisabling &3Plugin&e!"));
     }
-
 
     //API STUFF
     private boolean APIDebug;
 
     public void setupAPIDebug() {
-        APIDebug = getConfig().getBoolean("messages.debugAPI");
+        APIDebug = lang().getBoolean("messages.debugAPI");
     }
 
     public boolean isAPIDebugEnabled() {
-        if (this.getConfig().getBoolean("messages.debugAPI") != APIDebug) {
+        if (lang().getBoolean("messages.debugAPI") != APIDebug) {
             Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3JadGens &7>> &eA plugin tried to disable API Debug, but it was reverted."));
             APIDebug = getConfig().getBoolean("messages.debugAPI");
             return APIDebug;
@@ -155,7 +152,7 @@ public class JadGens extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PlayerInteractListener(), this);
         getServer().getPluginManager().registerEvents(new OpenGuiListener(), this);
         getServer().getPluginManager().registerEvents(new InventoryClickListener(), this);
-        if (!getCompMode()) getServer().getPluginManager().registerEvents(new BlockExplodeListener(), this);
+        if (!getCompatibilityMode()) getServer().getPluginManager().registerEvents(new BlockExplodeListener(), this);
         getServer().getPluginManager().registerEvents(new EntityExplodeEvent(), this);
         getServer().getPluginManager().registerEvents(new PistonMoveListener(), this);
         getServer().getPluginManager().registerEvents(new ShopListeners(), this);
@@ -231,4 +228,49 @@ public class JadGens extends JavaPlugin {
         hookedPlaceHolderAPI = true;
         new PlaceHolders().register();
     }
+
+    /* Getters */
+
+    //files
+    public DataFile getDataFile() { return dataFile; }
+    public LangFile getLangFile() { return langFile; }
+    //hook booleans.
+    public boolean isHookedVault() {
+        return hookedVault;
+    }
+    public boolean isHookedPlaceHolderAPI() {
+        return hookedPlaceHolderAPI;
+    }
+    public boolean isHookedPlayerPoints() {
+        return hookedPlayerPoints;
+    }
+    //hooks
+    public Economy getEco() {
+        return eco;
+    }
+    public PlayerPointsAPI getPointsAPI() {
+        return pointsAPI;
+    }
+    //tasks
+
+    public ScheduledFuture<?> getProducer() {
+        return producer;
+    }
+
+    public void setProducer(ScheduledFuture<?> producer) {
+        this.producer = producer;
+    }
+
+    //Instance
+    public static JadGens getInstance() {
+        return instance;
+    }
+    //Compatibility Mode
+    public boolean getCompatibilityMode() { return compatibilityMode; }
+
+    public static ScheduledExecutorService getExecutorService() {
+        return executorService;
+    }
+
+    protected FileConfiguration lang() { return JadGens.getInstance().getLangFile().lang(); }
 }
