@@ -34,7 +34,7 @@ public class JadGensCommand implements CommandExecutor {
                 JadGens.getInstance().getServer().getPluginManager().callEvent(event);
                 if (event.isUsed()) return true;
                 new HelpCommand(sender);
-            } catch(StringIndexOutOfBoundsException ex) {
+            } catch (StringIndexOutOfBoundsException ex) {
                 CustomJadGensCommandArg event = new CustomJadGensCommandArg(sender, args[0], null);
                 JadGens.getInstance().getServer().getPluginManager().callEvent(event);
                 if (event.isUsed()) return true;

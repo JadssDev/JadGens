@@ -5,6 +5,7 @@ import ml.jadss.jadgens.utils.MachineLimiter;
 import ml.jadss.jadgens.utils.MachineLookup;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 public class InfoCommand {
@@ -14,9 +15,9 @@ public class InfoCommand {
             Player pl = (Player) sender;
             MachineLimiter limiter = new MachineLimiter();
             MachineLookup lookup = new MachineLookup();
-            for (String s : JadGens.getInstance().getConfig().getStringList("messages.infoCommand.msg")) {
+            for (String s : lang().getStringList("messages.infoMessages.msg")) {
                 if (limiter.getMaxLimit(pl) == -1) {
-                    s = s.replace("%max%", JadGens.getInstance().getConfig().getString("messages.infoCommand.infinite"));
+                    s = s.replace("%max%", lang().getString("messages.infoMessages.infinite"));
                 } else {
                     s = s.replace("%max%", String.valueOf(limiter.getMaxLimit(pl)));
                 }
@@ -24,7 +25,9 @@ public class InfoCommand {
                 pl.sendMessage(ChatColor.translateAlternateColorCodes('&', s));
             }
         } else {
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', JadGens.getInstance().getConfig().getString("messages.notPLayer")));
+            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', lang().getString("messages.notPLayer")));
         }
     }
+
+    protected FileConfiguration lang() { return JadGens.getInstance().getLangFile().lang(); }
 }

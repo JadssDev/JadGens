@@ -4,6 +4,7 @@ import ml.jadss.jadgens.JadGens;
 import ml.jadss.jadgens.utils.Shop;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 public class ShopCommand {
@@ -25,7 +26,9 @@ public class ShopCommand {
                 new HelpCommand(sender);
             }
         } else {
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', JadGens.getInstance().getConfig().getString("messages.notPLayer")));
+            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', lang().getString("messages.notPLayer")));
         }
     }
+
+    protected FileConfiguration lang() { return JadGens.getInstance().getLangFile().lang(); }
 }
