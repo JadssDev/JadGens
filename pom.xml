@@ -6,7 +6,7 @@
 
     <groupId>ml.jadss</groupId>
     <artifactId>JadGens</artifactId>
-    <version>2.5.4-JadLaxySnap</version>
+    <version>2.5.5-JadLaxySnap</version>
     <packaging>jar</packaging>
 
     <name>JadGens</name>

@@ -257,9 +257,7 @@ public class JadGens extends JavaPlugin {
         return producer;
     }
 
-    public void setProducer(BukkitTask producer) {
-        this.producer = producer;
-    }
+    public void setProducer(BukkitTask producer) { this.producer = producer; }
 
     //Instance
     public static JadGens getInstance() {
@@ -267,10 +265,6 @@ public class JadGens extends JavaPlugin {
     }
     //Compatibility Mode
     public boolean getCompatibilityMode() { return compatibilityMode; }
-
-    public static ScheduledExecutorService getExecutorService() {
-        return executorService;
-    }
-
+    //Lang file
     protected FileConfiguration lang() { return JadGens.getInstance().getLangFile().lang(); }
 }
