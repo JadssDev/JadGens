@@ -15,7 +15,7 @@ public class ReloadCommand { //messages.reloadMessages.permission | pluginReload
             JadGens.getInstance().getDataFile().reloadData();
             JadGens.getInstance().setupAPIDebug();
             JadGens.getInstance().getProducer().cancel();
-            JadGens.getInstance().setProducer(new ProduceRunnable().runTaskTimer(JadGens.getInstance(), 0L, JadGens.getInstance().getConfig().getInt("machinesConfig.machinesDelay")));
+            JadGens.getInstance().setProducer(new ProduceRunnable().runTaskTimer(JadGens.getInstance(), 0L, JadGens.getInstance().getConfig().getInt("machinesConfig.machinesDelay") * 20));
             sender.sendMessage(ChatColor.translateAlternateColorCodes('&', lang().getString("messages.reloadMessages.pluginReloaded")));
         } else {
             sender.sendMessage(ChatColor.translateAlternateColorCodes('&', lang().getString("messages.noPermission")));

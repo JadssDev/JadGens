@@ -90,7 +90,7 @@ public class JadGens extends JavaPlugin {
         }
 
         //Create the Scheduler
-        producer = new ProduceRunnable().runTaskTimer(this, 0L, getConfig().getInt("machinesConfig.machinesDelay"));
+        producer = new ProduceRunnable().runTaskTimer(this, 0L, getConfig().getInt("machinesConfig.machinesDelay") * 20);
 
         //Setup the API
         setupAPIDebug();

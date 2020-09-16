@@ -30,6 +30,7 @@ public class LangFile {
         }
         lang = YamlConfiguration.loadConfiguration(langFile);
         createFields();
+
         saveLang();
     }
 
