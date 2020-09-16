@@ -6,7 +6,7 @@ import ml.jadss.jadgens.listeners.*;
 import ml.jadss.jadgens.management.DataFile;
 import ml.jadss.jadgens.management.LangFile;
 import ml.jadss.jadgens.management.MetricsLite;
-import ml.jadss.jadgens.tasks.ProduceScheduler;
+import ml.jadss.jadgens.tasks.ProduceRunnable;
 import ml.jadss.jadgens.utils.PlaceHolders;
 import net.milkbowl.vault.economy.Economy;
 import org.black_ixx.playerpoints.PlayerPoints;
@@ -16,6 +16,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -35,7 +36,7 @@ public class JadGens extends JavaPlugin {
     private PlayerPointsAPI pointsAPI;
     private MetricsLite metrics;
     //tasks
-    private ScheduledFuture<?> producer;
+    private BukkitTask producer;
     //Instance
     private static JadGens instance;
     //ScheduledExecutor
@@ -89,7 +90,7 @@ public class JadGens extends JavaPlugin {
         }
 
         //Create the Scheduler
-        producer = new ProduceScheduler(getConfig().getInt("machinesConfig.machinesDelay")).getScheduledFuture();
+        producer = new ProduceRunnable().runTaskTimer(this, 0L, getConfig().getInt("machinesConfig.machinesDelay"));
 
         //Setup the API
         setupAPIDebug();
@@ -106,8 +107,7 @@ public class JadGens extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        //Terminate the Scheduler
-        producer.cancel(false);
+        producer.cancel();
 
         //Disable hooks
         eco = null;
@@ -253,11 +253,11 @@ public class JadGens extends JavaPlugin {
     }
     //tasks
 
-    public ScheduledFuture<?> getProducer() {
+    public BukkitTask getProducer() {
         return producer;
     }
 
-    public void setProducer(ScheduledFuture<?> producer) {
+    public void setProducer(BukkitTask producer) {
         this.producer = producer;
     }
 

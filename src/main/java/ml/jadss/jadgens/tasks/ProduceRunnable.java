@@ -16,7 +16,7 @@ import java.util.Set;
 import java.util.UUID;
 
 
-public class ProduceRunnable implements Runnable {
+public class ProduceRunnable extends BukkitRunnable {
 
     @Override
     public void run() {

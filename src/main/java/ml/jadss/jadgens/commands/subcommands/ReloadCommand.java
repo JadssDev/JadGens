@@ -2,7 +2,6 @@ package ml.jadss.jadgens.commands.subcommands;
 
 import ml.jadss.jadgens.JadGens;
 import ml.jadss.jadgens.tasks.ProduceRunnable;
-import ml.jadss.jadgens.tasks.ProduceScheduler;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -15,8 +14,8 @@ public class ReloadCommand { //messages.reloadMessages.permission | pluginReload
             JadGens.getInstance().reloadConfig();
             JadGens.getInstance().getDataFile().reloadData();
             JadGens.getInstance().setupAPIDebug();
-            JadGens.getInstance().getProducer().cancel(false);
-            JadGens.getInstance().setProducer(new ProduceScheduler(JadGens.getInstance().getConfig().getInt("machinesConfig.machinesDelay")).getScheduledFuture());
+            JadGens.getInstance().getProducer().cancel();
+            JadGens.getInstance().setProducer(new ProduceRunnable().runTaskTimer(JadGens.getInstance(), 0L, JadGens.getInstance().getConfig().getInt("machinesConfig.machinesDelay")));
             sender.sendMessage(ChatColor.translateAlternateColorCodes('&', lang().getString("messages.reloadMessages.pluginReloaded")));
         } else {
             sender.sendMessage(ChatColor.translateAlternateColorCodes('&', lang().getString("messages.noPermission")));
