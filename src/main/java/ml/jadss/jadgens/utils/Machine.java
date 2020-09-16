@@ -150,7 +150,7 @@ public class Machine {
             lore.add(ChatColor.translateAlternateColorCodes('&', s));
         }
 
-        if (JadGens.getInstance().getCompatibilityMode()) {
+        if (!JadGens.getInstance().getCompatibilityMode()) {
             meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
             if (JadGens.getInstance().getConfig().getBoolean("machines." + id + ".glow")) {
                 meta.addEnchant(Enchantment.DIG_SPEED, 1, true);
