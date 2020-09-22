@@ -3,14 +3,14 @@ machineGui:
   enabled: true
   title: "&3&lMachine"
   #about the drops check item in the gui.
+  backItem:
+    material: STAINED_GLASS_PANE
+    #change if you're 1.12 and below.
+    damage: 3
   dropsCheckItem:
     enabled: true
     #1 = first slot, 9 = last slot.
-    slot: 5
-    backItem:
-      material: STAINED_GLASS_PANE
-      #change if you're 1.12 and below.
-      damage: 3
+    slot: 9
     item:
       material: IRON_INGOT
       damage: 0 #just change this is the value of the stained glass after it's id.. just keep that in mind when changing this value, also, 0 is the default damage value.
@@ -22,6 +22,17 @@ machineGui:
     infiniteLore:
       - "&eYour &3&lmachine &ehas:"
       - "&bInfinite &3Drops&e!"
+  ownerCheckItem:
+    enabled: true
+    #1 = first slot, 9 = last slot.
+    slot: 1
+    item:
+      material: SKELETON_SKULL
+      damage: 0 #just change this is the value of the stained glass after it's id.. just keep that in mind when changing this value, also, 0 is the default damage value.
+    displayName: "&bOwner"
+    lore:
+      - "&eThis &3&lmachine &bowner &eis"
+      - "&b&l%owner%&e!"
 
 shop:
   #The plugin supports "ECO" (Economy) , "EXP" (Experience Levels) and "POINTS" (PlayerPoints) as currencies currently.
