@@ -1,5 +1,6 @@
 package ml.jadss.jadgens;
 
+import com.cryptomorin.xseries.XMaterial;
 import ml.jadss.jadgens.commands.JadGensCommand;
 import ml.jadss.jadgens.commands.TabCompleter;
 import ml.jadss.jadgens.listeners.*;
@@ -20,7 +21,6 @@ import org.bukkit.scheduler.BukkitTask;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
 
 public class JadGens extends JavaPlugin {
 
