@@ -16,9 +16,6 @@ import java.util.Set;
 public class TabCompleter implements org.bukkit.command.TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        System.out.println(Arrays.toString(args));
-        System.out.println(command.getName());
-        System.out.println(args.length);
         List<String> tab = new ArrayList<>();
         if (args.length == 1) {
             tab.add("help");
