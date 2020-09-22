@@ -14,6 +14,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class Machine {
 
@@ -104,7 +105,7 @@ public class Machine {
         if (this.id == null) return null;
         Inventory gui = Bukkit.createInventory(null, 9, ChatColor.translateAlternateColorCodes('&', JadGens.getInstance().getConfig().getString("machineGui.title")));
 
-        ItemStack backitem = new ItemStack(new Compatibility().matParser(JadGens.getInstance().getConfig().getString("machineGui.dropsCheckItem.backItem.material")), 1, (short) JadGens.getInstance().getConfig().getInt("machineGui.dropsCheckItem.backItem.damage"));
+        ItemStack backitem = new ItemStack(new Compatibility().matParser(JadGens.getInstance().getConfig().getString("machineGui.backItem.material")), 1, (short) JadGens.getInstance().getConfig().getInt("machineGui.backItem.damage"));
         for (int i = 8; i > -1; i--) {
             gui.setItem(i, backitem);
         }
@@ -135,6 +136,26 @@ public class Machine {
             dropsItem.setItemMeta(dropsMeta);
 
             gui.setItem(JadGens.getInstance().getConfig().getInt("machineGui.dropsCheckItem.slot") - 1, dropsItem);
+        }
+
+        if (JadGens.getInstance().getConfig().getBoolean("machineGui.ownerCheckItem.enabled")) {
+            ItemStack dropsItem = new ItemStack(new Compatibility().matParser(JadGens.getInstance().getConfig().getString("machineGui.ownerCheckItem.item.material")),
+                    1,
+                    (short) JadGens.getInstance().getConfig().getInt("machineGui.ownerCheckItem.item.damage"));
+
+            ItemMeta dropsMeta = dropsItem.getItemMeta();
+
+            dropsMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', JadGens.getInstance().getConfig().getString("machineGui.ownerCheckItem.displayName")));
+            List<String> lore = new ArrayList<>();
+            for (String s : JadGens.getInstance().getConfig().getStringList("machineGui.ownerCheckItem.lore")) {
+                //placeholders: %owner%
+                lore.add(ChatColor.translateAlternateColorCodes('&', s.replace("%owner%", Bukkit.getOfflinePlayer(UUID.fromString(this.getOwner())).getName())));
+            }
+
+            dropsMeta.setLore(lore);
+            dropsItem.setItemMeta(dropsMeta);
+
+            gui.setItem(JadGens.getInstance().getConfig().getInt("machineGui.ownerCheckItem.slot") - 1, dropsItem);
         }
 
         return gui;

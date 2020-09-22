@@ -59,6 +59,7 @@ public class Fuel {
 
     public boolean isFuel(ItemStack item) {
         if (item == null) return false;
+        if (!item.hasItemMeta()) return false;
         if (!item.getItemMeta().hasDisplayName()) return false;
         if (!JadGens.getInstance().getCompatibilityMode()) {
             NBTCompound nbtCompound = new NBTItem(item);
