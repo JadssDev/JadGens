@@ -7,6 +7,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.Plugin;
@@ -16,7 +17,7 @@ import java.util.UUID;
 import static ml.jadss.jadgens.JadGensAPI.validatePlugin;
 
 @SuppressWarnings("unused")
-public class MachineProduceEvent extends Event {
+public class MachineProduceEvent extends Event implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
 

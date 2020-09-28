@@ -1,6 +1,7 @@
 package ml.jadss.jadgens.utils;
 
 import ml.jadss.jadgens.JadGens;
+import ml.jadss.jadgens.events.MachineUnloadEvent;
 import org.bukkit.*;
 import org.bukkit.configuration.file.FileConfiguration;
 
@@ -38,6 +39,8 @@ public class PurgeMachines {
         World world = Bukkit.getServer().getWorld(data().getString("machines." + id + ".world"));
         if (world == null) {
             Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3JadGens &7>> &eThe &3&lMachine &ewith &b&lID &a\"" + id + "\" &ewas &c&lRemoved&e!"));
+            MachineUnloadEvent event = new MachineUnloadEvent(new Machine(id));
+            Bukkit.getServer().getPluginManager().callEvent(event);
             data().set("machines." + id, null);
             return true;
         }
@@ -48,7 +51,10 @@ public class PurgeMachines {
         if (new MachineLookup().isMachine(loc.getBlock())) {
             if (loc.getBlock().getType().equals(Material.AIR)) {
                 Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3JadGens &7>> &eThe &3&lMachine &ewith &b&lID &a\"" + id + "\" &ewas &c&lRemoved&e!"));
+                MachineUnloadEvent event = new MachineUnloadEvent(new Machine(id));
+                Bukkit.getServer().getPluginManager().callEvent(event);
                 data().set("machines." + id, null);
+                JadGens.getInstance().getDataFile().saveData();
                 return true;
             }
         }
@@ -62,8 +68,9 @@ public class PurgeMachines {
         if (mac.getLocation().getWorld() == null) {
             data().set("machines." + id, null);
         }
-        mac.getLocation().getBlock().setType(Material.AIR);
+        try { mac.getLocation().getBlock().setType(Material.AIR); } finally { Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3JadGens &7>> &bException caught &ewhen &cremoving &ea &3machine&e!"));}
         data().set("machines." + id, null);
+        JadGens.getInstance().getDataFile().saveData();
     }
 
     public FileConfiguration data() {

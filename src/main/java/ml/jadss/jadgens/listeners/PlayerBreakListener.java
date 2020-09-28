@@ -2,8 +2,11 @@ package ml.jadss.jadgens.listeners;
 
 import ml.jadss.jadgens.JadGens;
 import ml.jadss.jadgens.events.MachineBreakEvent;
+import ml.jadss.jadgens.events.MachineLoadEvent;
+import ml.jadss.jadgens.events.MachineUnloadEvent;
 import ml.jadss.jadgens.utils.Machine;
 import ml.jadss.jadgens.utils.MachineLookup;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -33,6 +36,8 @@ public class PlayerBreakListener implements Listener {
         e.setCancelled(true);
         if (UUID.fromString(machine.getOwner()).equals(pl.getUniqueId()) || pl.hasPermission(lang().getString("messages.bypassPermission"))) {
             if (pl.getInventory().firstEmpty() != -1) {
+                MachineUnloadEvent event1 = new MachineUnloadEvent(machine);
+                Bukkit.getServer().getPluginManager().callEvent(event1);
                 machine.removefromConfig();
                 pl.getInventory().addItem(machine.createItem(machine.getType()));
                 block.setType(Material.AIR);

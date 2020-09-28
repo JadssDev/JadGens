@@ -8,6 +8,8 @@ import ml.jadss.jadgens.management.DataFile;
 import ml.jadss.jadgens.management.LangFile;
 import ml.jadss.jadgens.management.MetricsLite;
 import ml.jadss.jadgens.tasks.ProduceRunnable;
+import ml.jadss.jadgens.utils.Machine;
+import ml.jadss.jadgens.utils.MachineLoader;
 import ml.jadss.jadgens.utils.PlaceHolders;
 import net.milkbowl.vault.economy.Economy;
 import org.black_ixx.playerpoints.PlayerPoints;
@@ -68,6 +70,9 @@ public class JadGens extends JavaPlugin {
         langFile = new LangFile();
         langFile.setupLangFile();
 
+        //Setup the API
+        setupAPIDebug();
+
         //Hook into plugins
         hookVault();
         hookPlaceHolderAPI();
@@ -92,14 +97,14 @@ public class JadGens extends JavaPlugin {
         //Create the Scheduler
         producer = new ProduceRunnable().runTaskTimer(this, 0L, getConfig().getInt("machinesConfig.machinesDelay") * 20);
 
-        //Setup the API
-        setupAPIDebug();
-
         //Register everything
         registerStuff();
 
         //Start metrics if compatibility mode = disabled.
         if (!getCompatibilityMode()) { metrics = new MetricsLite(this, 8789); }
+
+        //Load machines
+        new MachineLoader().loadMachines();
 
         //Plugin enabled!
         Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3JadGens &7>> &3Plugin &bEnabled&7!"));
@@ -107,12 +112,28 @@ public class JadGens extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        //Stop producer
         producer.cancel();
 
+        //Save data
+        getDataFile().saveData();
+
         //Disable hooks
-        eco = null;
-        pointsAPI = null;
-        metrics = null;
+        if (isHookedVault()) {
+            hookedVault = false;
+            eco = null;
+        }
+        if (isHookedPlaceHolderAPI()) {
+            hookedPlaceHolderAPI = false;
+            new PlaceHolders().unregister();
+        }
+        if (isHookedPlayerPoints()) {
+            hookedPlayerPoints = false;
+            pointsAPI = null;
+        }
+
+        //Unload Machines
+        new MachineLoader().unloadMachines();
 
         //Disabling the instance
         instance = null;
@@ -234,37 +255,27 @@ public class JadGens extends JavaPlugin {
     //files
     public DataFile getDataFile() { return dataFile; }
     public LangFile getLangFile() { return langFile; }
+
     //hook booleans.
-    public boolean isHookedVault() {
-        return hookedVault;
-    }
-    public boolean isHookedPlaceHolderAPI() {
-        return hookedPlaceHolderAPI;
-    }
-    public boolean isHookedPlayerPoints() {
-        return hookedPlayerPoints;
-    }
+    public boolean isHookedVault() { return hookedVault; }
+    public boolean isHookedPlaceHolderAPI() { return hookedPlaceHolderAPI; }
+    public boolean isHookedPlayerPoints() { return hookedPlayerPoints; }
+
     //hooks
-    public Economy getEco() {
-        return eco;
-    }
-    public PlayerPointsAPI getPointsAPI() {
-        return pointsAPI;
-    }
+    public Economy getEco() { return eco; }
+    public PlayerPointsAPI getPointsAPI() { return pointsAPI; }
     //tasks
 
-    public BukkitTask getProducer() {
-        return producer;
-    }
+    public BukkitTask getProducer() { return producer; }
 
     public void setProducer(BukkitTask producer) { this.producer = producer; }
 
     //Instance
-    public static JadGens getInstance() {
-        return instance;
-    }
+    public static JadGens getInstance() { return instance; }
+
     //Compatibility Mode
     public boolean getCompatibilityMode() { return compatibilityMode; }
+
     //Lang file
     protected FileConfiguration lang() { return JadGens.getInstance().getLangFile().lang(); }
 }

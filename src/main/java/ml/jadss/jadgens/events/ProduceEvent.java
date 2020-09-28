@@ -1,11 +1,12 @@
 package ml.jadss.jadgens.events;
 
 import org.bukkit.entity.Player;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 @SuppressWarnings("unused")
-public class ProduceEvent extends Event {
+public class ProduceEvent extends Event implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
 

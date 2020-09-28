@@ -1,12 +1,14 @@
 package ml.jadss.jadgens.utils;
 
 import ml.jadss.jadgens.JadGens;
+import ml.jadss.jadgens.events.MachineProduceEvent;
 import ml.jadss.jadgens.nbt.NBTItem;
 import ml.jadss.jadgens.nbt.NbtApiException;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -23,39 +25,66 @@ public class Machine {
     private Integer type;
     private String uuid;
     private Integer dropsRemaining;
+    private Integer dropsMax;
 
+    /**
+     * Use the methods in the machine without creating one.
+     */
     public Machine() {
         this.id = null;
         this.location = null;
         this.type = null;
         this.uuid = null;
         this.dropsRemaining = null;
+        this.dropsMax = null;
     }
 
+    /**
+     * Creates a machine using some stuff
+     * @param world the World of the machine
+     * @param x the X cord.
+     * @param y the Y cord.
+     * @param z the Z cord.
+     * @param type the machine type
+     * @param uuid the owner of the machine.
+     */
     public Machine(World world, int x, int y, int z, int type, String uuid) {
         this.id = world.getName() + "_" + x + "_" + y + "_" + z;
-        this.location = new Location(world, x, y, z);
+        this.location = new Location(world, x, y, z).add(0.5, 0, 0.5);
         this.type = type;
         this.uuid = uuid;
         this.dropsRemaining = 0;
+        this.dropsMax = JadGens.getInstance().getConfig().getInt("machines." + type + ".maxFuel");
     }
 
+    /**
+     * Creates a machine using some stuff
+     * @param loc the Location of the machine
+     * @param type the machine type
+     * @param uuid the owner of the machine.
+     */
     public Machine(Location loc, int type, String uuid) {
         this.id = loc.getWorld().getName() + "_" + loc.getBlockX() + "_" + loc.getBlockY() + "_" + loc.getBlockZ();
-        this.location = loc;
+        this.location = loc.add(0.5, 0, 0.5);;
         this.type = type;
         this.uuid = uuid;
         this.dropsRemaining = 0;
+        this.dropsMax = JadGens.getInstance().getConfig().getInt("machines." + type + ".maxFuel");
     }
 
+    /**
+     * This gets a machine.
+     * @param block Block to get the machine from
+     */
     public Machine(Block block) {
-        String configID = block.getLocation().getWorld().getName() + "_" + block.getLocation().getBlockX() + "_" + block.getLocation().getBlockY() + "_" + block.getLocation().getBlockZ();
-        if (data().isConfigurationSection("machines." + configID)) {
+        String ID = block.getLocation().getWorld().getName() + "_" + block.getLocation().getBlockX() + "_" + block.getLocation().getBlockY() + "_" + block.getLocation().getBlockZ();
+        if (data().isConfigurationSection("machines." + ID)) {
             this.id = block.getLocation().getWorld().getName() + "_" + block.getLocation().getBlockX() + "_" + block.getLocation().getBlockY() + "_" + block.getLocation().getBlockZ();
             this.location = new Location(Bukkit.getServer().getWorld(data().getString("machines." + id + ".world")), data().getInt("machines." + id + ".x"), data().getInt("machines." + id + ".y"), data().getInt("machines." + id + ".z"));
             this.type = data().getInt("machines." + id + ".type");
             this.uuid = data().getString("machines." + id + ".owner");
             this.dropsRemaining = data().getInt("machines." + id + ".drops");
+            this.dropsMax = JadGens.getInstance().getConfig().getInt("machines." + new Machine(ID).getType() + ".maxFuel");
             return;
         }
 
@@ -64,8 +93,13 @@ public class Machine {
         this.type = null;
         this.uuid = null;
         this.dropsRemaining = null;
+        this.dropsMax = null;
     }
 
+    /**
+     * This gets a machine.
+     * @param id Id from the machine.
+     */
     public Machine(String id) {
         if (!data().isConfigurationSection("machines." + id)) {
             this.id = null;
@@ -77,10 +111,11 @@ public class Machine {
         }
 
         this.id = id;
-        this.location = new Location(Bukkit.getServer().getWorld(data().getString("machines." + id + ".world")), data().getInt("machines." + id + ".x"), data().getInt("machines." + id + ".y"), data().getInt("machines." + id + ".z"));
+        this.location = new Location(Bukkit.getServer().getWorld(data().getString("machines." + id + ".world")), data().getInt("machines." + id + ".x"), data().getInt("machines." + id + ".y"), data().getInt("machines." + id + ".z")).add(0.5, 0, 0.5);
         this.type = data().getInt("machines." + id + ".type");
         this.uuid = data().getString("machines." + id + ".owner");
         this.dropsRemaining = data().getInt("machines." + id + ".drops");
+        this.dropsMax = JadGens.getInstance().getConfig().getInt("machines." + this.getType() + ".maxFuel");
     }
 
     public void addToConfig() {
@@ -124,7 +159,7 @@ public class Machine {
                     //placeholders: %remaining%, %max%
                     lore.add(ChatColor.translateAlternateColorCodes('&',
                             s.replace("%remaining%", String.valueOf(this.getDropsRemaining()))
-                                    .replace("%max%", String.valueOf(JadGens.getInstance().getConfig().getInt("machines." + this.type + ".maxFuel")))));
+                                    .replace("%max%", String.valueOf(this.getDropsMax()))));
                 }
             } else {
                 for (String s : JadGens.getInstance().getConfig().getStringList("machineGui.dropsCheckItem.infiniteLore")) {
@@ -195,19 +230,72 @@ public class Machine {
         return machine;
     }
 
-    public String getId() {
-        return id;
-    }
-    public Location getLocation() { return location; }
-    public Integer getType() {
-        return type;
-    }
-    public String getOwner() { return uuid; }
-    public Integer getDropsRemaining() {
-        return dropsRemaining;
+    public void produce() {
+        World wl = Bukkit.getServer().getWorld(data().getString("machines." + this.id + ".world"));
+        if (wl == null) {
+            Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3JadGens &7>> &eThe &3&lMachine &eWith &b&lID &3" + this.id + " &eWas &c&lNot &b&lFound&e!"));
+            new PurgeMachines().removeMachine(this.getId());
+            return;
+        }
+        //////////////////////////////////////////////
+
+        MachineProduceEvent machineProduceEvent = new MachineProduceEvent(this);
+        JadGens.getInstance().getServer().getPluginManager().callEvent(machineProduceEvent);
+        if (machineProduceEvent.isCancelled()) return;
+
+        if (JadGens.getInstance().getConfig().getBoolean("machinesConfig.stopProducingIfOffline")) {
+            Player testOnline = Bukkit.getPlayer(UUID.fromString(data().getString("machines." + this.id + ".owner")));
+            if (testOnline == null) return;
+        }
+
+        if (JadGens.getInstance().getConfig().getBoolean("machines." + this.type + ".dropItems.enabled")) {
+            Location location = new Location(wl,
+                    data().getInt("machines." + this.id + ".x"),
+                    data().getInt("machines." + this.id + ".y"),
+                    data().getInt("machines." + this.id + ".z"));
+            location.add(0, 1, 0);
+
+            ItemStack dropItem = new ItemStack(new Compatibility().matParser(JadGens.getInstance().getConfig().getString("machines." + this.type + ".dropItems.material")),
+                    JadGens.getInstance().getConfig().getInt("machines." + this.type + ".dropItems.amount"),
+                    (short) JadGens.getInstance().getConfig().getInt("machines." + this.type + ".dropItems.damage"));
+            wl.dropItem(location, dropItem);
+        }
+
+        if (JadGens.getInstance().getConfig().getBoolean("machines." + this.type + ".commands.enabled")) {
+            Player pl = Bukkit.getPlayer(UUID.fromString(data().getString("machines." + this.id + ".owner")));
+            if (!(pl == null)) {
+                for (String command : JadGens.getInstance().getConfig().getStringList("machines." + this.type + ".commands.commands")) {
+                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command.replace("%owner%", pl.getName()));
+                }
+            }
+        }
+
+        if (JadGens.getInstance().getConfig().getBoolean("machines." + this.type + ".economy.enabled") && JadGens.getInstance().isHookedVault()) {
+            OfflinePlayer pl = Bukkit.getOfflinePlayer(UUID.fromString(data().getString("machines." + this.id + ".owner")));
+            JadGens.getInstance().getEco().depositPlayer(pl, JadGens.getInstance().getConfig().getDouble("machines." + this.type + ".economy.give"));
+        }
+
+        if (JadGens.getInstance().getConfig().getBoolean("machines." + this.type + ".points.enabled") && JadGens.getInstance().isHookedPlayerPoints()) {
+            UUID player = UUID.fromString(data().getString("machines." + this.id + ".owner"));
+            JadGens.getInstance().getPointsAPI().give(player, JadGens.getInstance().getConfig().getInt("machines." + this.type + ".points.give"));
+        }
+
+        if (JadGens.getInstance().getConfig().getBoolean("machines." + this.type + ".exp.enabled")) {
+            Player onlinePL = Bukkit.getPlayer(UUID.fromString(data().getString("machines." + this.id + ".owner")));
+            if (onlinePL == null) return;
+            onlinePL.setLevel(onlinePL.getLevel()+JadGens.getInstance().getConfig().getInt("machines." + this.type + ".exp.givelevels"));
+        }
+        //////////////////////////////////////////////
     }
 
-    protected FileConfiguration data() {
-        return JadGens.getInstance().getDataFile().data();
-    }
+
+    public String getId() { return id; }
+    public Location getLocation() { return location; }
+    public Integer getType() { return type; }
+    public String getOwner() { return uuid; }
+    public Integer getDropsRemaining() { return dropsRemaining; }
+    public Integer getDropsMax() { return dropsMax; }
+    public String getDisplayName() { return ChatColor.translateAlternateColorCodes('&', JadGens.getInstance().getConfig().getString("machines." + this.getType() + ".displayName")); }
+
+    protected FileConfiguration data() { return JadGens.getInstance().getDataFile().data(); }
 }

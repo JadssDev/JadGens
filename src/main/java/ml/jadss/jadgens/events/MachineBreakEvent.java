@@ -4,11 +4,12 @@ import ml.jadss.jadgens.utils.Machine;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 @SuppressWarnings("unused")
-public class MachineBreakEvent extends Event {
+public class MachineBreakEvent extends Event implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
 

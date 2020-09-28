@@ -1,11 +1,13 @@
 package ml.jadss.jadgens.listeners;
 
 import ml.jadss.jadgens.JadGens;
+import ml.jadss.jadgens.events.MachineLoadEvent;
 import ml.jadss.jadgens.events.MachinePlaceEvent;
 import ml.jadss.jadgens.nbt.NBTCompound;
 import ml.jadss.jadgens.nbt.NBTItem;
 import ml.jadss.jadgens.utils.Machine;
 import ml.jadss.jadgens.utils.MachineLimiter;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -40,6 +42,8 @@ public class PlayerBuildListener implements Listener {
                 Machine machine = new Machine(block.getLocation(), machineType, pl.getUniqueId().toString());
                 machine.addToConfig();
                 pl.sendMessage(ChatColor.translateAlternateColorCodes('&', lang().getString("messages.machinesMessages.placed")));
+                MachineLoadEvent event1 = new MachineLoadEvent(machine);
+                Bukkit.getServer().getPluginManager().callEvent(event1);
                 return;
             }
         } else {
@@ -57,6 +61,8 @@ public class PlayerBuildListener implements Listener {
                     Machine machine = new Machine(block.getLocation(), machineType, pl.getUniqueId().toString());
                     machine.addToConfig();
                     pl.sendMessage(ChatColor.translateAlternateColorCodes('&', lang().getString("messages.machinesMessages.placed")));
+                    MachineLoadEvent event1 = new MachineLoadEvent(machine);
+                    Bukkit.getServer().getPluginManager().callEvent(event1);
                     return;
                 }
             }
