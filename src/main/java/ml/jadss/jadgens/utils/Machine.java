@@ -230,6 +230,9 @@ public class Machine {
         return machine;
     }
 
+    /**
+     * Make the machine produce....
+     */
     public void produce() {
         World wl = Bukkit.getServer().getWorld(data().getString("machines." + this.id + ".world"));
         if (wl == null) {
@@ -258,7 +261,25 @@ public class Machine {
             ItemStack dropItem = new ItemStack(new Compatibility().matParser(JadGens.getInstance().getConfig().getString("machines." + this.type + ".dropItems.material")),
                     JadGens.getInstance().getConfig().getInt("machines." + this.type + ".dropItems.amount"),
                     (short) JadGens.getInstance().getConfig().getInt("machines." + this.type + ".dropItems.damage"));
-            wl.dropItem(location, dropItem);
+
+            if (JadGens.getInstance().getConfig().getBoolean("machines." + this.type + ".dropItems.itemMeta.enabled")) {
+                ItemMeta meta = dropItem.getItemMeta();
+
+                //set displayName
+                meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', JadGens.getInstance().getConfig().getString("machines." + this.type + ".dropItems.itemMeta.displayName")));
+
+                //set lore
+                List<String> lore = new ArrayList<>();
+                for (String line : JadGens.getInstance().getConfig().getStringList("machines." + this.type + ".dropItems.itemMeta.lore")) {
+                    lore.add(ChatColor.translateAlternateColorCodes('&', line));
+                }
+                meta.setLore(lore);
+
+                //set itemMeta
+                dropItem.setItemMeta(meta);
+            }
+
+            wl.dropItem(location, dropItem); //itemMeta
         }
 
         if (JadGens.getInstance().getConfig().getBoolean("machines." + this.type + ".commands.enabled")) {

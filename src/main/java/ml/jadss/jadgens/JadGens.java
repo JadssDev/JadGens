@@ -43,8 +43,9 @@ public class JadGens extends JavaPlugin {
     private static JadGens instance;
     //ScheduledExecutor
     private final static ScheduledExecutorService executorService = Executors.newScheduledThreadPool(2);
-    //Compatibility Mode
+    //Compatibility Modes
     public boolean compatibilityMode = false;
+    public boolean skyblockMode = false;
 
     @Override
     public void onEnable() {
@@ -52,6 +53,14 @@ public class JadGens extends JavaPlugin {
         if (getServer().getBukkitVersion().contains("1.7")) {
             compatibilityMode = true;
             Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3JadGens &7>> &bEnabling &3&lCompatibility Mode&e..."));
+        }
+        if (getServer().getPluginManager().getPlugin("IridiumSkyblock") != null ||
+                getServer().getPluginManager().getPlugin("SuperiorSkyblock") != null ||
+                getServer().getPluginManager().getPlugin("SuperiorSkyblock2") != null ||
+                getServer().getPluginManager().getPlugin("FabledSkyblock") != null) {
+            skyblockMode = true;
+            Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3JadGens &7>> &bEnabling &3&lSkyblock Mode&e..."));
+            Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3JadGens &7>> &eAll gens production has been delayed for 30 seconds."));
         }
 
         //Setting instance
@@ -95,7 +104,10 @@ public class JadGens extends JavaPlugin {
         }
 
         //Create the Scheduler
-        producer = new ProduceRunnable().runTaskTimer(this, 0L, getConfig().getInt("machinesConfig.machinesDelay") * 20);
+        if (getSkyblockMode())
+            producer = new ProduceRunnable().runTaskTimer(this, 20 * 30, getConfig().getInt("machinesConfig.machinesDelay") * 20);
+        else
+            producer = new ProduceRunnable().runTaskTimer(this, 20L, getConfig().getInt("machinesConfig.machinesDelay") * 20);
 
         //Register everything
         registerStuff();
@@ -275,6 +287,7 @@ public class JadGens extends JavaPlugin {
 
     //Compatibility Mode
     public boolean getCompatibilityMode() { return compatibilityMode; }
+    public boolean getSkyblockMode() { return skyblockMode; }
 
     //Lang file
     protected FileConfiguration lang() { return JadGens.getInstance().getLangFile().lang(); }

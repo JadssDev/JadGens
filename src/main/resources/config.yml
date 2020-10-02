@@ -145,6 +145,13 @@ machines:
     dropItems:
       enabled: true
       material: DIAMOND
+      itemMeta:
+        #wanna enable item meta to use lore and display name?
+        enabled: true
+        displayName: "&bDiamond"
+        lore:
+          - "&eThis is a &b&lDiamond"
+          - "&ecreated by a &b&lMachine&e!"
       damage: 0
       amount: 1
     #----Commands Stuff---- (they are run by the console!) [only when the player is online!]
@@ -196,7 +203,14 @@ machines:
     #when the machine produces you can enable what the machines does.
     dropItems:
       enabled: false
-      material: DIAMOND
+      material: GOLD_INGOT
+      itemMeta:
+        #wanna enable item meta to use lore and display name?
+        enabled: true
+        displayName: "&6&lGold"
+        lore:
+          - "&eThis is &b&lGold"
+          - "&ecreated by a &b&lMachine &etype 2!"
       damage: 0
       amount: 1
     #----Commands Stuff---- (they are run by the console!) [only when the player is online!]

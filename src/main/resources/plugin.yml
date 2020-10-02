@@ -4,7 +4,7 @@ main: ml.jadss.jadgens.JadGens
 load: STARTUP
 api-version: '1.13'
 authors: [Jadss_pt]
-softdepend: [Vault, PlaceHolderAPI, PlayertPoints]
+softdepend: [Vault, PlaceHolderAPI, PlayertPoints, IridiumSkyblock, SuperiorSkyblock, SuperiorSkyblock2, FabledSkyblock]
 description: a generators plugin! hope you like it!
 website: jadss.ml
 commands:
