@@ -23,7 +23,7 @@ public class GiveCommand { // /jadgens give <type> <id> <player>
                         } else {
                             target.getInventory().addItem(new Fuel().createItem(Integer.parseInt(args[2])));
                             if (!(args.length == 5 && args[4].equalsIgnoreCase("-s"))) {
-                                target.sendMessage(ChatColor.translateAlternateColorCodes('&', lang().getString("messages.giveMessages.givenMachine")));
+                                target.sendMessage(ChatColor.translateAlternateColorCodes('&', lang().getString("messages.giveMessages.givenFuel")));
                             }
                         }
                     } else {
