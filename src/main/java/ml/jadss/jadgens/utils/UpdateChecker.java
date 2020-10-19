@@ -65,7 +65,7 @@ public class UpdateChecker {
                     new BukkitRunnable() {
                         @Override
                         public void run() {
-                            Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3JadGens &7>> &eRunning &b&llatest available &3aversion&e!"));
+                            Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3JadGens &7>> &eRunning &b&llatest available &3version&e!"));
                         }
                     }.runTaskLaterAsynchronously(JadGens.getInstance(), 10 * 20);
                 } else if (outdated == 1) {
@@ -74,7 +74,7 @@ public class UpdateChecker {
                     new BukkitRunnable() {
                         @Override
                         public void run() {
-                            Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3JadGens &7>> &eRunning &b&llatest &c(secret) &3aversion&e!"));
+                            Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3JadGens &7>> &eRunning &b&llatest &c(secret) &3version&e!"));
                         }
                     }.runTaskLaterAsynchronously(JadGens.getInstance(), 10 * 20);
                 } else if (outdated == 2) {
