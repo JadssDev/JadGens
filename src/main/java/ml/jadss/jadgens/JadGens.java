@@ -1,6 +1,5 @@
 package ml.jadss.jadgens;
 
-import com.cryptomorin.xseries.XMaterial;
 import ml.jadss.jadgens.commands.JadGensCommand;
 import ml.jadss.jadgens.commands.TabCompleter;
 import ml.jadss.jadgens.listeners.*;
@@ -8,21 +7,19 @@ import ml.jadss.jadgens.management.DataFile;
 import ml.jadss.jadgens.management.LangFile;
 import ml.jadss.jadgens.management.MetricsLite;
 import ml.jadss.jadgens.tasks.ProduceRunnable;
-import ml.jadss.jadgens.utils.Machine;
 import ml.jadss.jadgens.utils.MachineLoader;
 import ml.jadss.jadgens.utils.PlaceHolders;
+import ml.jadss.jadgens.utils.UpdateChecker;
 import net.milkbowl.vault.economy.Economy;
 import org.black_ixx.playerpoints.PlayerPoints;
 import org.black_ixx.playerpoints.PlayerPointsAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
-
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 
 public class JadGens extends JavaPlugin {
 
@@ -41,8 +38,8 @@ public class JadGens extends JavaPlugin {
     private BukkitTask producer;
     //Instance
     private static JadGens instance;
-    //ScheduledExecutor
-    private final static ScheduledExecutorService executorService = Executors.newScheduledThreadPool(2);
+    //Update Checker
+    private UpdateChecker updateChecker;
     //Compatibility Modes
     public boolean compatibilityMode = false;
     public boolean skyblockMode = false;
@@ -118,6 +115,10 @@ public class JadGens extends JavaPlugin {
         //Load machines
         new MachineLoader().loadMachines();
 
+        //Starting Update checker.
+        updateChecker = new UpdateChecker();
+        updateChecker.check();
+
         //Plugin enabled!
         Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3JadGens &7>> &3Plugin &bEnabled&7!"));
     }
@@ -189,6 +190,7 @@ public class JadGens extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new EntityExplodeEvent(), this);
         getServer().getPluginManager().registerEvents(new PistonMoveListener(), this);
         getServer().getPluginManager().registerEvents(new ShopListeners(), this);
+        getServer().getPluginManager().registerEvents(new PlayerJoinListener(), this);
     }
 
     //SETUP SHOP STUFF
@@ -267,28 +269,23 @@ public class JadGens extends JavaPlugin {
     //files
     public DataFile getDataFile() { return dataFile; }
     public LangFile getLangFile() { return langFile; }
-
     //hook booleans.
     public boolean isHookedVault() { return hookedVault; }
     public boolean isHookedPlaceHolderAPI() { return hookedPlaceHolderAPI; }
     public boolean isHookedPlayerPoints() { return hookedPlayerPoints; }
-
     //hooks
     public Economy getEco() { return eco; }
     public PlayerPointsAPI getPointsAPI() { return pointsAPI; }
     //tasks
-
     public BukkitTask getProducer() { return producer; }
-
     public void setProducer(BukkitTask producer) { this.producer = producer; }
-
     //Instance
     public static JadGens getInstance() { return instance; }
-
+    //Update Checker
+    public UpdateChecker getUpdateChecker() { return updateChecker; }
     //Compatibility Mode
     public boolean getCompatibilityMode() { return compatibilityMode; }
     public boolean getSkyblockMode() { return skyblockMode; }
-
     //Lang file
     protected FileConfiguration lang() { return JadGens.getInstance().getLangFile().lang(); }
 }

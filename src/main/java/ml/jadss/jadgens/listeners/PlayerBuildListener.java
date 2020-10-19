@@ -5,6 +5,7 @@ import ml.jadss.jadgens.events.MachineLoadEvent;
 import ml.jadss.jadgens.events.MachinePlaceEvent;
 import ml.jadss.jadgens.nbt.NBTCompound;
 import ml.jadss.jadgens.nbt.NBTItem;
+import ml.jadss.jadgens.utils.Fuel;
 import ml.jadss.jadgens.utils.Machine;
 import ml.jadss.jadgens.utils.MachineLimiter;
 import org.bukkit.Bukkit;
@@ -13,13 +14,14 @@ import org.bukkit.block.Block;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class PlayerBuildListener implements Listener {
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.MONITOR)
     public void PlayerBuildEvent(BlockPlaceEvent e) {
         if (!e.getItemInHand().hasItemMeta()) return;
         Player pl = e.getPlayer();
@@ -30,6 +32,7 @@ public class PlayerBuildListener implements Listener {
 
         if (!JadGens.getInstance().getCompatibilityMode()) {
             if (nbtCompound.getBoolean("JadGens_machine")) {
+                if (e.isCancelled()) return;
                 if (!limiter.canPlaceMachine(pl)) {
                     e.setCancelled(true);
                     pl.sendMessage(ChatColor.translateAlternateColorCodes('&', lang().getString("messages.machinesMessages.limitReached")));
@@ -45,6 +48,8 @@ public class PlayerBuildListener implements Listener {
                 MachineLoadEvent event1 = new MachineLoadEvent(machine);
                 Bukkit.getServer().getPluginManager().callEvent(event1);
                 return;
+            } else if(new Fuel().isFuel(item)) {
+                e.setCancelled(true);
             }
         } else {
             for (String key : JadGens.getInstance().getConfig().getConfigurationSection("machines").getKeys(false)) {

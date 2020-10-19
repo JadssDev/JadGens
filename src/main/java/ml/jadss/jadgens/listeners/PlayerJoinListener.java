@@ -1,0 +1,27 @@
+package ml.jadss.jadgens.listeners;
+
+import ml.jadss.jadgens.JadGens;
+import org.bukkit.ChatColor;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
+
+public class PlayerJoinListener implements Listener {
+
+    @EventHandler
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        if (lang().getBoolean("messages.updateChecker.enabled")) {
+            if (lang().getBoolean("messages.updateChecker.notifyOnJoin")) {
+                if (event.getPlayer().hasPermission(lang().getString("messages.updateChecker.permission"))) {
+                    if (JadGens.getInstance().getUpdateChecker().hasChecked() && !JadGens.getInstance().getUpdateChecker().isUpdated()) {
+                        event.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', lang().getString("messages.updateChecker.message")));
+                    }
+                }
+            }
+        }
+    }
+
+
+    protected FileConfiguration lang() { return JadGens.getInstance().getLangFile().lang(); }
+}

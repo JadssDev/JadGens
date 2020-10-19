@@ -304,9 +304,8 @@ public class Machine {
         if (JadGens.getInstance().getConfig().getBoolean("machines." + this.type + ".exp.enabled")) {
             Player onlinePL = Bukkit.getPlayer(UUID.fromString(data().getString("machines." + this.id + ".owner")));
             if (onlinePL == null) return;
-            onlinePL.setLevel(onlinePL.getLevel()+JadGens.getInstance().getConfig().getInt("machines." + this.type + ".exp.givelevels"));
+            onlinePL.setLevel(onlinePL.getLevel() + JadGens.getInstance().getConfig().getInt("machines." + this.type + ".exp.givelevels"));
         }
-        //////////////////////////////////////////////
     }
 
 

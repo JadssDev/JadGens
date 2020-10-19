@@ -6,7 +6,7 @@
 
     <groupId>ml.jadss</groupId>
     <artifactId>JadGens</artifactId>
-    <version>2.6.6.2-JadLaxySnap</version>
+    <version>2.6.7.3-JadLaxySnap</version>
     <packaging>jar</packaging>
 
     <name>JadGens</name>
@@ -102,10 +102,6 @@
         <repository>
             <id>placeholderapi</id>
             <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
-        </repository>
-        <repository>
-            <id>maven-repo</id>
-            <url>file:/C:/users/onlin/.m2</url>
         </repository>
     </repositories>
 

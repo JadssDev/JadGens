@@ -109,7 +109,13 @@ public class LangFile {
         lang().addDefault("messages.noPistonMoving", "&eYou &c&lcannot &euse &3pistons &eto &a&lmove &b&lMachines&e!");
         lang().addDefault("messages.bypassPermission", "JadGens.bypassBreak");
 
-        //debug booleans
+        //Update checker
+        lang().addDefault("messages.updateChecker.enabled", true);
+        lang().addDefault("messages.updateChecker.notifyOnJoin", true);
+        lang().addDefault("messages.updateChecker.permission", "JadGens.UpdateChecker.Notify");
+        lang().addDefault("messages.updateChecker.message", "&3JadGens &7>> &eA &bnew &3&lUpdate &eis &bAvailable&e!");
+
+        //Debug booleans
         lang().addDefault("messages.debugAPI", false);
 
         lang().options().copyDefaults(true);

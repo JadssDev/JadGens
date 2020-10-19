@@ -12,20 +12,20 @@ public class PurgeMachines {
     public PurgeMachines() { return; }
 
     public void purgeMachines() {
-        Set<String> keys = data().getConfigurationSection("machines").getKeys(false);
-        for (String key : keys) {
-            int x = data().getInt("machines." + key + ".x");
-            int y = data().getInt("machines." + key + ".y");
-            int z = data().getInt("machines." + key + ".z");
-            World world = Bukkit.getServer().getWorld(data().getString("machines." + key + ".world"));
-            if (world == null)  {
-                data().set("machines." + key, null);
-            } else {
-                Location location = new Location(world, x, y, z);
-                location.getBlock().setType(Material.AIR);
-                data().set("machines." + key, null);
+            Set<String> keys = data().getConfigurationSection("machines").getKeys(false);
+            for (String key : keys) {
+                int x = data().getInt("machines." + key + ".x");
+                int y = data().getInt("machines." + key + ".y");
+                int z = data().getInt("machines." + key + ".z");
+                World world = Bukkit.getServer().getWorld(data().getString("machines." + key + ".world"));
+                if (world == null) {
+                    data().set("machines." + key, null);
+                } else {
+                    Location location = new Location(world, x, y, z);
+                    location.getBlock().setType(Material.AIR);
+                    data().set("machines." + key, null);
+                }
             }
-        }
         data().set("machines", null);
         data().set("machines.setup", true);
         data().set("machines.setup", null);
