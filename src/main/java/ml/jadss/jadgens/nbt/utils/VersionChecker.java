@@ -1,19 +1,17 @@
 package ml.jadss.jadgens.nbt.utils;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.logging.Level;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-
 import ml.jadss.jadgens.nbt.NBTItem;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 /**
  * This class uses the Spiget API to check for updates

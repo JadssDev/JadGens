@@ -1,9 +1,9 @@
 package ml.jadss.jadgens.nbt.utils.annotations;
 
-import java.lang.reflect.Method;
-
 import ml.jadss.jadgens.nbt.NbtApiException;
 import ml.jadss.jadgens.nbt.utils.MinecraftVersion;
+
+import java.lang.reflect.Method;
 
 public class CheckUtil {
 

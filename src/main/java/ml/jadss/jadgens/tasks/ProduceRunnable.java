@@ -22,7 +22,7 @@ public class ProduceRunnable extends BukkitRunnable {
         for (String id : keys) {
             if (new PurgeMachines().removeIfAir(id)) continue;
             int type = data().getInt("machines." + id + ".type");
-            if (JadGens.getInstance().getConfig().getBoolean("machines." + type + ".needsFuelToProduce")) {
+            if (JadGens.getInstance().getConfig().getBoolean("machines." + type + ".fuels.needsFuelToProduce")) {
                 if (data().getInt("machines." + id + ".drops") > 0) {
                     data().set("machines." + id + ".drops", data().getInt("machines." + id + ".drops")-1);
                     new Machine(id).produce();

@@ -1,11 +1,11 @@
 package ml.jadss.jadgens.nbt;
 
+import ml.jadss.jadgens.nbt.utils.nmsmappings.ObjectCreator;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-
-import ml.jadss.jadgens.nbt.utils.nmsmappings.ObjectCreator;
 
 /**
  * {@link NBTCompound} implementation backed by a {@link File}

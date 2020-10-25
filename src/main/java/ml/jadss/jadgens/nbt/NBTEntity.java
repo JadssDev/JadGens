@@ -1,9 +1,8 @@
 package ml.jadss.jadgens.nbt;
 
-import org.bukkit.entity.Entity;
-
 import ml.jadss.jadgens.nbt.utils.MinecraftVersion;
 import ml.jadss.jadgens.nbt.utils.annotations.AvaliableSince;
+import org.bukkit.entity.Entity;
 
 /**
  * NBT class to access vanilla tags from Entities. Entities don't support custom

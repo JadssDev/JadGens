@@ -1,5 +1,6 @@
 package ml.jadss.jadgens.utils;
 
+import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
 import ml.jadss.jadgens.JadGens;
 import ml.jadss.jadgens.events.MachineProduceEvent;
 import ml.jadss.jadgens.nbt.NBTItem;
@@ -54,7 +55,7 @@ public class Machine {
         this.type = type;
         this.uuid = uuid;
         this.dropsRemaining = 0;
-        this.dropsMax = JadGens.getInstance().getConfig().getInt("machines." + type + ".maxFuel");
+        this.dropsMax = JadGens.getInstance().getConfig().getInt("machines." + type + ".fuels.maxFuel");
     }
 
     /**
@@ -69,7 +70,7 @@ public class Machine {
         this.type = type;
         this.uuid = uuid;
         this.dropsRemaining = 0;
-        this.dropsMax = JadGens.getInstance().getConfig().getInt("machines." + type + ".maxFuel");
+        this.dropsMax = JadGens.getInstance().getConfig().getInt("machines." + type + ".fuels.maxFuel");
     }
 
     /**
@@ -84,7 +85,7 @@ public class Machine {
             this.type = data().getInt("machines." + id + ".type");
             this.uuid = data().getString("machines." + id + ".owner");
             this.dropsRemaining = data().getInt("machines." + id + ".drops");
-            this.dropsMax = JadGens.getInstance().getConfig().getInt("machines." + new Machine(ID).getType() + ".maxFuel");
+            this.dropsMax = JadGens.getInstance().getConfig().getInt("machines." + type + ".fuels.maxFuel");
             return;
         }
 
@@ -115,7 +116,7 @@ public class Machine {
         this.type = data().getInt("machines." + id + ".type");
         this.uuid = data().getString("machines." + id + ".owner");
         this.dropsRemaining = data().getInt("machines." + id + ".drops");
-        this.dropsMax = JadGens.getInstance().getConfig().getInt("machines." + this.getType() + ".maxFuel");
+        this.dropsMax = JadGens.getInstance().getConfig().getInt("machines." + type + ".fuels.maxFuel");
     }
 
     public void addToConfig() {
@@ -129,7 +130,7 @@ public class Machine {
         JadGens.getInstance().getDataFile().saveData();
     }
 
-    public void removefromConfig() {
+    public void removeFromConfig() {
         data().set("machines." + this.getId(), null);
         JadGens.getInstance().getDataFile().saveData();
     }
@@ -154,7 +155,7 @@ public class Machine {
 
             dropsMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', JadGens.getInstance().getConfig().getString("machineGui.dropsCheckItem.displayName")));
             List<String> lore = new ArrayList<>();
-            if (JadGens.getInstance().getConfig().getBoolean("machines." + this.type + ".needsFuelToProduce")) {
+            if (JadGens.getInstance().getConfig().getBoolean("machines." + this.type + ".fuels.needsFuelToProduce")) {
                 for (String s : JadGens.getInstance().getConfig().getStringList("machineGui.dropsCheckItem.lore")) {
                     //placeholders: %remaining%, %max%
                     lore.add(ChatColor.translateAlternateColorCodes('&',
@@ -316,6 +317,16 @@ public class Machine {
     public Integer getDropsRemaining() { return dropsRemaining; }
     public Integer getDropsMax() { return dropsMax; }
     public String getDisplayName() { return ChatColor.translateAlternateColorCodes('&', JadGens.getInstance().getConfig().getString("machines." + this.getType() + ".displayName")); }
+    public boolean isFuelCompatible(int fuelType) {
+        System.out.println("is Enabled: " + JadGens.getInstance().getConfig().getBoolean("machines." + this.getType() + ".fuels.fuelsAccepted.enabled"));
+        System.out.println("-------------------");
+        System.out.println("Requested: " + fuelType);
+        System.out.println("List: " + JadGens.getInstance().getConfig().getIntegerList("machines." + this.getType() + ".fuels.fuelsAccepted.types").toString());
+        System.out.println("is Equals: " + JadGens.getInstance().getConfig().getIntegerList("machines." + this.getType() + ".fuels.fuelsAccepted.types").contains(fuelType));
+        if (JadGens.getInstance().getConfig().getBoolean("machines." + this.getType() + ".fuels.fuelsAccepted.enabled"))
+            return JadGens.getInstance().getConfig().getIntegerList("machines." + this.getType() + ".fuels.fuelsAccepted.types").contains(fuelType);
+        return true;
+    }
 
     protected FileConfiguration data() { return JadGens.getInstance().getDataFile().data(); }
 }

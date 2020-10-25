@@ -1,14 +1,13 @@
 package ml.jadss.jadgens.nbt.utils.nmsmappings;
 
+import ml.jadss.jadgens.nbt.NbtApiException;
+import ml.jadss.jadgens.nbt.utils.MinecraftVersion;
+import org.bukkit.inventory.ItemStack;
+
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
 import java.util.UUID;
-
-import org.bukkit.inventory.ItemStack;
-
-import ml.jadss.jadgens.nbt.NbtApiException;
-import ml.jadss.jadgens.nbt.utils.MinecraftVersion;
 
 /**
  * This class caches method reflections, keeps track of method name changes between versions and allows early checking for problems

@@ -99,6 +99,7 @@ public class LangFile {
         lang().addDefault("messages.fuelMessages.machineNotAcceptingFuel", "&eThis &3&lmachine &edoesn't use &bfuel&e!");
         lang().addDefault("messages.fuelMessages.notAMachine", "&eThis is &c&lnot &ea &3&lmachine&e!");
         lang().addDefault("messages.fuelMessages.doesntAcceptMoreFuel", "&eThis &3&lmachine &ereached the &a&lmax &b&lFuel&e!");
+        lang().addDefault("messages.fuelMessages.notRightFuel", "&eThis &3&lfuel &cdoesn't &bwork &eon this &b&lmachine&e!");
 
         //Global messages
         lang().addDefault("messages.noPermission", "&eNo &3&lPermission&e!");

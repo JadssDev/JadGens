@@ -1,9 +1,8 @@
 package ml.jadss.jadgens.nbt;
 
-import org.bukkit.block.BlockState;
-
 import ml.jadss.jadgens.nbt.utils.MinecraftVersion;
 import ml.jadss.jadgens.nbt.utils.annotations.AvaliableSince;
+import org.bukkit.block.BlockState;
 
 /**
  * NBT class to access vanilla tags from TileEntities. TileEntities don't

@@ -2,7 +2,6 @@ package ml.jadss.jadgens.listeners;
 
 import ml.jadss.jadgens.JadGens;
 import ml.jadss.jadgens.events.MachineBreakEvent;
-import ml.jadss.jadgens.events.MachineLoadEvent;
 import ml.jadss.jadgens.events.MachineUnloadEvent;
 import ml.jadss.jadgens.utils.Machine;
 import ml.jadss.jadgens.utils.MachineLookup;
@@ -38,7 +37,7 @@ public class PlayerBreakListener implements Listener {
             if (pl.getInventory().firstEmpty() != -1) {
                 MachineUnloadEvent event1 = new MachineUnloadEvent(machine);
                 Bukkit.getServer().getPluginManager().callEvent(event1);
-                machine.removefromConfig();
+                machine.removeFromConfig();
                 pl.getInventory().addItem(machine.createItem(machine.getType()));
                 block.setType(Material.AIR);
                 pl.sendMessage(ChatColor.translateAlternateColorCodes('&', lang().getString("messages.machinesMessages.broken")));

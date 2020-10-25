@@ -1,12 +1,12 @@
 package ml.jadss.jadgens.nbt.utils.annotations;
 
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import ml.jadss.jadgens.nbt.utils.MinecraftVersion;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import ml.jadss.jadgens.nbt.utils.MinecraftVersion;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 @Retention(RUNTIME)
 @Target({ METHOD })

@@ -1,10 +1,9 @@
 package ml.jadss.jadgens.nbt.utils;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+
+import java.util.logging.Logger;
 
 /**
  * This class acts as the "Brain" of the NBTApi. It contains the main logger for

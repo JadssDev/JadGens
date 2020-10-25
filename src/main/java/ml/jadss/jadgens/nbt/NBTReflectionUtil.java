@@ -1,5 +1,14 @@
 package ml.jadss.jadgens.nbt;
 
+import ml.jadss.jadgens.nbt.utils.GsonWrapper;
+import ml.jadss.jadgens.nbt.utils.MinecraftVersion;
+import ml.jadss.jadgens.nbt.utils.nmsmappings.ClassWrapper;
+import ml.jadss.jadgens.nbt.utils.nmsmappings.ObjectCreator;
+import ml.jadss.jadgens.nbt.utils.nmsmappings.ReflectionMethod;
+import org.bukkit.block.BlockState;
+import org.bukkit.entity.Entity;
+import org.bukkit.inventory.meta.ItemMeta;
+
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
@@ -8,16 +17,6 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Map;
 import java.util.Set;
-
-import org.bukkit.block.BlockState;
-import org.bukkit.entity.Entity;
-import org.bukkit.inventory.meta.ItemMeta;
-
-import ml.jadss.jadgens.nbt.utils.GsonWrapper;
-import ml.jadss.jadgens.nbt.utils.MinecraftVersion;
-import ml.jadss.jadgens.nbt.utils.nmsmappings.ClassWrapper;
-import ml.jadss.jadgens.nbt.utils.nmsmappings.ObjectCreator;
-import ml.jadss.jadgens.nbt.utils.nmsmappings.ReflectionMethod;
 
 /**
  * Utility class for translating NBTApi calls to reflections into NMS code All

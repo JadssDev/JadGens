@@ -137,9 +137,15 @@ machines:
       damage: 0
 
     #fuel options:
-    #does the machine need fuel to produce? (making this false makes the machine not ACCEPT fuel)
-    needsFuelToProduce: false
-    maxFuel: 100
+    fuels:
+      #does the machine need fuel to produce? (making this false makes the machine not ACCEPT fuel)
+      needsFuelToProduce: false
+      maxFuel: 100
+      fuelsAccepted:
+        #enabling this will make a machine only accept specific fuels.
+        enabled: false
+        types:
+          - 1
 
     #when the machine produces you can enable what the machines does.
     dropItems:
@@ -196,9 +202,14 @@ machines:
       damage: 0
 
     #fuel options:
-    #does the machine need fuel to produce? (making this false makes the machine not ACCEPT fuel)
-    needsFuelToProduce: true
-    maxFuel: 50
+    fuels:
+      #does the machine need fuel to produce? (making this false makes the machine not ACCEPT fuel)
+      needsFuelToProduce: true
+      maxFuel: 50
+      fuelsAccepted:
+        #enabling this will make a machine only accept specific fuels.
+        enabled: false
+        types: [1, 2]
 
     #when the machine produces you can enable what the machines does.
     dropItems:

@@ -1,10 +1,10 @@
 package ml.jadss.jadgens.nbt;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-
 import ml.jadss.jadgens.nbt.utils.nmsmappings.ClassWrapper;
 import ml.jadss.jadgens.nbt.utils.nmsmappings.ReflectionMethod;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * Integer implementation for NBTLists

@@ -1,7 +1,6 @@
 package ml.jadss.jadgens.listeners;
 
 import ml.jadss.jadgens.JadGens;
-import ml.jadss.jadgens.utils.Machine;
 import ml.jadss.jadgens.utils.MachineLookup;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

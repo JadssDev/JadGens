@@ -42,7 +42,7 @@ public class MachineBreakEvent extends Event implements Cancellable {
     public int getType() {
         return type;
     }
-    public void removeMachine() { Machine mac = new Machine(block); mac.removefromConfig(); block.setType(Material.AIR); }
+    public void removeMachine() { Machine mac = new Machine(block); mac.removeFromConfig(); block.setType(Material.AIR); }
     public Block getBlock() { return block; }
 
     public HandlerList getHandlers() {

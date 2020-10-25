@@ -1,10 +1,9 @@
 package ml.jadss.jadgens.nbt;
 
+import ml.jadss.jadgens.nbt.utils.nmsmappings.ReflectionMethod;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-
-import ml.jadss.jadgens.nbt.utils.nmsmappings.ReflectionMethod;
 
 /**
  * NBT class to access vanilla/custom tags on ItemStacks. This class doesn't
