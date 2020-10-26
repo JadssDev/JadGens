@@ -318,11 +318,6 @@ public class Machine {
     public Integer getDropsMax() { return dropsMax; }
     public String getDisplayName() { return ChatColor.translateAlternateColorCodes('&', JadGens.getInstance().getConfig().getString("machines." + this.getType() + ".displayName")); }
     public boolean isFuelCompatible(int fuelType) {
-        System.out.println("is Enabled: " + JadGens.getInstance().getConfig().getBoolean("machines." + this.getType() + ".fuels.fuelsAccepted.enabled"));
-        System.out.println("-------------------");
-        System.out.println("Requested: " + fuelType);
-        System.out.println("List: " + JadGens.getInstance().getConfig().getIntegerList("machines." + this.getType() + ".fuels.fuelsAccepted.types").toString());
-        System.out.println("is Equals: " + JadGens.getInstance().getConfig().getIntegerList("machines." + this.getType() + ".fuels.fuelsAccepted.types").contains(fuelType));
         if (JadGens.getInstance().getConfig().getBoolean("machines." + this.getType() + ".fuels.fuelsAccepted.enabled"))
             return JadGens.getInstance().getConfig().getIntegerList("machines." + this.getType() + ".fuels.fuelsAccepted.types").contains(fuelType);
         return true;
