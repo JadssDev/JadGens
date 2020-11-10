@@ -6,7 +6,7 @@
 
     <groupId>ml.jadss</groupId>
     <artifactId>JadGens</artifactId>
-    <version>2.6.8.2-JadLaxySnap</version>
+    <version>2.7.1.4-JadLaxySnap</version>
     <packaging>jar</packaging>
 
     <name>JadGens</name>
@@ -38,7 +38,7 @@
                         <relocation>
                             <pattern>com.cryptomorin.xseries</pattern>
                             <!-- Be sure to change the package below -->
-                            <shadedPattern>ml.jadss.jadgens.xSeries</shadedPattern>
+                            <shadedPattern>ml.jadss.jadgens.dependencies.xSeries</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>
@@ -62,6 +62,18 @@
                     <show>private</show>
                     <nohelp>true</nohelp>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
         <resources>
@@ -147,10 +159,11 @@
             <version>2.1.3</version>
             <scope>provided</scope>
         </dependency>
+        <!--xSeries API-->
         <dependency>
             <groupId>com.github.cryptomorin</groupId>
             <artifactId>XSeries</artifactId>
-            <version>7.5.4</version>
+            <version>7.5.5</version>
         </dependency>
     </dependencies>
 </project>

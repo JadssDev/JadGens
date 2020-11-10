@@ -1,7 +1,8 @@
 package ml.jadss.jadgens.utils;
 
 import ml.jadss.jadgens.JadGens;
-import ml.jadss.jadgens.nbt.NBTItem;
+import ml.jadss.jadgens.dependencies.Compatibility;
+import ml.jadss.jadgens.dependencies.nbt.NBTItem;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.inventory.Inventory;

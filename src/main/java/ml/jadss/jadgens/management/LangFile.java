@@ -88,11 +88,12 @@ public class LangFile {
         list2.add("&3");
         lang().addDefault("messages.infoMessages.msg", list2);
 
-        //machines messages
+        //machines messages //&eYou've &b&ltoggled &eyour &3machine &3%enabled%&e.
         lang().addDefault("messages.machinesMessages.placed", "&eYou've &aplaced &ea &3&lMachine&e!");
         lang().addDefault("messages.machinesMessages.broken", "&eYou've &abroke &ea &3&lMachine&e!");
         lang().addDefault("messages.machinesMessages.limitReached", "&eYou &c&lcannot &bplace &amore &3&lMachines!");
         lang().addDefault("messages.machinesMessages.notTheOwner", "&eYou're &cnot &ethe &3&lowner &eof this &b&lmachine&e!");
+        lang().addDefault("messages.machinesMessages.machineToggled", "&eYou've &b&ltoggled &eyour &3machine &3%enabled%&e.");
 
         //fuel Messages
         lang().addDefault("messages.fuelMessages.used", "&eYou've used &b&lfuel &eon your &3&lmachine&e!");

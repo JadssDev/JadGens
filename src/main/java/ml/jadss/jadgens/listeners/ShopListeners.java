@@ -1,9 +1,9 @@
 package ml.jadss.jadgens.listeners;
 
 import ml.jadss.jadgens.JadGens;
-import ml.jadss.jadgens.nbt.NBTCompound;
-import ml.jadss.jadgens.nbt.NBTItem;
-import ml.jadss.jadgens.utils.Compatibility;
+import ml.jadss.jadgens.dependencies.Compatibility;
+import ml.jadss.jadgens.dependencies.nbt.NBTCompound;
+import ml.jadss.jadgens.dependencies.nbt.NBTItem;
 import ml.jadss.jadgens.utils.Fuel;
 import ml.jadss.jadgens.utils.Machine;
 import ml.jadss.jadgens.utils.Shop;

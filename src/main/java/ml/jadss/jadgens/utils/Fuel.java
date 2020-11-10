@@ -1,9 +1,10 @@
 package ml.jadss.jadgens.utils;
 
 import ml.jadss.jadgens.JadGens;
-import ml.jadss.jadgens.nbt.NBTCompound;
-import ml.jadss.jadgens.nbt.NBTItem;
-import ml.jadss.jadgens.nbt.NbtApiException;
+import ml.jadss.jadgens.dependencies.Compatibility;
+import ml.jadss.jadgens.dependencies.nbt.NBTCompound;
+import ml.jadss.jadgens.dependencies.nbt.NBTItem;
+import ml.jadss.jadgens.dependencies.nbt.NbtApiException;
 import org.bukkit.ChatColor;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;

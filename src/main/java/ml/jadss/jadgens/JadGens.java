@@ -2,14 +2,16 @@ package ml.jadss.jadgens;
 
 import ml.jadss.jadgens.commands.JadGensCommand;
 import ml.jadss.jadgens.commands.TabCompleter;
+import ml.jadss.jadgens.hooks.PlaceHolders;
 import ml.jadss.jadgens.listeners.*;
 import ml.jadss.jadgens.management.DataFile;
 import ml.jadss.jadgens.management.LangFile;
 import ml.jadss.jadgens.management.MetricsLite;
+import ml.jadss.jadgens.management.UpdateChecker;
 import ml.jadss.jadgens.tasks.ProduceRunnable;
 import ml.jadss.jadgens.utils.MachineLoader;
-import ml.jadss.jadgens.utils.PlaceHolders;
-import ml.jadss.jadgens.utils.UpdateChecker;
+import ml.jadss.jadgens.utils.ParticleSystem;
+import ml.jadss.jadgens.utils.ParticleType;
 import net.milkbowl.vault.economy.Economy;
 import org.black_ixx.playerpoints.PlayerPoints;
 import org.black_ixx.playerpoints.PlayerPointsAPI;
@@ -40,8 +42,10 @@ public class JadGens extends JavaPlugin {
     //Update Checker
     private UpdateChecker updateChecker;
     //Compatibility Modes
-    public boolean compatibilityMode = false;
-    public boolean skyblockMode = false;
+    private boolean compatibilityMode = false;
+    private boolean skyblockMode = false;
+    //Particle System
+    private ParticleType particleType;
 
     @Override
     public void onEnable() {
@@ -120,6 +124,16 @@ public class JadGens extends JavaPlugin {
 
         //Plugin enabled!
         Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3JadGens &7>> &3Plugin &bEnabled&7!"));
+
+        //Checks
+
+        //Check particle working
+        Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3&lJadGens &7>> &eChecking particle System"));
+        boolean particleCheck = new ParticleSystem().checkParticle();
+        if (particleCheck)
+            Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3&lJadGens &7>> &3&lParticle System &eis &a&lWorking&e!"));
+         else
+            Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3&lJadGens &7>> &eYour &a&lselected &3particle&e, is not &a&lcorrect&e, &b&lfix it&e!"));
     }
 
     @Override
@@ -285,6 +299,10 @@ public class JadGens extends JavaPlugin {
     //Compatibility Mode
     public boolean getCompatibilityMode() { return compatibilityMode; }
     public boolean getSkyblockMode() { return skyblockMode; }
+    //Particle System
+    public ParticleType getParticleType() { return particleType; }
+    public void setParticleType(ParticleType type) { particleType = type; }
+
     //Lang file
     protected FileConfiguration lang() { return JadGens.getInstance().getLangFile().lang(); }
 }

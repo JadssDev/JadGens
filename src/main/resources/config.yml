@@ -33,8 +33,53 @@ machineGui:
     lore:
       - "&eThis &3&lmachine &bowner &eis"
       - "&b&l%owner%&e!"
+  enabledCheckItem:
+    enabled: true
+    #1 = first slot, 9 = last slot.
+    slot: 5
+    item:
+      enabledItem:
+        material: EMERALD_BLOCK
+        damage: 0
+      disabledItem:
+        material: IRON_BLOCK
+        damage: 0
+    #Configure what the text is if the machine is enabled or not.
+    settings:
+      enabledText: "&a&lEnabled"
+      disabledText: "&c&lDisabled"
+    #Placeholders: %enabled% > says if the machine is enabled or not using the text above.
+    displayName: "&b&lMachine Status"
+    lore:
+      - "&eYour &3machine &eis &a&lcurrently&e:"
+      - "&7> &3%enabled%"
+      - "&3"
+      - "&eClick to &3toggle&e!"
+
+machineParticles:
+  #do you want particle system?
+  enabled: true
+  #Conditions on when the machine should give the particles
+  conditions:
+    #when the machine produces
+    onProduce:
+      enabled: true
+
+  #if you're using a newer version, radius and speed, may not apply to the particles!
+  particle:
+    type: MAGIC_CRIT #change this according to the docs here: https://helpch.at/docs/ , try to find a class named "Particle", if it exists, you may use it, if not, please use Effect class, change to your likings, if anything is complicating your life, be sure to contact me on discord to do the job just for ya.
+    particleCount: 25 #you can have fun with this! believe me =D (spamming too much will just lag on low end pcs, but it's pretty funny!)
+    speed: 8 #this value shouldn't be higher then 10, or maybe a lag spike will occur.
+    radius: 20 #what radius can the players see the particles?
+
+    times: 5 #how many particles per row?
+    rows: 2 #how many rows should the particles have? like this, but vertically: "---"
+
+    #if the above changes aren't good enough, try this, real worth: type: COLOURED_DUST, particleCount: 2, speed: 1, radius: 50, times: 2 , rows: 100. (it's real great this one)
+
 
 shop:
+  #ATTENTION > SUPPORTED ECONOMIES BELOW.
   #The plugin supports "ECO" (Economy) , "EXP" (Experience Levels) and "POINTS" (PlayerPoints) as currencies currently.
 
   enabled: true
@@ -42,7 +87,7 @@ shop:
   # - 1 > This shop just contains 2 menus, the fuel shop and machine shop! and the can be accessed by "/jadgens shop <fuels/machines>
   # - 2 > This shop contains 3 menus, the fuel shop, machine shop and the shop main menu, can be configured at "shopMainMenu" a bit below.
   shopType: 2
-  noMoney: "&eNo &asufficient &3&lMoney &efor this &b&lMachine&e!"
+  noMoney: "&eYou have no &asufficient &3&lMoney &efor this &b&lMachine&e!"
   purchaseSuccesfull: "&3&lItem &b&lbought &ewith &a&lSuccess&e!"
   shopTitle: "&bMachines &3&lShop"
   #this main menu you can select the mahcines or fuel. can be controlled by the "shopType".
@@ -81,26 +126,30 @@ shop:
       - "&eClick to &bBuy&e!"
 
 machineLimiter:
-  #Only change the values!
+  #you cannot remove anything from here except 2, 3, 4, 5
   default:
     #you can use: -1 for infinite machine places.
     #use: -2 to prevent machine places.
     amount: 10
-  limit1:
-    permission: JadGens.limit.1
-    amount: 50
-  limit2:
-    permission: JadGens.limit.2
-    amount: 100
-  limit3:
-    permission: JadGens.limit.3
-    amount: 150
-  limit4:
-    permission: JadGens.limit.4
-    amount: 300
-  limit5:
-    permission: JadGens.limit.5
-    amount: -1 # -1 = infinite.
+  infinite:
+    disabled: false
+    permission: JadGens.limit.infinite
+  amounts:
+    1:
+      permission: JadGens.limit.1
+      amount: 50
+    2:
+      permission: JadGens.limit.2
+      amount: 100
+    3:
+      permission: JadGens.limit.3
+      amount: 150
+    4:
+      permission: JadGens.limit.4
+      amount: 300
+    5:
+      permission: JadGens.limit.5
+      amount: -1 # -1 = infinite.
 
 machinesConfig:
   #In which delay should the machines produce?
@@ -126,6 +175,8 @@ machines:
       currency: EXP
       #in which slot of the shop will this item be displayed? 1 to 27
       slot: 1
+
+    #info about the machine
     displayName: "&b&lDiamond &eGen"
     lore:
       - "&eThis is a &b&ldiamond machine&e!"
@@ -191,6 +242,8 @@ machines:
       currency: EXP
       #in which slot of the shop will this item be displayed? 1 to 27
       slot: 2
+
+    #info about the machine
     displayName: "&b&lXP &3Gen"
     lore:
       - "&eThis is a &6&lGold &b&lMachine&e!"

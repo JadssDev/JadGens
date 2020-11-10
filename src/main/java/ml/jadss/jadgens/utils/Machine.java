@@ -1,10 +1,10 @@
 package ml.jadss.jadgens.utils;
 
-import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
 import ml.jadss.jadgens.JadGens;
+import ml.jadss.jadgens.dependencies.Compatibility;
+import ml.jadss.jadgens.dependencies.nbt.NBTItem;
+import ml.jadss.jadgens.dependencies.nbt.NbtApiException;
 import ml.jadss.jadgens.events.MachineProduceEvent;
-import ml.jadss.jadgens.nbt.NBTItem;
-import ml.jadss.jadgens.nbt.NbtApiException;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -27,6 +27,8 @@ public class Machine {
     private String uuid;
     private Integer dropsRemaining;
     private Integer dropsMax;
+    private boolean machineEnabled;
+    private final ParticleSystem particleSys = new ParticleSystem();
 
     /**
      * Use the methods in the machine without creating one.
@@ -38,6 +40,7 @@ public class Machine {
         this.uuid = null;
         this.dropsRemaining = null;
         this.dropsMax = null;
+        this.machineEnabled = true;
     }
 
     /**
@@ -56,6 +59,7 @@ public class Machine {
         this.uuid = uuid;
         this.dropsRemaining = 0;
         this.dropsMax = JadGens.getInstance().getConfig().getInt("machines." + type + ".fuels.maxFuel");
+        this.machineEnabled = true;
     }
 
     /**
@@ -71,6 +75,7 @@ public class Machine {
         this.uuid = uuid;
         this.dropsRemaining = 0;
         this.dropsMax = JadGens.getInstance().getConfig().getInt("machines." + type + ".fuels.maxFuel");
+        this.machineEnabled = true;
     }
 
     /**
@@ -86,6 +91,7 @@ public class Machine {
             this.uuid = data().getString("machines." + id + ".owner");
             this.dropsRemaining = data().getInt("machines." + id + ".drops");
             this.dropsMax = JadGens.getInstance().getConfig().getInt("machines." + type + ".fuels.maxFuel");
+            this.machineEnabled = data().getBoolean("machines." + id + ".enabled");
             return;
         }
 
@@ -95,6 +101,7 @@ public class Machine {
         this.uuid = null;
         this.dropsRemaining = null;
         this.dropsMax = null;
+        this.machineEnabled = false;
     }
 
     /**
@@ -108,6 +115,7 @@ public class Machine {
             this.type = null;
             this.uuid = null;
             this.dropsRemaining = null;
+            this.machineEnabled = false;
             return;
         }
 
@@ -117,6 +125,7 @@ public class Machine {
         this.uuid = data().getString("machines." + id + ".owner");
         this.dropsRemaining = data().getInt("machines." + id + ".drops");
         this.dropsMax = JadGens.getInstance().getConfig().getInt("machines." + type + ".fuels.maxFuel");
+        this.machineEnabled = data().getBoolean("machines." + id + ".enabled");
     }
 
     public void addToConfig() {
@@ -127,6 +136,7 @@ public class Machine {
         data().set("machines." + this.getId() + ".z", this.getLocation().getBlockZ());
         data().set("machines." + this.getId() + ".type", this.getType());
         data().set("machines." + this.getId() + ".drops", this.getDropsRemaining());
+        data().set("machines." + this.getId() + ".enabled", this.machineEnabled);
         JadGens.getInstance().getDataFile().saveData();
     }
 
@@ -134,8 +144,6 @@ public class Machine {
         data().set("machines." + this.getId(), null);
         JadGens.getInstance().getDataFile().saveData();
     }
-
-    public void setDropsRemaining(Integer drops) { this.dropsRemaining = drops; }
 
     public Inventory createGUI() {
         if (this.id == null) return null;
@@ -194,6 +202,51 @@ public class Machine {
             gui.setItem(JadGens.getInstance().getConfig().getInt("machineGui.ownerCheckItem.slot") - 1, dropsItem);
         }
 
+        if (JadGens.getInstance().getConfig().getBoolean("machineGui.enabledCheckItem.enabled")) {
+            ItemStack enabledItem;
+            if (this.isMachineEnabled()) {
+                enabledItem = new ItemStack(new Compatibility().matParser(JadGens.getInstance().getConfig().getString("machineGui.enabledCheckItem.item.enabledItem.material")),
+                        1,
+                        (short) JadGens.getInstance().getConfig().getInt("machineGui.enabledCheckItem.item.enabledItem.damage"));
+
+                ItemMeta enabledMeta = enabledItem.getItemMeta();
+
+                enabledMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', JadGens.getInstance().getConfig().getString("machineGui.enabledCheckItem.displayName")
+                        .replace("%enabled%", this.getMachineStatusText())));
+
+                List<String> lore = new ArrayList<>();
+                for (String s : JadGens.getInstance().getConfig().getStringList("machineGui.enabledCheckItem.lore")) {
+                    //placeholders: %enabled%
+                    lore.add(ChatColor.translateAlternateColorCodes('&', s.replace("%enabled%", this.getMachineStatusText())));
+                }
+
+                enabledMeta.setLore(lore);
+                enabledItem.setItemMeta(enabledMeta);
+            } else {
+                enabledItem = new ItemStack(new Compatibility().matParser(JadGens.getInstance().getConfig().getString("machineGui.enabledCheckItem.item.disabledItem.material")),
+                        1,
+                        (short) JadGens.getInstance().getConfig().getInt("machineGui.enabledCheckItem.item.disabledItem.damage"));
+
+                ItemMeta enabledMeta = enabledItem.getItemMeta();
+
+                enabledMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', JadGens.getInstance().getConfig().getString("machineGui.enabledCheckItem.displayName")
+                        .replace("%enabled%", this.getMachineStatusText())));
+
+                List<String> lore = new ArrayList<>();
+                for (String s : JadGens.getInstance().getConfig().getStringList("machineGui.enabledCheckItem.lore")) {
+                    //placeholders: %enabled%
+                    lore.add(ChatColor.translateAlternateColorCodes('&', s.replace("%enabled%", this.getMachineStatusText())));
+                }
+
+                enabledMeta.setLore(lore);
+                enabledItem.setItemMeta(enabledMeta);
+            }
+            NBTItem item = new NBTItem(enabledItem);
+            item.setBoolean("JadGens_toggleItem", true);
+            item.setString("JadGens_machineID", this.getId());
+
+            gui.setItem(JadGens.getInstance().getConfig().getInt("machineGui.enabledCheckItem.slot") - 1, item.getItem());
+        }
         return gui;
     }
 
@@ -243,6 +296,14 @@ public class Machine {
         }
         //////////////////////////////////////////////
 
+        if (JadGens.getInstance().getConfig().getBoolean("machines." + type + ".fuels.needsFuelToProduce")) {
+            if (data().getInt("machines." + id + ".drops") > 0) {
+                data().set("machines." + id + ".drops", data().getInt("machines." + id + ".drops")-1);
+            } else return;
+        }
+
+        if (!this.machineEnabled) return;
+
         MachineProduceEvent machineProduceEvent = new MachineProduceEvent(this);
         JadGens.getInstance().getServer().getPluginManager().callEvent(machineProduceEvent);
         if (machineProduceEvent.isCancelled()) return;
@@ -253,10 +314,7 @@ public class Machine {
         }
 
         if (JadGens.getInstance().getConfig().getBoolean("machines." + this.type + ".dropItems.enabled")) {
-            Location location = new Location(wl,
-                    data().getInt("machines." + this.id + ".x"),
-                    data().getInt("machines." + this.id + ".y"),
-                    data().getInt("machines." + this.id + ".z"));
+            Location location = this.getLocation();
             location.add(0, 1, 0);
 
             ItemStack dropItem = new ItemStack(new Compatibility().matParser(JadGens.getInstance().getConfig().getString("machines." + this.type + ".dropItems.material")),
@@ -307,16 +365,121 @@ public class Machine {
             if (onlinePL == null) return;
             onlinePL.setLevel(onlinePL.getLevel() + JadGens.getInstance().getConfig().getInt("machines." + this.type + ".exp.givelevels"));
         }
+
+        this.showParticles();
+    }
+
+    /**
+     * force the machine to produce, no matter what, even if it has no fuel.
+     */
+    public void forceProduce() {
+        World wl = Bukkit.getServer().getWorld(data().getString("machines." + this.id + ".world"));
+        if (wl == null) {
+            Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3JadGens &7>> &eThe &3&lMachine &eWith &b&lID &3" + this.id + " &eWas &c&lNot &b&lFound&e!"));
+            new PurgeMachines().removeMachine(this.getId());
+            return;
+        }
+        //////////////////////////////////////////////
+
+        MachineProduceEvent machineProduceEvent = new MachineProduceEvent(this);
+        JadGens.getInstance().getServer().getPluginManager().callEvent(machineProduceEvent);
+        if (machineProduceEvent.isCancelled()) return;
+
+        if (JadGens.getInstance().getConfig().getBoolean("machinesConfig.stopProducingIfOffline")) {
+            Player testOnline = Bukkit.getPlayer(UUID.fromString(data().getString("machines." + this.id + ".owner")));
+            if (testOnline == null) return;
+        }
+
+        if (JadGens.getInstance().getConfig().getBoolean("machines." + this.type + ".dropItems.enabled")) {
+            Location location = this.getLocation();
+            location.add(0, 1, 0);
+
+            ItemStack dropItem = new ItemStack(new Compatibility().matParser(JadGens.getInstance().getConfig().getString("machines." + this.type + ".dropItems.material")),
+                    JadGens.getInstance().getConfig().getInt("machines." + this.type + ".dropItems.amount"),
+                    (short) JadGens.getInstance().getConfig().getInt("machines." + this.type + ".dropItems.damage"));
+
+            if (JadGens.getInstance().getConfig().getBoolean("machines." + this.type + ".dropItems.itemMeta.enabled")) {
+                ItemMeta meta = dropItem.getItemMeta();
+
+                //set displayName
+                meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', JadGens.getInstance().getConfig().getString("machines." + this.type + ".dropItems.itemMeta.displayName")));
+
+                //set lore
+                List<String> lore = new ArrayList<>();
+                for (String line : JadGens.getInstance().getConfig().getStringList("machines." + this.type + ".dropItems.itemMeta.lore")) {
+                    lore.add(ChatColor.translateAlternateColorCodes('&', line));
+                }
+                meta.setLore(lore);
+
+                //set itemMeta
+                dropItem.setItemMeta(meta);
+            }
+
+            wl.dropItem(location, dropItem); //itemMeta
+        }
+
+        if (JadGens.getInstance().getConfig().getBoolean("machines." + this.type + ".commands.enabled")) {
+            Player pl = Bukkit.getPlayer(UUID.fromString(data().getString("machines." + this.id + ".owner")));
+            if (!(pl == null)) {
+                for (String command : JadGens.getInstance().getConfig().getStringList("machines." + this.type + ".commands.commands")) {
+                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command.replace("%owner%", pl.getName()));
+                }
+            }
+        }
+
+        if (JadGens.getInstance().getConfig().getBoolean("machines." + this.type + ".economy.enabled") && JadGens.getInstance().isHookedVault()) {
+            OfflinePlayer pl = Bukkit.getOfflinePlayer(UUID.fromString(data().getString("machines." + this.id + ".owner")));
+            JadGens.getInstance().getEco().depositPlayer(pl, JadGens.getInstance().getConfig().getDouble("machines." + this.type + ".economy.give"));
+        }
+
+        if (JadGens.getInstance().getConfig().getBoolean("machines." + this.type + ".points.enabled") && JadGens.getInstance().isHookedPlayerPoints()) {
+            UUID player = UUID.fromString(data().getString("machines." + this.id + ".owner"));
+            JadGens.getInstance().getPointsAPI().give(player, JadGens.getInstance().getConfig().getInt("machines." + this.type + ".points.give"));
+        }
+
+        if (JadGens.getInstance().getConfig().getBoolean("machines." + this.type + ".exp.enabled")) {
+            Player onlinePL = Bukkit.getPlayer(UUID.fromString(data().getString("machines." + this.id + ".owner")));
+            if (onlinePL == null) return;
+            onlinePL.setLevel(onlinePL.getLevel() + JadGens.getInstance().getConfig().getInt("machines." + this.type + ".exp.givelevels"));
+        }
+
+        this.showParticles();
+    }
+
+    public void showParticles() {
+        if (JadGens.getInstance().getConfig().getBoolean("machineParticles.enabled") && JadGens.getInstance().getConfig().getBoolean("machineParticles.conditions.onProduce.enabled")) {
+            Location loc = this.getLocation();
+
+            for (int i = 0; i < JadGens.getInstance().getConfig().getInt("machineParticles.particle.rows"); i++) {
+                for (int x = 0; x < JadGens.getInstance().getConfig().getInt("machineParticles.particle.times"); x++) {
+                    boolean value = particleSys.spawnParticle(loc);
+                    if (!value) return;
+                }
+            }
+            loc.setY(loc.getY() + 0.01);
+        }
     }
 
 
-    public String getId() { return id; }
-    public Location getLocation() { return location; }
-    public Integer getType() { return type; }
-    public String getOwner() { return uuid; }
-    public Integer getDropsRemaining() { return dropsRemaining; }
-    public Integer getDropsMax() { return dropsMax; }
+    public String getId() { return this.id; }
+    public Location getLocation() { return this.location; }
+    public Integer getType() { return this.type; }
+    public String getOwner() { return this.uuid; }
+    public Integer getDropsRemaining() { return this.dropsRemaining; }
+    public Integer getDropsMax() { return this.dropsMax; }
+    public boolean isMachineEnabled() { return this.machineEnabled; }
+    public void setMachineEnabled(boolean isEnabled) { this.machineEnabled = isEnabled; data().set("machines." + this.id + ".enabled", isEnabled); }
+    public void setDropsRemaining(Integer drops) { this.dropsRemaining = drops; data().set("machines." + this.id + ".drops", drops); }
+
     public String getDisplayName() { return ChatColor.translateAlternateColorCodes('&', JadGens.getInstance().getConfig().getString("machines." + this.getType() + ".displayName")); }
+
+    public String getMachineStatusText() {
+        if (isMachineEnabled())
+            return ChatColor.translateAlternateColorCodes('&', JadGens.getInstance().getConfig().getString("machineGui.enabledCheckItem.settings.enabledText"));
+        else
+            return ChatColor.translateAlternateColorCodes('&', JadGens.getInstance().getConfig().getString("machineGui.enabledCheckItem.settings.disabledText"));
+    }
+
     public boolean isFuelCompatible(int fuelType) {
         if (JadGens.getInstance().getConfig().getBoolean("machines." + this.getType() + ".fuels.fuelsAccepted.enabled"))
             return JadGens.getInstance().getConfig().getIntegerList("machines." + this.getType() + ".fuels.fuelsAccepted.types").contains(fuelType);
