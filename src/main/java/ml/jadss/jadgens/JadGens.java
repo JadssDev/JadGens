@@ -8,6 +8,7 @@ import ml.jadss.jadgens.management.DataFile;
 import ml.jadss.jadgens.management.LangFile;
 import ml.jadss.jadgens.management.MetricsLite;
 import ml.jadss.jadgens.management.UpdateChecker;
+import ml.jadss.jadgens.tasks.BlocksRemover;
 import ml.jadss.jadgens.tasks.ProduceRunnable;
 import ml.jadss.jadgens.utils.MachineLoader;
 import ml.jadss.jadgens.utils.ParticleSystem;
@@ -46,6 +47,8 @@ public class JadGens extends JavaPlugin {
     private boolean skyblockMode = false;
     //Particle System
     private ParticleType particleType;
+    //Block remover system
+    private BlocksRemover blocksRemover;
 
     @Override
     public void onEnable() {
@@ -81,6 +84,9 @@ public class JadGens extends JavaPlugin {
 
         //Setup the API
         setupAPIDebug();
+
+        //Setup blocks remover.
+        blocksRemover = new BlocksRemover();
 
         //Hook into plugins
         hookVault();
@@ -302,6 +308,8 @@ public class JadGens extends JavaPlugin {
     //Particle System
     public ParticleType getParticleType() { return particleType; }
     public void setParticleType(ParticleType type) { particleType = type; }
+    //Block remover system
+    public BlocksRemover getBlocksRemover() { return blocksRemover; }
 
     //Lang file
     protected FileConfiguration lang() { return JadGens.getInstance().getLangFile().lang(); }

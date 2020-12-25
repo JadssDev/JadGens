@@ -19,12 +19,12 @@ import java.util.UUID;
 @SuppressWarnings("unused")
 public class JadGensAPI {
 
-    private static Fuel fuel = new Fuel();
-    private static Machine mac = new Machine();
-    private static MachineLimiter limiter = new MachineLimiter();
-    private static MachineLookup lookup = new MachineLookup();
+    private Fuel fuel = new Fuel();
+    private Machine mac = new Machine();
+    private MachineLimiter limiter = new MachineLimiter();
+    private MachineLookup lookup = new MachineLookup();
     private static String[] versions = new String[] {"1.0"} ;
-    private static String[] invalidNames = new String[] {"Vault", "PlaceHolderAPI", "Essentials", "PermissionsEx", "LuckPerms"};
+    private static String[] invalidNames = new String[] {"Vault", "PlaceHolderAPI", "Essentials", "PermissionsEx", "LuckPerms", "PermissionsEx"};
     private JavaPlugin plugin;
     private String pluginName;
     private String apiVersion;
