@@ -5,6 +5,8 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -22,6 +24,14 @@ public class MachineLookup {
             }
         }
         return count;
+    }
+
+    @SuppressWarnings("all")
+    public List<Machine> getPlayerMachines(UUID player) {
+        List<Machine> list = new ArrayList<>();
+        list.addAll(getAllMachines());
+        for (Machine mac : new ArrayList<>(list)) if (!mac.getOwner().equals(player.toString())) list.remove(mac); else continue;
+        return list;
     }
 
     public boolean isMachine(Block block) {
@@ -53,5 +63,17 @@ public class MachineLookup {
             }
         }
         return count;
+    }
+
+    public List<Machine> getAllMachines() {
+        List<Machine> machines = new ArrayList<>();
+        Set<String> keys = JadGens.getInstance().getDataFile().data().getConfigurationSection("machines").getKeys(false);
+        for (String key : keys) {
+            machines.add(new Machine(key));
+        }
+
+        for (Machine machine : machines) if (machine == null) machines.remove(machine);
+
+        return machines;
     }
 }

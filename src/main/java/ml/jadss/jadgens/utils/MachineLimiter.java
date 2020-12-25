@@ -5,6 +5,8 @@ import org.bukkit.entity.Player;
 
 public class MachineLimiter {
 
+    private final MachineLookup lookupMachines = new MachineLookup();
+
     public int getMaxLimit(Player pl) { //machineLimiter.amounts // default
         if (!JadGens.getInstance().getConfig().getBoolean("machineLimiter.infinite.disabled") && pl.hasPermission(JadGens.getInstance().getConfig().getString("machineLimiter.infinite.permission")))
             return -1;
@@ -20,12 +22,10 @@ public class MachineLimiter {
     }
 
     public int getMachinesLeft(Player pl) {
-        MachineLookup lookup = new MachineLookup();
-
         int max = getMaxLimit(pl);
         if (max == -1) return -1;
 
-        int has = lookup.getMachines(pl.getUniqueId());
+        int has = lookupMachines.getMachines(pl.getUniqueId());
         int remain = max-has;
 
         if (remain > 0) { return remain; } else { return 0; }
@@ -34,9 +34,9 @@ public class MachineLimiter {
     public boolean canPlaceMachine(Player pl) {
         int max = getMaxLimit(pl);
         if (max == -1) return true;
-        int left = getMachinesLeft(pl);
+        int left = lookupMachines.getMachines(pl.getUniqueId());
 
-        if (max >= left) return true;
+        if (max > left) return true;
         return false;
     }
 }

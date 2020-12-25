@@ -140,11 +140,6 @@ public class Machine {
         JadGens.getInstance().getDataFile().saveData();
     }
 
-    public void removeFromConfig() {
-        data().set("machines." + this.getId(), null);
-        JadGens.getInstance().getDataFile().saveData();
-    }
-
     public Inventory createGUI() {
         if (this.id == null) return null;
         Inventory gui = Bukkit.createInventory(null, 9, ChatColor.translateAlternateColorCodes('&', JadGens.getInstance().getConfig().getString("machineGui.title")));
@@ -291,7 +286,7 @@ public class Machine {
         World wl = Bukkit.getServer().getWorld(data().getString("machines." + this.id + ".world"));
         if (wl == null) {
             Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3JadGens &7>> &eThe &3&lMachine &eWith &b&lID &3" + this.id + " &eWas &c&lNot &b&lFound&e!"));
-            new PurgeMachines().removeMachine(this.getId());
+            new MachinePurger().removeMachine(this.getId());
             return;
         }
         //////////////////////////////////////////////
@@ -376,7 +371,7 @@ public class Machine {
         World wl = Bukkit.getServer().getWorld(data().getString("machines." + this.id + ".world"));
         if (wl == null) {
             Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3JadGens &7>> &eThe &3&lMachine &eWith &b&lID &3" + this.id + " &eWas &c&lNot &b&lFound&e!"));
-            new PurgeMachines().removeMachine(this.getId());
+            new MachinePurger().removeMachine(this.getId());
             return;
         }
         //////////////////////////////////////////////
