@@ -162,6 +162,10 @@ machinesConfig:
   preventPistonsMoveMachines: true
   #Should the machine not produce if the player is offline?
   stopProducingIfOffline: false
+  #Do you want to log tasks about removal of machines to the console? (kinda recommended)
+  logRemovalTasks: true
+  #what about the speed of the removal task? what should it be? but notice that making this value too slow may be annoying! put it a higher value that will not cause a lag spike.
+  removalTasksSpeed: 150
 
 machines:
   #the value below is the ID of the machine!
