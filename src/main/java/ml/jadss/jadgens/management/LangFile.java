@@ -50,6 +50,9 @@ public class LangFile {
     }
 
     protected void createFields() {
+        lang().options().header("Welcome to the language file! all the plugin messages are editable! Great editing!");
+        lang().options().copyHeader(true);
+
         //help messages
         List<String> list = new ArrayList<>();
         list.add("&3&lJadGens &eby &bJadss_pt&e!");
@@ -61,6 +64,7 @@ public class LangFile {
         list.add("&3/JadGens &bReload &7: &eReload the &3plugin &c(not recommended, just restart the server)");
         list.add("&3/JadGens &bShop &b<Type> &7: &eOpen the &3&lShop&e!");
         list.add("&3/JadGens &bInfo &7: &eShows &b&linfo &eabout your &3&lMachines&e!");
+        list.add("&3/JadGens &bActions &7: &eDo &b&lMASS ACTIONS &eon &a&lall &eof your &3&lmachines&e!");
         list.add("&3/JadGens &bVersion &7: &eSee the &bversion &eof the &3&lplugin&e!");
         list.add("&e");
         lang().addDefault("messages.helpMessages", list);
@@ -75,6 +79,7 @@ public class LangFile {
 
         //purge Messages
         lang().addDefault("messages.purgeMessages.purgingMachines", "&ePurging &3&lmachines&e...");
+        lang().addDefault("messages.purgeMessages.purgedMachines", "&b&lPurging &ebeing &adone&e, &3please wait&e");
 
         //reload Messages
         lang().addDefault("messages.reloadMessages.permission", "JadGens.reload");
@@ -87,6 +92,31 @@ public class LangFile {
         list2.add("&3JadGens &7>> &eYou have &3%has% &b&lMachines&e, your &3&lmax &eis &b%max%&e!");
         list2.add("&3");
         lang().addDefault("messages.infoMessages.msg", list2);
+
+        //Actions messages
+        lang().addDefault("messages.actionsMessages.enabled", true);
+
+        lang().addDefault("messages.actionsMessages.permission", "JadGens.actions");
+        lang().addDefault("messages.actionsMessages.permissionManageAll", "JadGens.actions.all");
+        lang().addDefault("messages.actionsMessages.permissionManageOthers", "JadGens.actions.other");
+
+        lang().addDefault("messages.actionsMessages.selectableArgumentMe", "me");
+        lang().addDefault("messages.actionsMessages.selectableArgumentAll", "all");
+
+        lang().addDefault("messages.actionsMessages.actionNotFound", "&b&lAction &cnot &3found&e!");
+
+        lang().addDefault("messages.actionsMessages.managedPlayer", "&b&lAction &adone &eto &3%player%'s machines&e! &e(&bCount &l%count%&e)");
+        lang().addDefault("messages.actionsMessages.managedAllPlayers", "&b&lAction &adone &eto &a&lALL &3machines&e! &e(&bCount &l%count%&e)");
+
+        lang().addDefault("messages.actionsMessages.purgeOwnMachinesPermission", "JadGens.actions.purgeOwn");
+        lang().addDefault("messages.actionsMessages.purgeInQueue", "&eYour &3&lpurge &ehas been put into &b&lqueue&e, wait a couple &3&lseconds &eor &b&lminutes&e.");
+        lang().addDefault("messages.actionsMessages.purgedOwnMachines", "&eYou just &b&lpurged &eyour &3&lown machines&e!");
+
+        lang().addDefault("messages.actionsMessages.disableOwnMachinesPermission", "JadGens.actions.disableOwn");
+        lang().addDefault("messages.actionsMessages.disabledOwnMachines", "&eAll your &3&lmachines &ehave been &c&ldisabled&e!");
+
+        lang().addDefault("messages.actionsMessages.enableOwnMachinesPermission", "JadGens.actions.enableOwn");
+        lang().addDefault("messages.actionsMessages.enabledOwnMachines", "&eAll your &3&lmachines &ehave been &a&lenabled&e!");
 
         //machines messages //&eYou've &b&ltoggled &eyour &3machine &3%enabled%&e.
         lang().addDefault("messages.machinesMessages.placed", "&eYou've &aplaced &ea &3&lMachine&e!");
