@@ -28,6 +28,10 @@ public class JadGensCommand implements CommandExecutor {
             new VersionCommand(sender);
         } else if (args[0].equalsIgnoreCase("info")) {
             new InfoCommand(sender);
+        } else if (args[0].equalsIgnoreCase("debug")) {
+            new DebugCommand(sender);
+        } else if (JadGens.getInstance().getLangFile().lang().getBoolean("messages.actionsMessages.enabled") && args[0].equalsIgnoreCase("actions")) {
+            new ActionsCommand(sender, args);
         } else {
             try {
                 CustomJadGensCommandArg event = new CustomJadGensCommandArg(sender, args[0], Arrays.stream(args).skip(1).map(s -> " " + s).collect(Collectors.joining()).substring(1).split(" "));

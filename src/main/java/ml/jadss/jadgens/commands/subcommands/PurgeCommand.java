@@ -1,7 +1,7 @@
 package ml.jadss.jadgens.commands.subcommands;
 
 import ml.jadss.jadgens.JadGens;
-import ml.jadss.jadgens.utils.PurgeMachines;
+import ml.jadss.jadgens.utils.MachinePurger;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -16,7 +16,8 @@ public class PurgeCommand {
             pl.sendMessage(ChatColor.translateAlternateColorCodes('&', lang().getString("messages.onlyConsole")));
         } else if (sender instanceof ConsoleCommandSender) {
             sender.sendMessage(ChatColor.translateAlternateColorCodes('&', lang().getString("messages.purgeMessages.purgingMachines")));
-            new PurgeMachines().purgeMachines();
+            new MachinePurger().purgeMachines();
+            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', lang().getString("messages.purgeMessages.purgedMachines")));
         }
     }
 
