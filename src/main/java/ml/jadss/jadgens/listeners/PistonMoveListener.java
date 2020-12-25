@@ -27,6 +27,9 @@ public class PistonMoveListener implements Listener {
                     }
                 }
                 return;
+            } else if (JadGens.getInstance().getBlocksRemover().getBlocks().contains(b)) {
+                e.setCancelled(true);
+                return;
             }
         }
     }
@@ -43,6 +46,9 @@ public class PistonMoveListener implements Listener {
                         nearPlayer.sendMessage(ChatColor.translateAlternateColorCodes('&', lang().getString("messages.noPistonMoving")));
                     }
                 }
+                return;
+            } else if (JadGens.getInstance().getBlocksRemover().getBlocks().contains(b)) {
+                e.setCancelled(true);
                 return;
             }
         }

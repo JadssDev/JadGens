@@ -16,6 +16,9 @@ public class EntityExplodeEvent implements Listener {
             if (checker.isMachine(b)) {
                 e.setCancelled(true);
                 return;
+            } else if (JadGens.getInstance().getBlocksRemover().getBlocks().contains(b)) {
+                e.setCancelled(true);
+                return;
             }
         }
     }

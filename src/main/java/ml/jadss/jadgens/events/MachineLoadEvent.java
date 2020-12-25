@@ -2,7 +2,7 @@ package ml.jadss.jadgens.events;
 
 import ml.jadss.jadgens.JadGens;
 import ml.jadss.jadgens.utils.Machine;
-import ml.jadss.jadgens.utils.PurgeMachines;
+import ml.jadss.jadgens.utils.MachinePurger;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -38,7 +38,7 @@ public class MachineLoadEvent extends Event {
             if (JadGens.getInstance().isAPIDebugEnabled())
                 Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&',
                         "&3JadGens &7>> &eThe &3&lMachine &ewith &b&lID &a\"" + this.getID() + "\" &ewas &c&lRemoved &eby " + plugin.getDescription().getName()));
-            new PurgeMachines().removeMachine(this.getID());
+            new MachinePurger().removeMachine(this.getID());
         }
     }
 

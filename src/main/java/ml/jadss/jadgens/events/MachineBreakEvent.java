@@ -1,6 +1,7 @@
 package ml.jadss.jadgens.events;
 
 import ml.jadss.jadgens.utils.Machine;
+import ml.jadss.jadgens.utils.MachinePurger;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -42,7 +43,7 @@ public class MachineBreakEvent extends Event implements Cancellable {
     public int getType() {
         return type;
     }
-    public void removeMachine() { Machine mac = new Machine(block); mac.removeFromConfig(); block.setType(Material.AIR); }
+    public void removeMachine() { Machine mac = new Machine(block); new MachinePurger().removeMachine(mac.getId()); block.setType(Material.AIR); }
     public Block getBlock() { return block; }
 
     public HandlerList getHandlers() {

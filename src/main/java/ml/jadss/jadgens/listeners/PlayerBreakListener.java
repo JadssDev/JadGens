@@ -5,9 +5,9 @@ import ml.jadss.jadgens.events.MachineBreakEvent;
 import ml.jadss.jadgens.events.MachineUnloadEvent;
 import ml.jadss.jadgens.utils.Machine;
 import ml.jadss.jadgens.utils.MachineLookup;
+import ml.jadss.jadgens.utils.MachinePurger;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -25,6 +25,7 @@ public class PlayerBreakListener implements Listener {
         Player pl = e.getPlayer();
         MachineLookup lookup = new MachineLookup();
 
+        if (JadGens.getInstance().getBlocksRemover().getBlocks().contains(e.getBlock())) { e.setCancelled(true); return; }
         if (!lookup.isMachine(block)) return;
 
         String id = block.getLocation().getWorld().getName() + "_" + block.getLocation().getBlockX() + "_" + block.getLocation().getBlockY() + "_" + block.getLocation().getBlockZ();
@@ -37,9 +38,8 @@ public class PlayerBreakListener implements Listener {
             if (pl.getInventory().firstEmpty() != -1) {
                 MachineUnloadEvent event1 = new MachineUnloadEvent(machine);
                 Bukkit.getServer().getPluginManager().callEvent(event1);
-                machine.removeFromConfig();
+                new MachinePurger().removeMachineInstant(machine.getId());
                 pl.getInventory().addItem(machine.createItem(machine.getType()));
-                block.setType(Material.AIR);
                 pl.sendMessage(ChatColor.translateAlternateColorCodes('&', lang().getString("messages.machinesMessages.broken")));
             } else {
                 pl.sendMessage(ChatColor.translateAlternateColorCodes('&', lang().getString("messages.noInventorySpace")));
