@@ -176,7 +176,6 @@ public class JadGens extends JavaPlugin {
 
     //API STUFF
     private boolean APIDebug;
-
     public void setupAPIDebug() {
         APIDebug = lang().getBoolean("messages.debugAPI");
     }
@@ -210,6 +209,7 @@ public class JadGens extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PistonMoveListener(), this);
         getServer().getPluginManager().registerEvents(new ShopListeners(), this);
         getServer().getPluginManager().registerEvents(new PlayerJoinListener(), this);
+        getServer().getPluginManager().registerEvents(new PlayerCraftListener(), this);
     }
 
     //SETUP SHOP STUFF
@@ -243,16 +243,15 @@ public class JadGens extends JavaPlugin {
                     }
                 }
             }
-        } else if (!getConfig().getBoolean("shop.enabled")) {
+        } else {
             Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3JadGens &7>> &3Shop &eis &cDisabled&e!"));
             return true;
         }
         return true;
     }
 
-
     //Hooks
-    private void hookVault() {
+    public void hookVault() {
         if (getServer().getPluginManager().getPlugin("Vault") == null) {
             hookedVault = false;
             return;
@@ -266,7 +265,7 @@ public class JadGens extends JavaPlugin {
         hookedVault = true;
     }
 
-    private void hookPlayerPoints() {
+    public void hookPlayerPoints() {
         if (getServer().getPluginManager().getPlugin("PlayerPoints") == null) {
             hookedPlayerPoints = false;
             return;
@@ -275,10 +274,11 @@ public class JadGens extends JavaPlugin {
         hookedPlayerPoints = true;
     }
 
-    private void hookPlaceHolderAPI() {
+    public void hookPlaceHolderAPI() {
         if (getServer().getPluginManager().getPlugin("PlaceholderAPI") == null) {
             return;
         }
+        new PlaceHolders().unregister();
         hookedPlaceHolderAPI = true;
         new PlaceHolders().register();
     }
