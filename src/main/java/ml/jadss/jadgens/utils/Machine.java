@@ -2,6 +2,7 @@ package ml.jadss.jadgens.utils;
 
 import ml.jadss.jadgens.JadGens;
 import ml.jadss.jadgens.dependencies.Compatibility;
+import ml.jadss.jadgens.dependencies.nbt.NBTCompound;
 import ml.jadss.jadgens.dependencies.nbt.NBTItem;
 import ml.jadss.jadgens.dependencies.nbt.NbtApiException;
 import ml.jadss.jadgens.events.MachineProduceEvent;
@@ -138,6 +139,20 @@ public class Machine {
         data().set("machines." + this.getId() + ".drops", this.getDropsRemaining());
         data().set("machines." + this.getId() + ".enabled", this.machineEnabled);
         JadGens.getInstance().getDataFile().saveData();
+    }
+
+    public boolean isMachineItem(ItemStack item) {
+        if (item == null) return false;
+        if (!item.hasItemMeta()) return false;
+        if (!item.getItemMeta().hasDisplayName()) return false;
+        if (!JadGens.getInstance().getCompatibilityMode()) {
+            NBTCompound nbtCompound = new NBTItem(item);
+            return nbtCompound.hasKey("JadGens_machine");
+        } else {
+            for (String key : JadGens.getInstance().getConfig().getConfigurationSection("machines").getKeys(false))
+                if (ChatColor.translateAlternateColorCodes('&', JadGens.getInstance().getConfig().getString("machines." + key + ".displayName")).equals(item.getItemMeta().getDisplayName())) return true;
+            return false;
+        }
     }
 
     public Inventory createGUI() {

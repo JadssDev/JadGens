@@ -58,7 +58,7 @@ public class Fuel {
         return type;
     }
 
-    public boolean isFuel(ItemStack item) {
+    public boolean isFuelItem(ItemStack item) {
         if (item == null) return false;
         if (!item.hasItemMeta()) return false;
         if (!item.getItemMeta().hasDisplayName()) return false;
