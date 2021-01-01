@@ -1,6 +1,7 @@
 package ml.jadss.jadgens.dependencies.nbt;
 
 import com.mojang.authlib.GameProfile;
+
 import ml.jadss.jadgens.dependencies.nbt.utils.nmsmappings.ObjectCreator;
 import ml.jadss.jadgens.dependencies.nbt.utils.nmsmappings.ReflectionMethod;
 

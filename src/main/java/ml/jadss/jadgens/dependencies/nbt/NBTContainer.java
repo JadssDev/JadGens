@@ -1,10 +1,10 @@
 package ml.jadss.jadgens.dependencies.nbt;
 
+import java.io.InputStream;
+
 import ml.jadss.jadgens.dependencies.nbt.utils.nmsmappings.ClassWrapper;
 import ml.jadss.jadgens.dependencies.nbt.utils.nmsmappings.ObjectCreator;
 import ml.jadss.jadgens.dependencies.nbt.utils.nmsmappings.ReflectionMethod;
-
-import java.io.InputStream;
 
 /**
  * A Standalone {@link NBTCompound} implementation. All data is just kept inside

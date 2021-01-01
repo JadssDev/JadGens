@@ -1,9 +1,9 @@
 package ml.jadss.jadgens.dependencies.nbt.utils;
 
+import java.util.logging.Logger;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-
-import java.util.logging.Logger;
 
 /**
  * This class acts as the "Brain" of the NBTApi. It contains the main logger for
@@ -30,7 +30,7 @@ public enum MinecraftVersion {
 	private static Logger logger = Logger.getLogger("NBTAPI");
 
 	// NBT-API Version
-	protected static final String VERSION = "2.6.0";
+	protected static final String VERSION = "2.7.1";
 
 	private final int versionId;
 

@@ -1,10 +1,9 @@
 package ml.jadss.jadgens.dependencies.nbt.utils.nmsmappings;
 
-import ml.jadss.jadgens.dependencies.nbt.utils.MinecraftVersion;
+import java.util.logging.Level;
 import org.bukkit.Bukkit;
 
-import java.util.logging.Level;
-
+import ml.jadss.jadgens.dependencies.nbt.utils.MinecraftVersion;
 import static ml.jadss.jadgens.dependencies.nbt.utils.MinecraftVersion.getLogger;
 
 /**
@@ -19,6 +18,7 @@ CRAFT_ITEMSTACK(PackageWrapper.CRAFTBUKKIT, "inventory.CraftItemStack"),
 CRAFT_METAITEM(PackageWrapper.CRAFTBUKKIT, "inventory.CraftMetaItem"),
 CRAFT_ENTITY(PackageWrapper.CRAFTBUKKIT, "entity.CraftEntity"),
 CRAFT_WORLD(PackageWrapper.CRAFTBUKKIT, "CraftWorld"),
+CRAFT_PERSISTENTDATACONTAINER(PackageWrapper.CRAFTBUKKIT, "persistence.CraftPersistentDataContainer", MinecraftVersion.MC1_14_R1, null),
 NMS_NBTBASE(PackageWrapper.NMS, "NBTBase"),
 NMS_NBTTAGSTRING(PackageWrapper.NMS, "NBTTagString"),
 NMS_NBTTAGINT(PackageWrapper.NMS, "NBTTagInt"),
@@ -68,7 +68,7 @@ GAMEPROFILE("com.mojang.authlib.GameProfile", MinecraftVersion.MC1_8_R3)
         	getLogger().log(Level.WARNING, "[NBTAPI] Error while trying to resolve the class '" + suffix + "'!", ex);
         }
     }
-
+    
     ClassWrapper(String path, MinecraftVersion from){
     	if(from != null && MinecraftVersion.getVersion().getVersionId() < from.getVersionId()) {
     		return;

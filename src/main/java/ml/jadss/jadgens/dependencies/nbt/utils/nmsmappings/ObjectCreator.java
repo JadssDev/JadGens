@@ -1,10 +1,10 @@
 package ml.jadss.jadgens.dependencies.nbt.utils.nmsmappings;
 
-import ml.jadss.jadgens.dependencies.nbt.NbtApiException;
-import ml.jadss.jadgens.dependencies.nbt.utils.MinecraftVersion;
-
 import java.lang.reflect.Constructor;
 import java.util.logging.Level;
+
+import ml.jadss.jadgens.dependencies.nbt.NbtApiException;
+import ml.jadss.jadgens.dependencies.nbt.utils.MinecraftVersion;
 
 import static ml.jadss.jadgens.dependencies.nbt.utils.MinecraftVersion.getLogger;
 
