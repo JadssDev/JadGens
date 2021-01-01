@@ -25,7 +25,7 @@ public class MachineLimiter {
         int max = getMaxLimit(pl);
         if (max == -1) return -1;
 
-        int has = lookupMachines.getMachines(pl.getUniqueId());
+        int has = lookupMachines.getPlayerMachineCount(pl.getUniqueId());
         int remain = max-has;
 
         if (remain > 0) { return remain; } else { return 0; }
@@ -34,7 +34,7 @@ public class MachineLimiter {
     public boolean canPlaceMachine(Player pl) {
         int max = getMaxLimit(pl);
         if (max == -1) return true;
-        int left = lookupMachines.getMachines(pl.getUniqueId());
+        int left = lookupMachines.getPlayerMachineCount(pl.getUniqueId());
 
         if (max > left) return true;
         return false;

@@ -15,7 +15,7 @@ public class MachineLookup {
         return;
     }
 
-    public int getMachines(UUID owner) {
+    public int getPlayerMachineCount(UUID owner) {
         int count = 0;
         Set<String> keys = JadGens.getInstance().getDataFile().data().getConfigurationSection("machines").getKeys(false);
         for (String key : keys) {
@@ -26,12 +26,47 @@ public class MachineLookup {
         return count;
     }
 
-    @SuppressWarnings("all")
-    public List<Machine> getPlayerMachines(UUID player) {
+    public int getPlayerMachineCount(UUID owner, int machineType) {
+        int count = 0;
+        Set<String> keys = JadGens.getInstance().getDataFile().data().getConfigurationSection("machines").getKeys(false);
+        for (String key : keys) {
+            if (JadGens.getInstance().getDataFile().data().getString("machines." + key + ".owner").equals(String.valueOf(owner)) && JadGens.getInstance().getDataFile().data().getInt("machines." + key + ".type") == machineType) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    public List<Machine> getPlayerMachines(UUID owner) {
         List<Machine> list = new ArrayList<>();
         list.addAll(getAllMachines());
-        for (Machine mac : new ArrayList<>(list)) if (!mac.getOwner().equals(player.toString())) list.remove(mac); else continue;
+        for (Machine mac : new ArrayList<>(list)) if (!mac.getOwner().equals(owner.toString())) list.remove(mac); else continue;
         return list;
+    }
+
+
+
+    public int getAllMachinesCount(int type) {
+        int count = 0;
+        for (Machine machine : this.getAllMachines())
+            if (machine.getType() == type) count++;
+        return count;
+    }
+
+    public List<Machine> getAllMachines() {
+        List<Machine> machines = new ArrayList<>();
+        Set<String> keys = JadGens.getInstance().getDataFile().data().getConfigurationSection("machines").getKeys(false);
+        for (String key : keys) {
+            machines.add(new Machine(key));
+        }
+
+        for (Machine machine : machines) if (machine == null) machines.remove(machine);
+
+        return machines;
+    }
+
+    public int getAllMachinesCount() {
+        return getAllMachines().size();
     }
 
     public boolean isMachine(Block block) {
@@ -52,28 +87,5 @@ public class MachineLookup {
         String id = world.getName() + "_" + x + "_" + y + "_" + z;
         Machine machine = new Machine(id);
         return machine.getId() != null;
-    }
-
-    public int getMachines(UUID owner, int machineType) {
-        int count = 0;
-        Set<String> keys = JadGens.getInstance().getDataFile().data().getConfigurationSection("machines").getKeys(false);
-        for (String key : keys) {
-            if (JadGens.getInstance().getDataFile().data().getString("machines." + key + ".owner").equals(String.valueOf(owner)) && JadGens.getInstance().getDataFile().data().getInt("machines." + key + ".type") == machineType) {
-                count++;
-            }
-        }
-        return count;
-    }
-
-    public List<Machine> getAllMachines() {
-        List<Machine> machines = new ArrayList<>();
-        Set<String> keys = JadGens.getInstance().getDataFile().data().getConfigurationSection("machines").getKeys(false);
-        for (String key : keys) {
-            machines.add(new Machine(key));
-        }
-
-        for (Machine machine : machines) if (machine == null) machines.remove(machine);
-
-        return machines;
     }
 }
