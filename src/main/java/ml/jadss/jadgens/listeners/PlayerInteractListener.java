@@ -22,7 +22,7 @@ public class PlayerInteractListener implements Listener {
         Player pl = e.getPlayer();
         ItemStack item = e.getPlayer().getInventory().getItemInHand();
         Block block = e.getClickedBlock();
-        if (new Fuel().isFuel(item)) {
+        if (new Fuel().isFuelItem(item)) {
             e.setCancelled(true);
             if (pl.isSneaking()) {
                 if (new MachineLookup().isMachine(block)) {

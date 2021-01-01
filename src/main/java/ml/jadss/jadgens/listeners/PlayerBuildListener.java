@@ -18,8 +18,14 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.noise.PerlinNoiseGenerator;
+import org.bukkit.util.noise.PerlinOctaveGenerator;
 
 public class PlayerBuildListener implements Listener {
+
+    MachineLimiter limiter = new MachineLimiter();
+    Machine machineChecker = new Machine();
+    Fuel fuelChecker = new Fuel();
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void PlayerBuildEvent(BlockPlaceEvent e) {
@@ -27,11 +33,12 @@ public class PlayerBuildListener implements Listener {
         Player pl = e.getPlayer();
         Block block = e.getBlock();
         ItemStack item = e.getItemInHand();
-        NBTCompound nbtCompound = new NBTItem(item);
-        MachineLimiter limiter = new MachineLimiter();
+
+        if (fuelChecker.isFuelItem(item)) { e.setCancelled(true); return; }
 
         if (!JadGens.getInstance().getCompatibilityMode()) {
-            if (nbtCompound.getBoolean("JadGens_machine")) {
+            if (machineChecker.isMachineItem(item)) {
+                NBTCompound nbtCompound = new NBTItem(item);
                 if (e.isCancelled()) return;
                 if (!limiter.canPlaceMachine(pl)) {
                     e.setCancelled(true);
@@ -48,7 +55,7 @@ public class PlayerBuildListener implements Listener {
                 MachineLoadEvent event1 = new MachineLoadEvent(machine);
                 Bukkit.getServer().getPluginManager().callEvent(event1);
                 return;
-            } else if(new Fuel().isFuel(item)) {
+            } else if(new Fuel().isFuelItem(item)) {
                 e.setCancelled(true);
             }
         } else {
