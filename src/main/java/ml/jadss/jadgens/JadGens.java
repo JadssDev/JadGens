@@ -157,7 +157,7 @@ public class JadGens extends JavaPlugin {
         }
         if (isHookedPlaceHolderAPI()) {
             hookedPlaceHolderAPI = false;
-            new PlaceHolders().unregister();
+            try { new PlaceHolders().unregister(); } catch(NullPointerException ex) { }
         }
         if (isHookedPlayerPoints()) {
             hookedPlayerPoints = false;
@@ -278,7 +278,7 @@ public class JadGens extends JavaPlugin {
         if (getServer().getPluginManager().getPlugin("PlaceholderAPI") == null) {
             return;
         }
-        new PlaceHolders().unregister();
+        try { new PlaceHolders().unregister(); } catch(NullPointerException ignored) { Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3&lJadGens &7>> &3PlaceHolderAPI &eCommitted a NPE, it was not shown so you think it is an error.")); }
         hookedPlaceHolderAPI = true;
         new PlaceHolders().register();
     }

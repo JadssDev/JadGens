@@ -199,7 +199,7 @@ public class JadGensAPI {
         if (!getValidation()) return 0;
         if (getApiVersion().equals("1.0")) {
             logAPI("&3JadGens&e(&b" + getPluginName() + "&e) &7>> &eGetting machines of &a" + player_uuid + "&e... &f(Player UUID)");
-            return lookup.getMachines(player_uuid);
+            return lookup.getPlayerMachineCount(player_uuid);
         }
         return 0;
     }
@@ -214,7 +214,7 @@ public class JadGensAPI {
         if (!getValidation()) return 0;
         if (getApiVersion().equals("1.0")) {
             logAPI("&3JadGens&e(&b" + getPluginName() + "&e) &7>> &eGetting machines of &a" + player.getName() + "&e...");
-            return lookup.getMachines(player.getUniqueId());
+            return lookup.getPlayerMachineCount(player.getUniqueId());
         }
         return 0;
     }
@@ -230,7 +230,7 @@ public class JadGensAPI {
         if (!getValidation()) return 0;
         if (getApiVersion().equals("1.0")) {
             logAPI("&3JadGens&e(&b" + getPluginName() + "&e) &7>> &eGetting machines of &a" + player.getName() + "&e with &btype id " + machine_type + "&e...");
-            return lookup.getMachines(player.getUniqueId(), machine_type);
+            return lookup.getPlayerMachineCount(player.getUniqueId(), machine_type);
         }
         return 0;
     }
@@ -246,7 +246,7 @@ public class JadGensAPI {
         if (!getValidation()) return 0;
         if (getApiVersion().equals("1.0")) {
             logAPI("&3JadGens&e(&b" + getPluginName() + "&e) &7>> &eGetting machines of &a" + player_uuid + "&e with &btype id " + machine_type + "&e... &f(Player UUID)");
-            return lookup.getMachines(player_uuid, machine_type);
+            return lookup.getPlayerMachineCount(player_uuid, machine_type);
         }
         return 0;
     }
