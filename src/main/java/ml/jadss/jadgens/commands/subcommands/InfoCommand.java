@@ -21,7 +21,7 @@ public class InfoCommand {
                 } else {
                     s = s.replace("%max%", String.valueOf(limiter.getMaxLimit(pl)));
                 }
-                s = s.replace("%has%", String.valueOf(lookup.getMachines(pl.getUniqueId())));
+                s = s.replace("%has%", String.valueOf(lookup.getPlayerMachineCount(pl.getUniqueId())));
                 pl.sendMessage(ChatColor.translateAlternateColorCodes('&', s));
             }
         } else {
