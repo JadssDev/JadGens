@@ -83,7 +83,8 @@ public class LangFile {
 
         //reload Messages
         lang().addDefault("messages.reloadMessages.permission", "JadGens.reload");
-        lang().addDefault("messages.reloadMessages.pluginReloaded", "&eThe &3&lPlugin &ehas been &b&lReloaded&e! &e(You should &3restart &eso every change applies)");
+        lang().addDefault("messages.reloadMessages.pluginReloaded", "&eThe &3&lPlugin &ehas been &b&lReloaded&e!");
+        lang().addDefault("messages.reloadMessages.reloadDebug", true);
 
         //info messages
         lang().addDefault("messages.infoMessages.infinite", "&b&lInfinite");
@@ -139,6 +140,7 @@ public class LangFile {
         lang().addDefault("messages.onlyConsole", "&eYou &ccannot &aexecute &ethis! Only the &b&lconsole&e!");
         lang().addDefault("messages.noInventorySpace", "&eNo &3&linventory &aspace &eto &a&lplace &ethe &b&lMachine&e!");
         lang().addDefault("messages.noPistonMoving", "&eYou &c&lcannot &euse &3pistons &eto &a&lmove &b&lMachines&e!");
+        lang().addDefault("messages.noCraftingItems", "&eYou &c&lCannot &euse &3Machine &eor &3Fuels &eto &b&lCraft&e!");
         lang().addDefault("messages.bypassPermission", "JadGens.bypassBreak");
 
         //Update checker
