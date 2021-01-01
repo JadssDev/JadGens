@@ -62,7 +62,7 @@ public class ReloadCommand { //messages.reloadMessages.permission | pluginReload
 
             if (isDebugReloadEnabled) sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&3&lJadGens &7>> &eKooking into &3&lPlayerPoints&e.."));
             JadGens.getInstance().hookPlayerPoints();
-            if (isDebugReloadEnabled && JadGens.getInstance().isHookedPlaceHolderAPI())
+            if (isDebugReloadEnabled && JadGens.getInstance().isHookedPlayerPoints())
                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&3&lJadGens &7>> &eHooked into &3&lPlayerPoints&e.."));
             else
                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&3&lJadGens &7>> &cCouldn't &ehook into &3&lPlayerPoints&e.."));
