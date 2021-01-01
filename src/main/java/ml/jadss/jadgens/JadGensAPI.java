@@ -131,7 +131,7 @@ public class JadGensAPI {
         if (!getValidation()) return -2;
         if (getApiVersion().equals("1.0")) {
             logAPI("&3JadGens&e(&b" + getPluginName() + "&e) &7>> &eChecking if an Item is a fuel...");
-            if (fuel.isFuel(item)) {
+            if (fuel.isFuelItem(item)) {
                 Fuel f = new Fuel(item);
                 return f.getType();
             }
