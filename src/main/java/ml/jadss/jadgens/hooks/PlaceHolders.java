@@ -10,6 +10,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class PlaceHolders extends PlaceholderExpansion {
 
+    MachineLookup lookup = new MachineLookup();
+
     @Override
     public @NotNull String getIdentifier() {
         return "jadgens";
@@ -46,20 +48,32 @@ public class PlaceHolders extends PlaceholderExpansion {
         String type = splitParams[1];
         int iType;
 
-        if (ident.equalsIgnoreCase("machines")) {
+        if (ident.equalsIgnoreCase("me")) {
             if (type.equalsIgnoreCase("total")) {
-                return String.valueOf(new MachineLookup().getMachines(p.getUniqueId()));
+                return String.valueOf(lookup.getPlayerMachineCount(p.getUniqueId()));
             } else {
                 try {
                     iType = Integer.parseInt(type);
-                    return String.valueOf(new MachineLookup().getMachines(p.getUniqueId(), iType));
+                    return String.valueOf(lookup.getPlayerMachineCount(p.getUniqueId(), iType));
                 } catch (NumberFormatException ex) {
-                    Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3JadGens&e(&bPAPI&e) &7>> &eA plugin supplied a invalid value!"));
+                    Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3JadGens&e(&bPlaceholderAPI hook&e) &7>> &eA plugin supplied a invalid value!"));
                     return "Invalid";
                 }
             }
+        } else if (ident.equalsIgnoreCase("server")) {
+            if (type.equalsIgnoreCase("total")) {
+                return String.valueOf(lookup.getAllMachinesCount());
+            } else {
+                try {
+                    iType = Integer.parseInt(type);
+                    return String.valueOf(lookup.getAllMachinesCount(iType));
+                } catch (NumberFormatException ex) {
+                    Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3JadGens&e(&bPlaceholderAPI hook&e) &7>> &eA plugin supplied a invalid value!"));
+                    return "Invalid";
+                }
+            }
+        } else {
+            return "Invalid TOKEN.";
         }
-
-        return null;
     }
 }
