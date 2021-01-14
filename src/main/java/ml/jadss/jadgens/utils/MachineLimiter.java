@@ -23,7 +23,7 @@ public class MachineLimiter {
 
     public int getMachinesLeft(Player pl) {
         int max = getMaxLimit(pl);
-        if (max == -1) return -1;
+        if (max == -1) return max;
 
         int has = lookupMachines.getPlayerMachineCount(pl.getUniqueId());
         int remain = max-has;
