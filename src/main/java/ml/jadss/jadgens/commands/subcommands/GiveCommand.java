@@ -9,20 +9,53 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
-public class GiveCommand { // /jadgens give <type> <id> <player>
+public class GiveCommand { // /jadgens give <type> <id> <player> <amount> [-s]
+
+    Machine machineChecker = new Machine();
+    Fuel fuelChecker = new Fuel();
+
 
     public GiveCommand(CommandSender sender, String[] args) {
         if (sender.hasPermission(lang().getString("messages.giveMessages.permission")) || sender instanceof ConsoleCommandSender) {
-            if (args.length == 4 || args.length == 5) {
+            if (args.length == 4 || args.length == 5 || args.length == 6) {
                 if (args[1].equalsIgnoreCase("fuels") || args[1].equalsIgnoreCase("fuel") || args[1].equalsIgnoreCase("f")) {
-                    if (JadGens.getInstance().getConfig().isConfigurationSection("fuels." + args[2])) {
+                    if (fuelChecker.typeExists(args[2])) {
                         Player target = Bukkit.getPlayer(args[3]);
                         if (target == null) {
                             sender.sendMessage(ChatColor.translateAlternateColorCodes('&', lang().getString("messages.playerNotFound")));
                         } else {
-                            target.getInventory().addItem(new Fuel().createItem(Integer.parseInt(args[2])));
-                            if (!(args.length == 5 && args[4].equalsIgnoreCase("-s"))) {
+                            ItemStack fuel = new Fuel().createItem(Integer.parseInt(args[2]));
+                            if (args.length == 4) {
+                                target.getInventory().addItem(fuel);
+                                target.sendMessage(ChatColor.translateAlternateColorCodes('&', lang().getString("messages.giveMessages.givenFuel")));
+                            } else if (args.length == 5) {
+
+                                int amount = 1;
+                                try {
+                                    amount = Integer.parseInt(args[4]);
+                                } catch(NumberFormatException ignored) { }
+                                if (amount > 64) amount = 64;
+
+                                fuel.setAmount(amount);
+
+                                target.getInventory().addItem(fuel);
+                                target.sendMessage(ChatColor.translateAlternateColorCodes('&', lang().getString("messages.giveMessages.givenFuel")));
+                            } else if (args.length == 6) {
+
+                                int amount = 1;
+                                try {
+                                    amount = Integer.parseInt(args[4]);
+                                } catch(NumberFormatException ignored) { }
+                                if (amount > 64) amount = 64;
+
+                                fuel.setAmount(amount);
+
+                                if (args[5].toLowerCase().contains("silent")) {
+                                    target.getInventory().addItem(fuel);
+                                    return;
+                                }
                                 target.sendMessage(ChatColor.translateAlternateColorCodes('&', lang().getString("messages.giveMessages.givenFuel")));
                             }
                         }
@@ -30,13 +63,41 @@ public class GiveCommand { // /jadgens give <type> <id> <player>
                         sender.sendMessage(ChatColor.translateAlternateColorCodes('&', lang().getString("messages.giveMessages.idNotFound")));
                     }
                 } else if (args[1].equalsIgnoreCase("machines") || args[1].equalsIgnoreCase("machine") || args[1].equalsIgnoreCase("m")) {
-                    if (JadGens.getInstance().getConfig().isConfigurationSection("machines." + args[2])) {
+                    if (machineChecker.typeExists(args[2])) {
                         Player target = Bukkit.getPlayer(args[3]);
                         if (target == null) {
                             sender.sendMessage(ChatColor.translateAlternateColorCodes('&', lang().getString("messages.playerNotFound")));
                         } else {
-                            target.getInventory().addItem(new Machine().createItem(Integer.parseInt(args[2])));
-                            if (!(args.length == 5 && args[4].equalsIgnoreCase("-s"))) {
+                            ItemStack machine = new Machine().createItem(Integer.parseInt(args[2]));
+                            if (args.length == 4) {
+                                target.getInventory().addItem(machine);
+                                target.sendMessage(ChatColor.translateAlternateColorCodes('&', lang().getString("messages.giveMessages.givenMachine")));
+                            } else if (args.length == 5) {
+
+                                int amount = 1;
+                                try {
+                                    amount = Integer.parseInt(args[4]);
+                                } catch(NumberFormatException ignored) { }
+                                if (amount > 64) amount = 64;
+
+                                machine.setAmount(amount);
+
+                                target.getInventory().addItem(machine);
+                                target.sendMessage(ChatColor.translateAlternateColorCodes('&', lang().getString("messages.giveMessages.givenMachine")));
+                            } else if (args.length == 6) {
+
+                                int amount = 1;
+                                try {
+                                    amount = Integer.parseInt(args[4]);
+                                } catch(NumberFormatException ignored) { }
+                                if (amount > 64) amount = 64;
+
+                                machine.setAmount(amount);
+
+                                if (args[5].toLowerCase().contains("silent")) {
+                                    target.getInventory().addItem(machine);
+                                    return;
+                                }
                                 target.sendMessage(ChatColor.translateAlternateColorCodes('&', lang().getString("messages.giveMessages.givenMachine")));
                             }
                         }
