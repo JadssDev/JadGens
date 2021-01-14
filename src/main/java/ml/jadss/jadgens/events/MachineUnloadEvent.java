@@ -1,6 +1,7 @@
 package ml.jadss.jadgens.events;
 
 import ml.jadss.jadgens.JadGens;
+import ml.jadss.jadgens.JadGensAPI;
 import ml.jadss.jadgens.utils.Machine;
 import ml.jadss.jadgens.utils.MachinePurger;
 import org.bukkit.Bukkit;
@@ -9,12 +10,13 @@ import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-import org.bukkit.plugin.Plugin;
 
 import java.util.UUID;
 
-import static ml.jadss.jadgens.JadGensAPI.validatePlugin;
-
+/**
+ * Event called when a machine is unloaded.<p>
+ * This means, when the server is shutting down.
+ */
 @SuppressWarnings("unused")
 public class MachineUnloadEvent extends Event {
 
@@ -33,12 +35,12 @@ public class MachineUnloadEvent extends Event {
     public Location getLocation() { return machine.getLocation(); }
     public Block getBlock() { return machine.getLocation().getBlock(); }
     public Machine getMachine() { return machine; }
-    public void removeMachine(Plugin plugin) {
-        if (validatePlugin(plugin)) {
+    public void removeMachine(JadGensAPI api) {
+        if (api.isAPIValid()) {
             if (JadGens.getInstance().isAPIDebugEnabled())
                 Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&',
-                        "&3JadGens &7>> &eThe &3&lMachine &ewith &b&lID &a\"" + this.getID() + "\" &ewas &c&lRemoved &eby " + plugin.getDescription().getName()));
-            new MachinePurger().removeMachine(this.getID());
+                        "&3JadGens &7>> &eThe &3&lMachine &ewith &b&lID &a\"" + this.getID() + "\" &ewas &c&lRemoved &eby " + api.getPluginName()));
+            new MachinePurger().removeMachineInstant(this.getID());
         }
     }
 

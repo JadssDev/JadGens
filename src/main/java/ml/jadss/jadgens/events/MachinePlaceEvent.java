@@ -5,6 +5,9 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
+/**
+ * Event called when a machine is placed.
+ */
 @SuppressWarnings("unused")
 public class MachinePlaceEvent extends Event implements Cancellable {
 

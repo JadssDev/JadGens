@@ -19,17 +19,18 @@ public class PlayerCraftListener implements Listener {
     @EventHandler
     public void onCraft(CraftItemEvent e) {
         if (!JadGens.getInstance().getConfig().getBoolean("machinesConfig.preventCrafting")) return;
+
         if (e.getWhoClicked() instanceof Player) {
             Player player = (Player) e.getWhoClicked();
 
             for(ItemStack checking : e.getInventory().getMatrix()) {
-                if (checking != null && checking.getType() != Material.AIR) {
-                    if (checker1.isMachineItem(checking) || checker2.isFuelItem(checking)) {
-                        e.setCancelled(true);
-                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', JadGens.getInstance().getLangFile().lang().getString("messages.noCraftingItems")));
-                        return;
-                    }
-                } else continue;
+
+                if (checking != null && checking.getType() != Material.AIR && checker1.isMachineItem(checking) || checker2.isFuelItem(checking)) {
+                    e.setCancelled(true);
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', JadGens.getInstance().getLangFile().lang().getString("messages.noCraftingItems")));
+                    return;
+                }
+
             }
         }
     }

@@ -4,6 +4,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
+/**
+ * This event is called, if the argument on the /jadgens command is not recognized,<p>
+ * and then you can use your own stuff at /jadgens command, pretty neat right?
+ */
 @SuppressWarnings("unused")
 public class CustomJadGensCommandArg extends Event {
 

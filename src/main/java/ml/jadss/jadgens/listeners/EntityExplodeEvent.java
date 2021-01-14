@@ -13,10 +13,7 @@ public class EntityExplodeEvent implements Listener {
         if (!JadGens.getInstance().getConfig().getBoolean("machinesConfig.preventMachineExplosion")) return;
         MachineLookup checker = new MachineLookup();
         for (Block b : e.blockList()) {
-            if (checker.isMachine(b)) {
-                e.setCancelled(true);
-                return;
-            } else if (JadGens.getInstance().getBlocksRemover().getBlocks().contains(b)) {
+            if (checker.isMachine(b) || JadGens.getInstance().getBlocksRemover().getBlocks().contains(b)) {
                 e.setCancelled(true);
                 return;
             }

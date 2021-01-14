@@ -10,16 +10,11 @@ import org.bukkit.event.player.PlayerJoinEvent;
 public class PlayerJoinListener implements Listener {
 
     @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event) {
-        if (lang().getBoolean("messages.updateChecker.enabled")) {
-            if (lang().getBoolean("messages.updateChecker.notifyOnJoin")) {
-                if (event.getPlayer().hasPermission(lang().getString("messages.updateChecker.permission"))) {
-                    if (JadGens.getInstance().getUpdateChecker().hasChecked() && !JadGens.getInstance().getUpdateChecker().isUpdated()) {
-                        event.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', lang().getString("messages.updateChecker.message")));
-                    }
-                }
-            }
-        }
+    public void onPlayerJoin(PlayerJoinEvent e) {
+        if (lang().getBoolean("messages.updateChecker.enabled") && lang().getBoolean("messages.updateChecker.notifyOnJoin"))
+            if (e.getPlayer().hasPermission(lang().getString("messages.updateChecker.permission")) &&
+                    JadGens.getInstance().getUpdateChecker().hasChecked() && !JadGens.getInstance().getUpdateChecker().isUpdated())
+                        e.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', lang().getString("messages.updateChecker.message")));
     }
 
 

@@ -9,6 +9,9 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
+/**
+ * Event called when a Machine is broken, simple enough.
+ */
 @SuppressWarnings("unused")
 public class MachineBreakEvent extends Event implements Cancellable {
 

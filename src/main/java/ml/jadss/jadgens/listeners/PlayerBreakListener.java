@@ -19,30 +19,35 @@ import java.util.UUID;
 
 public class PlayerBreakListener implements Listener {
 
+    MachineLookup checker = new MachineLookup();
+
     @EventHandler
     public void PlayerBreakEvent(BlockBreakEvent e) {
         Block block = e.getBlock();
-        Player pl = e.getPlayer();
-        MachineLookup lookup = new MachineLookup();
+        Player player = e.getPlayer();
 
         if (JadGens.getInstance().getBlocksRemover().getBlocks().contains(e.getBlock())) { e.setCancelled(true); return; }
-        if (!lookup.isMachine(block)) return;
+        if (!checker.isMachine(block)) return;
 
-        String id = block.getLocation().getWorld().getName() + "_" + block.getLocation().getBlockX() + "_" + block.getLocation().getBlockY() + "_" + block.getLocation().getBlockZ();
-        Machine machine = new Machine(id);
-        MachineBreakEvent event = new MachineBreakEvent(pl, machine.getType(), UUID.fromString(machine.getOwner()).equals(pl.getUniqueId()), e.getBlock());
+        Machine machine = new Machine(block);
+
+        MachineBreakEvent event = new MachineBreakEvent(player, machine.getType(), (machine.getOwner().equalsIgnoreCase("none") || machine.getOwner().equalsIgnoreCase(player.getUniqueId().toString())), block);
         JadGens.getInstance().getServer().getPluginManager().callEvent(event);
         if (event.isCancelled()) { e.setCancelled(true); return; }
+
         e.setCancelled(true);
-        if (UUID.fromString(machine.getOwner()).equals(pl.getUniqueId()) || pl.hasPermission(lang().getString("messages.bypassPermission"))) {
-            if (pl.getInventory().firstEmpty() != -1) {
+        if (machine.getOwner().equalsIgnoreCase("none") || UUID.fromString(machine.getOwner()).equals(player.getUniqueId()) || player.hasPermission(lang().getString("messages.bypassPermission"))) {
+            if (player.getInventory().firstEmpty() != -1) {
+
                 MachineUnloadEvent event1 = new MachineUnloadEvent(machine);
                 Bukkit.getServer().getPluginManager().callEvent(event1);
+
                 new MachinePurger().removeMachineInstant(machine.getId());
-                pl.getInventory().addItem(machine.createItem(machine.getType()));
-                pl.sendMessage(ChatColor.translateAlternateColorCodes('&', lang().getString("messages.machinesMessages.broken")));
+
+                player.getInventory().addItem(machine.createItem(machine.getType()));
+                player.sendMessage(ChatColor.translateAlternateColorCodes('&', lang().getString("messages.machinesMessages.broken")));
             } else {
-                pl.sendMessage(ChatColor.translateAlternateColorCodes('&', lang().getString("messages.noInventorySpace")));
+                player.sendMessage(ChatColor.translateAlternateColorCodes('&', lang().getString("messages.noInventorySpace")));
             }
         } else {
             e.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', lang().getString("messages.machinesMessages.notTheOwner")));

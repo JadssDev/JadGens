@@ -18,66 +18,79 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.util.noise.PerlinNoiseGenerator;
-import org.bukkit.util.noise.PerlinOctaveGenerator;
 
 public class PlayerBuildListener implements Listener {
 
     MachineLimiter limiter = new MachineLimiter();
-    Machine machineChecker = new Machine();
-    Fuel fuelChecker = new Fuel();
+    Machine checker1 = new Machine();
+    Fuel checker2 = new Fuel();
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void PlayerBuildEvent(BlockPlaceEvent e) {
-        if (!e.getItemInHand().hasItemMeta()) return;
-        Player pl = e.getPlayer();
+        Player player = e.getPlayer();
         Block block = e.getBlock();
-        ItemStack item = e.getItemInHand();
+        ItemStack item = e.getPlayer().getInventory().getItemInHand();
 
-        if (fuelChecker.isFuelItem(item)) { e.setCancelled(true); return; }
+        if (item == null || item.getItemMeta() == null || e.isCancelled()) return;
+
+        if (checker2.isFuelItem(item)) { e.setCancelled(true); return; }
 
         if (!JadGens.getInstance().getCompatibilityMode()) {
-            if (machineChecker.isMachineItem(item)) {
-                NBTCompound nbtCompound = new NBTItem(item);
-                if (e.isCancelled()) return;
-                if (!limiter.canPlaceMachine(pl)) {
+
+            if (checker1.isMachineItem(item)) {
+
+                NBTCompound nbt = new NBTItem(item);
+                int machineType = nbt.getInteger("JadGens_machineType");
+
+                if (!limiter.canPlaceMachine(player)) {
                     e.setCancelled(true);
-                    pl.sendMessage(ChatColor.translateAlternateColorCodes('&', lang().getString("messages.machinesMessages.limitReached")));
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', lang().getString("messages.machinesMessages.limitReached")));
                     return;
                 }
-                int machineType = nbtCompound.getInteger("JadGens_machineType");
-                MachinePlaceEvent event = new MachinePlaceEvent(pl, machineType);
-                JadGens.getInstance().getServer().getPluginManager().callEvent(event);
-                if(event.isCancelled()) { e.setCancelled(true); return; }
-                Machine machine = new Machine(block.getLocation(), machineType, pl.getUniqueId().toString());
-                machine.addToConfig();
-                pl.sendMessage(ChatColor.translateAlternateColorCodes('&', lang().getString("messages.machinesMessages.placed")));
-                MachineLoadEvent event1 = new MachineLoadEvent(machine);
-                Bukkit.getServer().getPluginManager().callEvent(event1);
-                return;
-            } else if(new Fuel().isFuelItem(item)) {
-                e.setCancelled(true);
+
+                if (!JadGens.getInstance().getConfig().getConfigurationSection("machines").getKeys(false).contains(String.valueOf(machineType))) {
+                    e.setCancelled(true);
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', lang().getString("messages.machinesMessages.oldMachine")));
+                    return;
+                }
+
+                MachinePlaceEvent event1 = new MachinePlaceEvent(player, machineType);
+                JadGens.getInstance().getServer().getPluginManager().callEvent(event1);
+                if(event1.isCancelled()) { e.setCancelled(true); return; }
+
+                Machine machine = new Machine(block.getLocation(), machineType, player.getUniqueId().toString());
+                player.sendMessage(ChatColor.translateAlternateColorCodes('&', lang().getString("messages.machinesMessages.placed")));
+
+                MachineLoadEvent event2 = new MachineLoadEvent(machine);
+                Bukkit.getServer().getPluginManager().callEvent(event2);
+
             }
         } else {
             for (String key : JadGens.getInstance().getConfig().getConfigurationSection("machines").getKeys(false)) {
                 if (ChatColor.translateAlternateColorCodes('&', JadGens.getInstance().getConfig().getString("machines." + key + ".displayName")).equals(item.getItemMeta().getDisplayName())) {
-                    if (!limiter.canPlaceMachine(pl)) {
+
+                    int machineType = Integer.parseInt(key);
+
+                    if (!limiter.canPlaceMachine(player)) {
                         e.setCancelled(true);
-                        pl.sendMessage(ChatColor.translateAlternateColorCodes('&', lang().getString("messages.machinesMessages.limitReached")));
+                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', lang().getString("messages.machinesMessages.limitReached")));
                         return;
                     }
-                    int machineType = Integer.parseInt(key);
-                    MachinePlaceEvent event = new MachinePlaceEvent(pl, machineType);
-                    JadGens.getInstance().getServer().getPluginManager().callEvent(event);
-                    if(event.isCancelled()) { e.setCancelled(true); return; }
-                    Machine machine = new Machine(block.getLocation(), machineType, pl.getUniqueId().toString());
-                    machine.addToConfig();
-                    pl.sendMessage(ChatColor.translateAlternateColorCodes('&', lang().getString("messages.machinesMessages.placed")));
-                    MachineLoadEvent event1 = new MachineLoadEvent(machine);
-                    Bukkit.getServer().getPluginManager().callEvent(event1);
+
+                    MachinePlaceEvent event1 = new MachinePlaceEvent(player, machineType);
+                    JadGens.getInstance().getServer().getPluginManager().callEvent(event1);
+                    if(event1.isCancelled()) { e.setCancelled(true); return; }
+
+                    Machine machine = new Machine(block.getLocation(), machineType, player.getUniqueId().toString());
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', lang().getString("messages.machinesMessages.placed")));
+
+                    MachineLoadEvent event2 = new MachineLoadEvent(machine);
+                    Bukkit.getServer().getPluginManager().callEvent(event2);
                     return;
                 }
             }
+            e.setCancelled(true);
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&', lang().getString("messages.machinesMessages.oldMachine")));
         }
     }
 

@@ -14,21 +14,19 @@ import org.bukkit.event.block.BlockPistonRetractEvent;
 
 public class PistonMoveListener implements Listener {
 
+    MachineLookup checker = new MachineLookup();
+
     @EventHandler
     public void pistonExtendEvent(BlockPistonExtendEvent e) {
         if (!JadGens.getInstance().getConfig().getBoolean("machinesConfig.preventPistonsMoveMachines")) return;
-        MachineLookup checker = new MachineLookup();
+
         for (Block b : e.getBlocks()) {
-            if (checker.isMachine(b)) {
+            if (checker.isMachine(b) || JadGens.getInstance().getBlocksRemover().getBlocks().contains(b)) {
                 e.setCancelled(true);
                 for (Player nearPlayer : Bukkit.getOnlinePlayers()) {
-                    if (nearPlayer.getLocation().distance(b.getLocation()) <= 5) {
+                    if (nearPlayer.getLocation().distance(b.getLocation()) <= 5)
                         nearPlayer.sendMessage(ChatColor.translateAlternateColorCodes('&', lang().getString("messages.noPistonMoving")));
-                    }
                 }
-                return;
-            } else if (JadGens.getInstance().getBlocksRemover().getBlocks().contains(b)) {
-                e.setCancelled(true);
                 return;
             }
         }
@@ -37,18 +35,13 @@ public class PistonMoveListener implements Listener {
     @EventHandler
     public void pistonRetractEvent(BlockPistonRetractEvent e) {
         if (!JadGens.getInstance().getConfig().getBoolean("machinesConfig.preventPistonsMoveMachines")) return;
-        MachineLookup checker = new MachineLookup();
         for (Block b : e.getBlocks()) {
-            if (checker.isMachine(b)) {
+            if (checker.isMachine(b) || JadGens.getInstance().getBlocksRemover().getBlocks().contains(b)) {
                 e.setCancelled(true);
                 for (Player nearPlayer : Bukkit.getOnlinePlayers()) {
-                    if (nearPlayer.getLocation().distance(b.getLocation()) <= 5) {
+                    if (nearPlayer.getLocation().distance(b.getLocation()) <= 5)
                         nearPlayer.sendMessage(ChatColor.translateAlternateColorCodes('&', lang().getString("messages.noPistonMoving")));
-                    }
                 }
-                return;
-            } else if (JadGens.getInstance().getBlocksRemover().getBlocks().contains(b)) {
-                e.setCancelled(true);
                 return;
             }
         }
