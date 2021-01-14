@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.URI;
+//import java.util.Random;
 
 public class Main implements ActionListener {
 
@@ -57,6 +58,10 @@ public class Main implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         String url = "https://dev.jadss.ml/jadgens";
+//        if (new Random(1).nextInt(25) == 1)
+//            url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
+//        else
+//            url = "https://dev.jadss.ml/jadgens";
         try {
             Desktop.getDesktop().browse(URI.create(url));
             frame.setVisible(false);
