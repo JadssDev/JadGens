@@ -2,6 +2,7 @@ package ml.jadss.jadgens.hooks;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import ml.jadss.jadgens.JadGens;
+import ml.jadss.jadgens.utils.MachineLimiter;
 import ml.jadss.jadgens.utils.MachineLookup;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -11,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 public class PlaceHolders extends PlaceholderExpansion {
 
     MachineLookup lookup = new MachineLookup();
+    MachineLimiter limiter = new MachineLimiter();
 
     @Override
     public @NotNull String getIdentifier() {
@@ -51,6 +53,12 @@ public class PlaceHolders extends PlaceholderExpansion {
         if (ident.equalsIgnoreCase("me")) {
             if (type.equalsIgnoreCase("total")) {
                 return String.valueOf(lookup.getPlayerMachineCount(p.getUniqueId()));
+            } else if (type.equalsIgnoreCase("limit")) {
+                if (limiter.getMaxLimit(p) != -1) {
+                    return "Infinite";
+                } else {
+                    return String.valueOf(limiter.getMaxLimit(p));
+                }
             } else {
                 try {
                     iType = Integer.parseInt(type);
