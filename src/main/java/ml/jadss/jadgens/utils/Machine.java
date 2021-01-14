@@ -18,6 +18,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 public class Machine {
@@ -61,6 +62,16 @@ public class Machine {
         this.dropsRemaining = 0;
         this.dropsMax = JadGens.getInstance().getConfig().getInt("machines." + type + ".fuels.maxFuel");
         this.machineEnabled = true;
+
+        data().set("machines." + this.getId() + ".owner", this.getOwner());
+        data().set("machines." + this.getId() + ".world", this.getLocation().getWorld().getName());
+        data().set("machines." + this.getId() + ".x", this.getLocation().getBlockX());
+        data().set("machines." + this.getId() + ".y", this.getLocation().getBlockY());
+        data().set("machines." + this.getId() + ".z", this.getLocation().getBlockZ());
+        data().set("machines." + this.getId() + ".type", this.getType());
+        data().set("machines." + this.getId() + ".drops", this.getDropsRemaining());
+        data().set("machines." + this.getId() + ".enabled", this.machineEnabled);
+        JadGens.getInstance().getDataFile().saveData();
     }
 
     /**
@@ -77,6 +88,16 @@ public class Machine {
         this.dropsRemaining = 0;
         this.dropsMax = JadGens.getInstance().getConfig().getInt("machines." + type + ".fuels.maxFuel");
         this.machineEnabled = true;
+
+        data().set("machines." + this.getId() + ".owner", this.getOwner());
+        data().set("machines." + this.getId() + ".world", this.getLocation().getWorld().getName());
+        data().set("machines." + this.getId() + ".x", this.getLocation().getBlockX());
+        data().set("machines." + this.getId() + ".y", this.getLocation().getBlockY());
+        data().set("machines." + this.getId() + ".z", this.getLocation().getBlockZ());
+        data().set("machines." + this.getId() + ".type", this.getType());
+        data().set("machines." + this.getId() + ".drops", this.getDropsRemaining());
+        data().set("machines." + this.getId() + ".enabled", this.machineEnabled);
+        JadGens.getInstance().getDataFile().saveData();
     }
 
     /**
@@ -129,6 +150,7 @@ public class Machine {
         this.machineEnabled = data().getBoolean("machines." + id + ".enabled");
     }
 
+    @Deprecated
     public void addToConfig() {
         data().set("machines." + this.getId() + ".owner", this.getOwner());
         data().set("machines." + this.getId() + ".world", this.getLocation().getWorld().getName());
@@ -141,6 +163,10 @@ public class Machine {
         JadGens.getInstance().getDataFile().saveData();
     }
 
+    //
+    //
+    //
+    //Standalone sh*t.
     public boolean isMachineItem(ItemStack item) {
         if (item == null) return false;
         if (!item.hasItemMeta()) return false;
@@ -154,6 +180,34 @@ public class Machine {
             return false;
         }
     }
+
+    public List<Integer> getExistingTypes() {
+        Set<String> typesAsString = JadGens.getInstance().getConfig().getConfigurationSection("machines.").getKeys(false);
+        List<Integer> types = new ArrayList<>();
+        for (String type : typesAsString) { types.add(Integer.parseInt(type)); }
+
+        return types;
+    }
+
+    public boolean typeExists(int type) {
+        return this.getExistingTypes().contains(type);
+    }
+
+    public boolean typeExists(String type) {
+        int typeInteger = -1;
+        try {
+            typeInteger = Integer.parseInt(type);
+        } catch(NumberFormatException ignored) {
+            return false;
+        }
+
+        return this.getExistingTypes().contains(typeInteger);
+    }
+
+    //Standalone sh*t.
+    //
+    //
+    //
 
     public Inventory createGUI() {
         if (this.id == null) return null;
@@ -189,7 +243,12 @@ public class Machine {
             dropsMeta.setLore(lore);
             dropsItem.setItemMeta(dropsMeta);
 
-            gui.setItem(JadGens.getInstance().getConfig().getInt("machineGui.dropsCheckItem.slot") - 1, dropsItem);
+            NBTItem item = new NBTItem(dropsItem);
+            item.setBoolean("JadGens_dropsItem", true);
+            item.setString("JadGens_machineID", this.getId());
+
+
+            gui.setItem(JadGens.getInstance().getConfig().getInt("machineGui.dropsCheckItem.slot") - 1, item.getItem());
         }
 
         if (JadGens.getInstance().getConfig().getBoolean("machineGui.ownerCheckItem.enabled")) {
@@ -201,9 +260,17 @@ public class Machine {
 
             dropsMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', JadGens.getInstance().getConfig().getString("machineGui.ownerCheckItem.displayName")));
             List<String> lore = new ArrayList<>();
+
+            String owner;
+            if (this.getOwner().equalsIgnoreCase("none")) {
+                owner = JadGens.getInstance().getLangFile().lang().getString("messages.machinesMessages.noOwnerInGui");
+            } else {
+                owner = Bukkit.getOfflinePlayer(UUID.fromString(this.getOwner())).getName();
+            }
+
             for (String s : JadGens.getInstance().getConfig().getStringList("machineGui.ownerCheckItem.lore")) {
                 //placeholders: %owner%
-                lore.add(ChatColor.translateAlternateColorCodes('&', s.replace("%owner%", Bukkit.getOfflinePlayer(UUID.fromString(this.getOwner())).getName())));
+                lore.add(ChatColor.translateAlternateColorCodes('&', s.replace("%owner%", owner)));
             }
 
             dropsMeta.setLore(lore);
@@ -298,6 +365,8 @@ public class Machine {
      * Make the machine produce....
      */
     public void produce() {
+        if (this.getOwner().equalsIgnoreCase("none")) this.setMachineEnabled(false);
+
         World wl = Bukkit.getServer().getWorld(data().getString("machines." + this.id + ".world"));
         if (wl == null) {
             Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3JadGens &7>> &eThe &3&lMachine &eWith &b&lID &3" + this.id + " &eWas &c&lNot &b&lFound&e!"));
@@ -344,8 +413,49 @@ public class Machine {
                 }
                 meta.setLore(lore);
 
+                meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+
+                if (!JadGens.getInstance().getCompatibilityMode() && JadGens.getInstance().getConfig().getBoolean("machines." + this.type + ".dropItems.itemMeta.glow")) {
+                    meta.addEnchant(Enchantment.DIG_SPEED, 1, true);
+                    meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+                }
+
                 //set itemMeta
                 dropItem.setItemMeta(meta);
+            }
+
+
+            if (JadGens.getInstance().getConfig().getBoolean("machines." + this.type + ".dropItems.nbt.enabled")) {
+                NBTItem nbt = new NBTItem(dropItem);
+
+                for (String key : JadGens.getInstance().getConfig().getConfigurationSection("machines." + this.type + ".dropItems.nbt.booleans").getKeys(false)) {
+                    String nbtKey = JadGens.getInstance().getConfig().getString("machines." + this.type + ".dropItems.nbt.booleans." + key + ".key");
+                    boolean value = JadGens.getInstance().getConfig().getBoolean("machines." + this.type + ".dropItems.nbt.booleans." + key + ".value");
+
+                    if (nbtKey == null) continue;
+
+                    nbt.setBoolean(nbtKey, value);
+                }
+
+                for (String key : JadGens.getInstance().getConfig().getConfigurationSection("machines." + this.type + ".dropItems.nbt.integers").getKeys(false)) {
+                    String nbtKey = JadGens.getInstance().getConfig().getString("machines." + this.type + ".dropItems.nbt.integers." + key + ".key");
+                    int value = JadGens.getInstance().getConfig().getInt("machines." + this.type + ".dropItems.nbt.integers." + key + ".value");
+
+                    if (nbtKey == null) continue;
+
+                    nbt.setInteger(nbtKey, value);
+                }
+
+                for (String key : JadGens.getInstance().getConfig().getConfigurationSection("machines." + this.type + ".dropItems.nbt.strings").getKeys(false)) {
+                    String nbtKey = JadGens.getInstance().getConfig().getString("machines." + this.type + ".dropItems.nbt.strings." + key + ".key");
+                    String value = JadGens.getInstance().getConfig().getString("machines." + this.type + ".dropItems.nbt.strings." + key + ".value");
+
+                    if (nbtKey == null) continue;
+
+                    nbt.setString(nbtKey, value);
+                }
+
+                dropItem = nbt.getItem();
             }
 
             wl.dropItem(location, dropItem); //itemMeta
@@ -383,6 +493,8 @@ public class Machine {
      * force the machine to produce, no matter what, even if it has no fuel.
      */
     public void forceProduce() {
+        if (this.getOwner().equalsIgnoreCase("none")) this.setMachineEnabled(false);
+
         World wl = Bukkit.getServer().getWorld(data().getString("machines." + this.id + ".world"));
         if (wl == null) {
             Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3JadGens &7>> &eThe &3&lMachine &eWith &b&lID &3" + this.id + " &eWas &c&lNot &b&lFound&e!"));
@@ -423,6 +535,33 @@ public class Machine {
 
                 //set itemMeta
                 dropItem.setItemMeta(meta);
+            }
+
+            if (JadGens.getInstance().getConfig().getBoolean("machines." + this.type + "dropItems.nbt.enabled")) {
+                NBTItem nbt = new NBTItem(dropItem);
+
+                for (String key : JadGens.getInstance().getConfig().getConfigurationSection("machines." + this.type + ".dropItems.nbt.booleans").getKeys(false)) {
+                    String nbtKey = JadGens.getInstance().getConfig().getString("machines." + this.type + ".dropItems.nbt.booleans." + key + ".key");
+                    boolean value = JadGens.getInstance().getConfig().getBoolean("machines." + this.type + ".dropItems.nbt.booleans." + key + ".value");
+
+                    nbt.setBoolean(nbtKey, value);
+                }
+
+                for (String key : JadGens.getInstance().getConfig().getConfigurationSection("machines." + this.type + ".dropItems.nbt.integers").getKeys(false)) {
+                    String nbtKey = JadGens.getInstance().getConfig().getString("machines." + this.type + ".dropItems.nbt.integers." + key + ".key");
+                    int value = JadGens.getInstance().getConfig().getInt("machines." + this.type + ".dropItems.nbt.integers." + key + ".value");
+
+                    nbt.setInteger(nbtKey, value);
+                }
+
+                for (String key : JadGens.getInstance().getConfig().getConfigurationSection("machines." + this.type + ".dropItems.nbt.strings").getKeys(false)) {
+                    String nbtKey = JadGens.getInstance().getConfig().getString("machines." + this.type + ".dropItems.nbt.strings." + key + ".key");
+                    String value = JadGens.getInstance().getConfig().getString("machines." + this.type + ".dropItems.nbt.strings." + key + ".value");
+
+                    nbt.setString(nbtKey, value);
+                }
+
+                dropItem = nbt.getItem();
             }
 
             wl.dropItem(location, dropItem); //itemMeta
@@ -479,7 +618,7 @@ public class Machine {
     public Integer getDropsMax() { return this.dropsMax; }
     public boolean isMachineEnabled() { return this.machineEnabled; }
     public void setMachineEnabled(boolean isEnabled) { this.machineEnabled = isEnabled; data().set("machines." + this.id + ".enabled", isEnabled); }
-    public void setDropsRemaining(Integer drops) { this.dropsRemaining = drops; data().set("machines." + this.id + ".drops", drops); }
+    public void setDropsRemaining(Integer drops) { this.dropsRemaining = drops; data().set("machines." + this.id + ".drops", drops); JadGens.getInstance().getDataFile().saveData(); JadGens.getInstance().getDataFile().reloadData(); }
 
     public String getDisplayName() { return ChatColor.translateAlternateColorCodes('&', JadGens.getInstance().getConfig().getString("machines." + this.getType() + ".displayName")); }
 
