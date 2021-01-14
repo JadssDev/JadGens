@@ -71,7 +71,7 @@ public class UpdateChecker {
                     new BukkitRunnable() {
                         @Override
                         public void run() {
-                            Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3JadGens &7>> &eRunning &b&llatest &c(secret) &3version&e!"));
+                            Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3JadGens &7>> &eRunning &b&llatest &c(secret/development) &3version&e!"));
                         }
                     }.runTaskLaterAsynchronously(JadGens.getInstance(), 10 * 20);
                 } else if (outdated == 2) {
@@ -90,10 +90,16 @@ public class UpdateChecker {
 
     private List<Integer> getNumbers(char[] line) {
         List<Integer> list = new ArrayList<>();
+        boolean lastDefined = false;
         for (char c : line) {
             try {
-                list.add(Integer.parseInt(String.valueOf(c)));
-            } catch(NumberFormatException ignored) { }
+                if (!lastDefined) {
+                    list.add(Integer.parseInt(String.valueOf(c)));
+                } else {
+                    list.set(list.size()-1, Integer.parseInt(list.get(list.size() - 1) + String.valueOf(c)));
+                }
+                lastDefined = true;
+            } catch(NumberFormatException ignored) { lastDefined = false; }
         }
         return list;
     }
