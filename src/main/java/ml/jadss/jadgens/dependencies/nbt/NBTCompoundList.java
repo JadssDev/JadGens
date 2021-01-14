@@ -1,10 +1,9 @@
 package ml.jadss.jadgens.dependencies.nbt;
 
-import org.apache.commons.lang.NotImplementedException;
-
 import ml.jadss.jadgens.dependencies.nbt.utils.MinecraftVersion;
 import ml.jadss.jadgens.dependencies.nbt.utils.nmsmappings.ClassWrapper;
 import ml.jadss.jadgens.dependencies.nbt.utils.nmsmappings.ReflectionMethod;
+import org.apache.commons.lang.NotImplementedException;
 
 /**
  * {@link NBTListCompound} implementation for NBTLists

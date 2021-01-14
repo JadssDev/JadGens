@@ -1,10 +1,10 @@
 package ml.jadss.jadgens.dependencies.nbt.utils;
 
+import ml.jadss.jadgens.dependencies.nbt.NbtApiException;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-
-import ml.jadss.jadgens.dependencies.nbt.NbtApiException;
 
 public final class ReflectionUtil {
 

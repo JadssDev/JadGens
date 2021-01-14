@@ -18,6 +18,9 @@ machineGui:
     lore:
       - "&eYour &3&lmachine &ehas:"
       - "&b%remaining% &eout of &b%max% &3Drops &bremaining&e!"
+      - "&e"
+      - "&eClick with the &3&lfuels &ein this &bitem &eto"
+      - "&b&lfuel &ethis &3&lmachine&e!"
     #lore used when the machine doesn't need fuel to continue producing!
     infiniteLore:
       - "&eYour &3&lmachine &ehas:"
@@ -152,8 +155,9 @@ machineLimiter:
       amount: -1 # -1 = infinite.
 
 machinesConfig:
+
   #In which delay should the machines produce?
-  machinesDelay: 10
+  machinesDelay: 15
 
   #Should the machines which are destroyed, be removed? (highly suggest not disabling this!)
   autoDestroy: true
@@ -168,82 +172,16 @@ machinesConfig:
 
   #Do you want to log tasks about removal of machines to the console? (kinda recommended)
   logRemovalTasks: true
-  #what about the speed of the removal task? what should it be? but notice that making this value too slow may be annoying! put it a higher value that will not cause a lag spike.
+  #what about the speed of the removal task? what should it be? but notice that making this value too high may be annoying! put it a higher value that will not cause a lag spike.
   removalTasksSpeed: 150
 
   #Do you want to prevent people from using Machines or Fuels to craft items?
   preventCrafting: true
 
 machines:
+
   #the value below is the ID of the machine!
   1:
-    shop:
-      #should this machine be displayed on shop?
-      displayOnShop: true
-      #price of the machine? the currency can be configured in the "shop" section.
-      price: 150
-      #every currency supported is in the shop category up top.
-      currency: EXP
-      #in which slot of the shop will this item be displayed? 1 to 27
-      slot: 1
-
-    #info about the machine
-    displayName: "&b&lDiamond &eGen"
-    lore:
-      - "&eThis is a &b&ldiamond machine&e!"
-      - "&eIt gives you &2money&e!"
-    glow: true
-    MachineBlock:
-      material: DIAMOND_BLOCK
-      #use "damage" on glass panels or stuff like that.
-      damage: 0
-
-    #fuel options:
-    fuels:
-      #does the machine need fuel to produce? (making this false makes the machine not ACCEPT fuel)
-      needsFuelToProduce: false
-      maxFuel: 100
-      fuelsAccepted:
-        #enabling this will make a machine only accept specific fuels.
-        enabled: false
-        types:
-          - 1
-
-    #when the machine produces you can enable what the machines does.
-    dropItems:
-      enabled: true
-      material: DIAMOND
-      itemMeta:
-        #wanna enable item meta to use lore and display name?
-        enabled: true
-        displayName: "&bDiamond"
-        lore:
-          - "&eThis is a &b&lDiamond"
-          - "&ecreated by a &b&lMachine&e!"
-      damage: 0
-      amount: 1
-    #----Commands Stuff---- (they are run by the console!) [only when the player is online!]
-    commands:
-      enabled: false
-      commands:
-        - "/eco give %owner% 5"
-        - "/say %owner% has gained 5$"
-    #----Economy Stuff----
-    economy:
-      enabled: true
-      #how much to give of economy to the player?
-      give: 1000
-    #----Points Stuff----
-    points:
-      enabled: false
-      #how much to give of economy to the player?
-      give: 10
-    #----EXP Stuff---- (can only be executed if the player is "ONLINE").
-    exp:
-      enabled: false
-      givelevels: 1
-
-  2:
     shop:
       #should this machine be displayed on shop?
       displayOnShop: true
@@ -252,13 +190,13 @@ machines:
       #every currency supported is in the shop category up top.
       currency: EXP
       #in which slot of the shop will this item be displayed? 1 to 27
-      slot: 2
+      slot: 1
 
     #info about the machine
-    displayName: "&b&lXP &3Gen"
+    displayName: "&a&lLevel &3Gen"
     lore:
-      - "&eThis is a &6&lGold &b&lMachine&e!"
-      - "&eIt gives you &35 &bLevel!"
+      - "&eThis is a &a&lLevel &b&lMachine&e!"
+      - "&eIt gives you &35 &bLevels &eof &3XP&e!"
     glow: true
     MachineBlock:
       material: GOLD_BLOCK
@@ -269,23 +207,39 @@ machines:
     fuels:
       #does the machine need fuel to produce? (making this false makes the machine not ACCEPT fuel)
       needsFuelToProduce: true
-      maxFuel: 50
+      maxFuel: 150 #self explanatory...
       fuelsAccepted:
         #enabling this will make a machine only accept specific fuels.
         enabled: false
-        types: [1, 2]
+        types: [ 1, 2 ]
 
     #when the machine produces you can enable what the machines does.
     dropItems:
       enabled: false
       material: GOLD_INGOT
+      #NBT is used by plugins to check if it is a item or stuff like that.
+      nbt:
+        enabled: false
+        booleans: #booleans only have 2 values, true or false.
+          1:
+            key: "Boolean"
+            value: true
+        integers: #integers have many values, but they are numerals.
+          1:
+            key: "Integer"
+            value: 123
+        strings: #String is your normal text....
+          1:
+            key: "String"
+            value: "This is some text."
       itemMeta:
         #wanna enable item meta to use lore and display name?
         enabled: true
         displayName: "&6&lGold"
         lore:
           - "&eThis is &b&lGold"
-          - "&ecreated by a &b&lMachine &etype 2!"
+          - "&ecreated by a &b&lMachine &etype 1!"
+        glow: false
       damage: 0
       amount: 1
     #----Commands Stuff---- (they are run by the console!) [only when the player is online!]
@@ -301,13 +255,269 @@ machines:
       give: 1000
     #----Points Stuff----
     points:
-      enabled: true
+      enabled: false
       #how much to give of economy to the player?
       give: 10
     #----EXP Stuff---- (can only be executed if the player is "ONLINE").
     exp:
       enabled: true
       givelevels: 5
+
+  #the value below is the ID of the machine!
+  2:
+    shop:
+      #should this machine be displayed on shop?
+      displayOnShop: true
+      #price of the machine? the currency can be configured in the "shop" section.
+      price: 150
+      #every currency supported is in the shop category up top.
+      currency: EXP
+      #in which slot of the shop will this item be displayed? 1 to 27
+      slot: 9
+
+    #info about the machine
+    displayName: "&b&lFuel &3Gen"
+    lore:
+      - "&eThis is a &a&lFuel &b&lMachine&e!"
+      - "&eIt gives you &3Fuels &eto use on your &b&lItem generators&e!"
+    glow: true
+    MachineBlock:
+      material: EMERALD_BLOCK
+      #use "damage" on glass panels or stuff like that.
+      damage: 0
+
+    #fuel options:
+    fuels:
+      #does the machine need fuel to produce? (making this false makes the machine not ACCEPT fuel)
+      needsFuelToProduce: true
+      maxFuel: 150 #self explanatory...
+      fuelsAccepted:
+        #enabling this will make a machine only accept specific fuels.
+        enabled: false
+        types: [ 1, 2 ]
+
+    #when the machine produces you can enable what the machines does.
+    dropItems:
+      enabled: true
+      material: GOLD_INGOT
+      #NBT is used by plugins to check if it is a item or stuff like that.
+      nbt:
+        enabled: true
+        booleans: #booleans only have 2 values, true or false.
+          1:
+            key: "JadGens_fuel"
+            value: true
+        integers: #integers have many values, but they are numerals.
+          1:
+            key: "JadGens_fuelType"
+            value: 9
+        strings: #String is your normal text....
+          1:
+            key: null #like this, the key is nulled, and it wont be used.
+            value: null
+      itemMeta:
+        #wanna enable item meta to use lore and display name?
+        enabled: true
+        displayName: "&6&lItem generator &bFuel"
+        lore:
+          - "&eThis &3&lfuel &egives your &b&lItem Generator machines"
+          - "&32 &3Drops&e!"
+          - "&e"
+          - "&bRight-click &eto &a&luse&e!"
+          - "&b&lLeft-click &eto &a&lMass &buse&e!"
+        glow: true
+      damage: 0
+      amount: 1
+    #----Commands Stuff---- (they are run by the console!) [only when the player is online!]
+    commands:
+      enabled: false
+      commands:
+        - "/eco give %owner% 5"
+        - "/say %owner% has gained 5$"
+    #----Economy Stuff----
+    economy:
+      enabled: false
+      #how much to give of economy to the player?
+      give: 1000
+    #----Points Stuff----
+    points:
+      enabled: false
+      #how much to give of economy to the player?
+      give: 10
+    #----EXP Stuff---- (can only be executed if the player is "ONLINE").
+    exp:
+      enabled: true
+      givelevels: 5
+
+  #the value below is the ID of the machine!
+  3:
+    shop:
+      #should this machine be displayed on shop?
+      displayOnShop: true
+      #price of the machine? the currency can be configured in the "shop" section.
+      price: 5
+      #every currency supported is in the shop category up top.
+      currency: EXP
+      #in which slot of the shop will this item be displayed? 1 to 27
+      slot: 10
+
+    #info about the machine
+    displayName: "&b&lDiamond &3Gen"
+    lore:
+      - "&eThis is a &b&ldiamond machine&e!"
+      - "&eIt gives you &2money&e!"
+      - "&e"
+      - "&eNeeds &b&lSpecialized &3Fuel&e."
+    glow: true
+    MachineBlock:
+      material: DIAMOND_BLOCK
+      #use "damage" on glass panels or stuff like that.
+      damage: 0
+
+    #fuel options:
+    fuels:
+      #does the machine need fuel to produce? (making this false makes the machine not ACCEPT fuel)
+      needsFuelToProduce: true
+      maxFuel: 20
+      fuelsAccepted:
+        #enabling this will make a machine only accept specific fuels.
+        enabled: true
+        types: [ 9 ]
+
+    #when the machine produces you can enable what the machines does.
+    dropItems:
+      enabled: true
+      material: DIAMOND
+      #NBT is used by plugins to check if it is a item or stuff like that.
+      nbt:
+        enabled: false
+        booleans: #booleans only have 2 values, true or false.
+          1:
+            key: "Boolean"
+            value: true
+        integers: #integers have many values, but they are numerals.
+          1:
+            key: "Integer"
+            value: 123
+        strings: #String is your normal text....
+          1:
+            key: "String"
+            value: "This is some text."
+      itemMeta:
+        #wanna enable item meta to use lore and display name?
+        enabled: true
+        displayName: "&b&lDiamond"
+        lore:
+          - "&eCreated by a &b&lMachine&e!"
+        glow: true
+      damage: 0
+      amount: 5
+    #----Commands Stuff---- (they are run by the console!) [only when the player is online!]
+    commands:
+      enabled: false
+      commands:
+        - "/eco give %owner% 5"
+        - "/say %owner% has gained 5$"
+    #----Economy Stuff----
+    economy:
+      enabled: false
+      #how much to give of economy to the player?
+      give: 1500
+    #----Points Stuff----
+    points:
+      enabled: false
+      #how much to give of economy to the player?
+      give: 10
+    #----EXP Stuff---- (can only be executed if the player is "ONLINE").
+    exp:
+      enabled: false
+      givelevels: 1
+
+
+  #the value below is the ID of the machine!
+  4:
+    shop:
+      #should this machine be displayed on shop?
+      displayOnShop: true
+      #price of the machine? the currency can be configured in the "shop" section.
+      price: 10
+      #every currency supported is in the shop category up top.
+      currency: EXP
+      #in which slot of the shop will this item be displayed? 1 to 27
+      slot: 11
+
+    #info about the machine
+    displayName: "&6&lLeather &3Gen"
+    lore:
+      - "&eThis is a &6&lLeather &b&lMachine&e!"
+      - "&eIt gives you &3Leather&e!"
+      - "&e"
+      - "&eNeeds &b&lSpecialized &3Fuel&e."
+    glow: true
+    MachineBlock:
+      material: IRON_BLOCK
+      #use "damage" on glass panels or stuff like that.
+      damage: 0
+
+    #fuel options:
+    fuels:
+      #does the machine need fuel to produce? (making this false makes the machine not ACCEPT fuel)
+      needsFuelToProduce: true
+      maxFuel: 50 #self explanatory...
+      fuelsAccepted:
+        #enabling this will make a machine only accept specific fuels.
+        enabled: true
+        types: [9]
+
+    #when the machine produces you can enable what the machines does.
+    dropItems:
+      enabled: true
+      material: LEATHER
+      #NBT is used by plugins to check if it is a item or stuff like that.
+      nbt:
+        enabled: true
+        booleans: #booleans only have 2 values, true or false.
+          1:
+            key: "JadGens_fuel"
+            value: true
+        integers: #integers have many values, but they are numerals.
+          1:
+            key: "JadGens_fuelType"
+            value: 9
+        strings: #String is your normal text....
+          1:
+            key: null #like this, the key is nulled, and it wont be used.
+            value: null
+      itemMeta:
+        #wanna enable item meta to use lore and display name?
+        enabled: true
+        displayName: "&6&lLeather"
+        lore:
+          - "&eCreated by a &b&lMachine&e!"
+        glow: true
+      damage: 0
+      amount: 15
+    #----Commands Stuff---- (they are run by the console!) [only when the player is online!]
+    commands:
+      enabled: false
+      commands:
+        - "/eco give %owner% 5"
+        - "/say %owner% has gained 5$"
+    #----Economy Stuff----
+    economy:
+      enabled: false
+      #how much to give of economy to the player?
+      give: 1000
+    #----Points Stuff----
+    points:
+      enabled: false
+      #how much to give of economy to the player?
+      give: 10
+    #----EXP Stuff---- (can only be executed if the player is "ONLINE").
+    exp:
+      enabled: false
+      givelevels: 5
+
 
 
 fuels:
@@ -322,17 +532,20 @@ fuels:
       currency: EXP
       #in which slot of the shop will this item be displayed? 1 to 27
       slot: 1
-    displayName: "&a&lEmerald &bFuel"
+
+    displayName: "&b&lDiamond &bFuel"
     lore:
       - "&eThis &3&lfuel &egives your &b&lmachine"
       - "&310 &3Drops&e!"
       - "&e"
-      - "&3Shift &bRight-click &eto &a&luse&e!"
-    glow: true
+      - "&bRight-click &eto &a&luse&e!"
+      - "&b&lShift &e+ &bRight-click &eto &a&lMass use&e!"
+    glow: false
     item:
-      material: GOLD_INGOT
+      material: DIAMOND
       damage: 0 #use "damage" on glass panels or stuff like that.
     drops: 10 #How many drops does this fuel give to the machine?
+
   #the value below is the ID of the fuel!
   2:
     shop:
@@ -344,15 +557,40 @@ fuels:
       currency: EXP
       #in which slot of the shop will this item be displayed? 1 to 27
       slot: 2
-    displayName: "&3Super &a&lEmerald &bFuel"
+
+    displayName: "&a&lEmerald &bFuel"
     lore:
       - "&eThis &3&lfuel &egives your &b&lmachine"
       - "&320 &3Drops&e!"
-      - "&aBetter &ethen the &a&lEmerald &bFuel&e!"
       - "&e"
-      - "&3Shift &bRight-click &eto &a&luse&e!"
+      - "&bRight-click &eto &a&luse&e!"
+      - "&b&lShift &e+ &bRight-click &eto &a&lMass use&e!"
+    glow: false
+    item:
+      material: EMERALD
+      damage: 0 #use "damage" on glass panels or stuff like that.
+    drops: 20 #How many drops does this fuel give to the machine?
+
+  #the value below is the ID of the fuel!
+  9:
+    shop:
+      #should this machine be displayed on shop?
+      displayOnShop: false
+      #price of the machine? the currency can be configured in the "shop" section.
+      price: 0
+      #every currency supported is in the shop category up top.
+      currency: EXP
+      #in which slot of the shop will this item be displayed? 1 to 27
+      slot: -1
+    displayName: "&6&lItem generator &bFuel"
+    lore:
+      - "&eThis &3&lfuel &egives your &b&lItem Generator machines"
+      - "&32 &3Drops&e!"
+      - "&e"
+      - "&bRight-click &eto &a&luse&e!"
+      - "&b&lLeft-click &eto &a&lMass &buse&e!"
     glow: true
     item:
       material: GOLD_INGOT
       damage: 0 #use "damage" on glass panels or stuff like that.
-    drops: 20 #How many drops does this fuel give to the machine?
+    drops: 2 #How many drops does this fuel give to the machine?

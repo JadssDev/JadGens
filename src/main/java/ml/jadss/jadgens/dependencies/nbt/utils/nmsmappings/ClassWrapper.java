@@ -1,9 +1,10 @@
 package ml.jadss.jadgens.dependencies.nbt.utils.nmsmappings;
 
-import java.util.logging.Level;
+import ml.jadss.jadgens.dependencies.nbt.utils.MinecraftVersion;
 import org.bukkit.Bukkit;
 
-import ml.jadss.jadgens.dependencies.nbt.utils.MinecraftVersion;
+import java.util.logging.Level;
+
 import static ml.jadss.jadgens.dependencies.nbt.utils.MinecraftVersion.getLogger;
 
 /**

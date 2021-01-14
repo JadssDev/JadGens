@@ -1,5 +1,9 @@
 package ml.jadss.jadgens.dependencies.nbt;
 
+import ml.jadss.jadgens.dependencies.nbt.utils.MinecraftVersion;
+import ml.jadss.jadgens.dependencies.nbt.utils.nmsmappings.ReflectionMethod;
+import org.bukkit.inventory.ItemStack;
+
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.Arrays;
@@ -8,11 +12,6 @@ import java.util.UUID;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-
-import org.bukkit.inventory.ItemStack;
-
-import ml.jadss.jadgens.dependencies.nbt.utils.MinecraftVersion;
-import ml.jadss.jadgens.dependencies.nbt.utils.nmsmappings.ReflectionMethod;
 
 /**
  * Base class representing NMS Compounds. For a standalone implementation check
