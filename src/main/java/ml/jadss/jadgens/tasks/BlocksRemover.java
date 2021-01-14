@@ -15,6 +15,7 @@ public class BlocksRemover {
     private BukkitTask task;
     private int speed = 10;
     private List<Block> blocks = new ArrayList<>();
+    private boolean SUPERMODE = false;
 
     private void startTask() {
         if (this.blocks.size() == 0) { stopTask("BlocksIs0"); return; }
@@ -44,6 +45,8 @@ public class BlocksRemover {
         if (JadGens.getInstance().getConfig().getBoolean("machinesConfig.logRemovalTasks"))
             if (reason.equalsIgnoreCase("BlocksIs0"))
                 Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3&lJadGens&e(&c&lRemoval&e) &7>> &eTask &c&lStopped&e. &e(&bBlocks to purge is 0&e)"));
+            else if (reason.equalsIgnoreCase("ShuttingDown"))
+                Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3&lJadGens&e(&c&lRemoval&e) &7>> &eTask &c&lStopped&e. &e(&bServer is shutting down.&e)"));
             else
                 Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3&lJadGens&e(&c&lRemoval&e) &7>> &eTask &c&lStopped&e. &e(&bNo specific reason&e)"));
     }
@@ -51,7 +54,7 @@ public class BlocksRemover {
     public void updateStatus(List<Block> list, boolean warn) {
         if (list != null) this.blocks.addAll(list);
 
-        calculateSpeed();
+        if (!SUPERMODE) calculateSpeed();
 
         if (task != null) return;
         else if (this.blocks.size() != 0) startTask();
@@ -64,14 +67,38 @@ public class BlocksRemover {
     private void calculateSpeed() {
         if (this.blocks.size() < 10) this.speed = 5;
         else if (this.blocks.size() < 50) this.speed = this.blocks.size() / 2;
-        else if (this.blocks.size() < 100) this.speed = this.blocks.size() / 4;
-        else if (this.blocks.size() < 500) this.speed = this.blocks.size() / 8;
-        else if (this.blocks.size() < 1000) this.speed = this.blocks.size() / 15;
-        else if (this.blocks.size() < 2000) this.speed = this.blocks.size() / 25;
+        else if (this.blocks.size() < 100) this.speed = this.blocks.size() / 3;
+        else if (this.blocks.size() < 500) this.speed = this.blocks.size() / 5;
+        else if (this.blocks.size() < 1000) this.speed = this.blocks.size() / 10;
+        else if (this.blocks.size() < 2000) this.speed = this.blocks.size() / 20;
         else this.speed = 200;
 
         assert false;
         if (this.speed == 0 || this.speed == 1) this.speed = 10;
+    }
+
+    public void goSuperSpeedBrrrrrrrrrrrrr() {
+        if (task != null) {
+            stopTask("ShuttingDown");
+            this.speed = 99999999;
+
+            Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3&lJadGens &7>> &3&lShutdown asked, Interrupting main thread to finish blocks remover."));
+            Thread.currentThread().interrupt();
+
+            while(this.blocks.size() != 0) {
+                Block block = null;
+                try { block = this.blocks.get(0); } catch(IndexOutOfBoundsException ignored) { break; }
+                if (block != null) block.setType(Material.AIR);
+                this.blocks.remove(block);
+            }
+
+            try {
+                Thread.sleep(0);
+                Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3&lJadGens &7>> &eResuming execution."));
+            } catch(InterruptedException ex) {
+                Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3&lJadGens &7>> &eReceived InterruptedException, resuming execution."));
+            }
+        }
     }
 
     public List<Block> getBlocks() { return blocks; }

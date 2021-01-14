@@ -7,7 +7,6 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -79,44 +78,33 @@ public class MachinePurger {
                     continue;
                 }
 
-                int total = count.getOrDefault(machine.getType(), 0);
-                count.put(machine.getType(), total + 1);
+                count.put(machine.getType(), count.getOrDefault(machine.getType(), 0) + 1);
 
                 if (machine.getId() == null) return;
-
                 data().set("machines." + machine.getId(), null);
 
                 JadGens.getInstance().getBlocksRemover().getBlocks().add(machine.getLocation().getBlock());
                 machines.remove(machine);
             }
-        }, 40, 60);
+        }, 5, 20);
 
         playerMachinePurger2 = Bukkit.getScheduler().runTaskTimer(JadGens.getInstance(), () -> {
+
             if (playerMachinePurger == null) {
-                if (giveBack) {
-                    List<ItemStack> types = new ArrayList<>();
-                    for (int ID : count.keySet()) {
-                        types.add(new Machine().createItem(ID));
-                    }
-
-                    for(int type : count.keySet()) {
-                        ItemStack item = types.get(type - 1);
-                        item.setAmount(count.get(type));
-                        if (Bukkit.getOfflinePlayer(player).isOnline()) Bukkit.getPlayer(player).getLocation().getWorld().dropItemNaturally(Bukkit.getPlayer(player).getLocation(), item);
-                    }
-
-                    Bukkit.getPlayer(player).sendMessage(ChatColor.translateAlternateColorCodes('&', JadGens.getInstance().getLangFile().lang().getString("messages.actionsMessages.purgedOwnMachines")));
+                for (int type : count.keySet()) {
+                    ItemStack item = new Machine().createItem(type);
+                    item.setAmount(count.get(type));
+                    if (Bukkit.getOfflinePlayer(player).isOnline())
+                        Bukkit.getPlayer(player).getLocation().getWorld().dropItemNaturally(Bukkit.getPlayer(player).getLocation(), item);
                 }
-                JadGens.getInstance().getDataFile().saveData();
-                JadGens.getInstance().getDataFile().reloadData();
 
-                JadGens.getInstance().getBlocksRemover().updateStatus(null, false);
-
+                Bukkit.getPlayer(player).sendMessage(ChatColor.translateAlternateColorCodes('&', JadGens.getInstance().getLangFile().lang().getString("messages.actionsMessages.purgedOwnMachines")));
                 playerMachinePurger2.cancel();;
                 playerMachinePurger2 = null;
                 return;
             }
-        }, 80, 120);
+
+        }, 10, 8);
     }
 
     public boolean removeIfAir(String id) {
