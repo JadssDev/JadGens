@@ -71,7 +71,7 @@ public class LangFile {
 
         //give Messages
         lang().addDefault("messages.giveMessages.permission", "JadGens.give");
-        lang().addDefault("messages.giveMessages.usage", "&cBad Usage! &eUse: &3&3/JadGens &bgive &b&l<fuel/machine> &a<ID> &a<Player>");
+        lang().addDefault("messages.giveMessages.usage", "&cBad Usage! &eUse: &3&3/JadGens &bgive &b&l<fuel/machine> &a<Type> &a<Player> &b<amount> &e[&b&lSilent|ComingSoon&e]");
         lang().addDefault("messages.giveMessages.givenMachine", "&eYou have been &bgiven &ea &3&lmachine&e!");
         lang().addDefault("messages.giveMessages.givenFuel", "&eYou have been &bgiven &ea &3&lFuel&e!");
         lang().addDefault("messages.giveMessages.idNotFound", "&eThe &3&lID &aspecified &cdoesn't &bexist&e!");
@@ -119,15 +119,20 @@ public class LangFile {
         lang().addDefault("messages.actionsMessages.enableOwnMachinesPermission", "JadGens.actions.enableOwn");
         lang().addDefault("messages.actionsMessages.enabledOwnMachines", "&eAll your &3&lmachines &ehave been &a&lenabled&e!");
 
-        //machines messages //&eYou've &b&ltoggled &eyour &3machine &3%enabled%&e.
+        //machines messages
         lang().addDefault("messages.machinesMessages.placed", "&eYou've &aplaced &ea &3&lMachine&e!");
         lang().addDefault("messages.machinesMessages.broken", "&eYou've &abroke &ea &3&lMachine&e!");
         lang().addDefault("messages.machinesMessages.limitReached", "&eYou &c&lcannot &bplace &amore &3&lMachines!");
         lang().addDefault("messages.machinesMessages.notTheOwner", "&eYou're &cnot &ethe &3&lowner &eof this &b&lmachine&e!");
         lang().addDefault("messages.machinesMessages.machineToggled", "&eYou've &b&ltoggled &eyour &3machine &3%enabled%&e.");
+        lang().addDefault("messages.machinesMessages.oldMachine", "&eThis &3&lmachine &eis &bold &eand is no longer &b&lsupported&e.");
+        lang().addDefault("messages.machinesMessages.clickWithFuel", "&ePress with &3&lfuels &eat this &3&lItem &eto &b&lfuel &ethis &3machine&e!");
+        lang().addDefault("messages.machinesMessages.noOwnerInGui", "&b&lNone");
+        lang().addDefault("messages.machinesMessages.noOwner", "&eThis &3&lmachine &ehas &cno owner&e, so you &c&lcannot &b&lchange &eit's &3&lstatus&e.");
 
         //fuel Messages
         lang().addDefault("messages.fuelMessages.used", "&eYou've used &b&lfuel &eon your &3&lmachine&e!");
+        lang().addDefault("messages.fuelMessages.usedMultiple", "&eYou've used &3%many% &b&lfuel &eon your &3&lmachine&e!");
         lang().addDefault("messages.fuelMessages.machineNotAcceptingFuel", "&eThis &3&lmachine &edoesn't use &bfuel&e!");
         lang().addDefault("messages.fuelMessages.notAMachine", "&eThis is &c&lnot &ea &3&lmachine&e!");
         lang().addDefault("messages.fuelMessages.doesntAcceptMoreFuel", "&eThis &3&lmachine &ereached the &a&lmax &b&lFuel&e!");
