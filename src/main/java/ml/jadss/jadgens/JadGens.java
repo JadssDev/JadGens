@@ -111,9 +111,9 @@ public class JadGens extends JavaPlugin {
 
         //Create the Scheduler
         if (getSkyblockMode())
-            producer = new ProduceRunnable().runTaskTimer(this, 20 * 30, getConfig().getInt("machinesConfig.machinesDelay") * 20);
+            producer = new ProduceRunnable().runTaskTimer(this, 20 * 30, getConfig().getInt("machinesConfig.machinesDelay") * 20L);
         else
-            producer = new ProduceRunnable().runTaskTimer(this, 20L, getConfig().getInt("machinesConfig.machinesDelay") * 20);
+            producer = new ProduceRunnable().runTaskTimer(this, 20L, getConfig().getInt("machinesConfig.machinesDelay") * 20L);
 
         //Register everything
         registerStuff();
@@ -144,6 +144,9 @@ public class JadGens extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        //SuperSpeed.
+        this.getBlocksRemover().goSuperSpeedBrrrrrrrrrrrrr();
+
         //Stop producer
         producer.cancel();
 
@@ -236,7 +239,7 @@ public class JadGens extends JavaPlugin {
                         return false;
                     }
                 }
-                if (getConfig().getString("machines." + key + ".shop.currency").equalsIgnoreCase("POINTS")) {
+                if (getConfig().getString("fuels." + key + ".shop.currency").equalsIgnoreCase("POINTS")) {
                     if (!hookedPlayerPoints) {
                         Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3JadGens &7>> &eCouldn't &b&lstartup &ebecause, a &3machine currency &eis &a\"POINTS\"&e, but &3&lPlayerPoints &cwasn't &afound&e!"));
                         return false;
