@@ -52,7 +52,7 @@ public class ActionsCommand {
                         if (sender.hasPermission(lang().getString("messages.actionsMessages.purgeOwnMachinesPermission"))) {
                             MachineActions acts = new MachineActions();
                             acts.toMachinesFrom(action, ((Player) sender).getUniqueId(), true);
-                            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', lang().getString("messages.actionsMessages.purgeInQueue")));
+                            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', lang().getString("messages.actionsMessages.purgePutInQueue")));
                         } else {
                             sender.sendMessage(ChatColor.translateAlternateColorCodes('&', lang().getString("messages.noPermission")));
                         }
