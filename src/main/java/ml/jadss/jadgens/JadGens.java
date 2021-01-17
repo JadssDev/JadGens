@@ -23,6 +23,11 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
+
 public class JadGens extends JavaPlugin {
 
     //Files
@@ -49,6 +54,11 @@ public class JadGens extends JavaPlugin {
     private ParticleType particleType;
     //Block remover system
     private BlocksRemover blocksRemover;
+    //List with players purging machines.
+    private final List<UUID> playersPurgingMachines = new ArrayList<>();
+    //List with players who disconnected while purging machines.
+    private final HashMap<UUID, HashMap<Integer, Integer>> playersWhoDisconnectedWhilePurgingMachines = new HashMap<>();
+
 
     @Override
     public void onEnable() {
@@ -313,6 +323,10 @@ public class JadGens extends JavaPlugin {
     public void setParticleType(ParticleType type) { particleType = type; }
     //Block remover system
     public BlocksRemover getBlocksRemover() { return blocksRemover; }
+    //List with players purging machines.
+    public List<UUID> getPlayersPurgingMachines() { return playersPurgingMachines; }
+    //People who disconnected while purging machines.
+    public HashMap<UUID, HashMap<Integer, Integer>> getPlayersWhoDisconnectedWhilePurgingMachines() { return playersWhoDisconnectedWhilePurgingMachines; }
 
     //Lang file
     protected FileConfiguration lang() { return JadGens.getInstance().getLangFile().lang(); }
