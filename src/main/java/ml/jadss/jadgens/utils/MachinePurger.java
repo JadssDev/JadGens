@@ -15,9 +15,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class MachinePurger {
 
     private int speed = JadGens.getInstance().getConfig().getInt("machinesConfig.removalTasksSpeed");
-    private BukkitTask globalMachinePurger = null;
-    private BukkitTask playerMachinePurger = null;
-    private BukkitTask playerMachinePurger2 = null;
+    private BukkitTask globalPurger = null;
+    private BukkitTask playerPurger = null;
+    private BukkitTask playerGiveBack = null;
 
     public MachinePurger() { return; }
 
@@ -27,14 +27,14 @@ public class MachinePurger {
 
         List<Machine> machines = new MachineLookup().getAllMachines();
 
-        globalMachinePurger = Bukkit.getScheduler().runTaskTimer(JadGens.getInstance(), () -> {
+        globalPurger = Bukkit.getScheduler().runTaskTimer(JadGens.getInstance(), () -> {
             for (int i = 0; i < speed; i++) {
                 Machine machine = null;
-                try { machine = machines.get(0); } catch (IndexOutOfBoundsException ex) { JadGens.getInstance().getBlocksRemover().updateStatus(null, false); JadGens.getInstance().getDataFile().saveData(); globalMachinePurger.cancel(); return; }
+                try { machine = machines.get(0); } catch (IndexOutOfBoundsException ex) { JadGens.getInstance().getBlocksRemover().updateStatus(null, false); JadGens.getInstance().getDataFile().saveData(); globalPurger.cancel(); return; }
                 if (machine == null || machine.getId() == null) {
                     JadGens.getInstance().getBlocksRemover().updateStatus(null, false);
                     JadGens.getInstance().getDataFile().saveData();
-                    globalMachinePurger.cancel();
+                    globalPurger.cancel();
                     return;
                 }
 
@@ -57,21 +57,22 @@ public class MachinePurger {
     }
 
 
-    /**
-     * Remove player's machines (and gives a count of how many machines were removed.)
-     *
-     * @param player player to remove the machines
-     * @param giveBack should we give back the machines?
-     */
     public void purgeMachines(UUID player, boolean giveBack) {
+
+        if (Bukkit.getOfflinePlayer(player).isOnline() && JadGens.getInstance().getPlayersPurgingMachines().contains(player)) {
+            Bukkit.getPlayer(player).sendMessage(ChatColor.translateAlternateColorCodes('&', JadGens.getInstance().getLangFile().lang().getString("messages.actionsMessages.alreadyInQueue")));
+            return;
+        }
+
+        JadGens.getInstance().getPlayersPurgingMachines().add(player);
         HashMap<Integer, Integer> count = new HashMap<>();
         List<Machine> machines = new MachineLookup().getPlayerMachines(player);
 
-        playerMachinePurger = Bukkit.getScheduler().runTaskTimer(JadGens.getInstance(), () -> {
+        playerPurger = Bukkit.getScheduler().runTaskTimer(JadGens.getInstance(), () -> {
             for (int i = 0; i < this.speed; i++) {
-                if (machines.size() == 0) { playerMachinePurger.cancel(); playerMachinePurger = null; return; }
+                if (machines.size() == 0) { playerPurger.cancel();playerPurger = null;return; }
                 Machine machine = null;
-                try { machine = machines.get(0); } catch(IndexOutOfBoundsException ignored) { playerMachinePurger.cancel(); playerMachinePurger = null; break; }
+                try { machine = machines.get(0); } catch (IndexOutOfBoundsException ignored) { playerPurger.cancel();playerPurger = null;break; }
 
                 if (machine.getLocation().getBlock() == null || machine.getLocation().getBlock().getType().equals(Material.AIR)) {
                     machines.remove(machine);
@@ -88,23 +89,36 @@ public class MachinePurger {
             }
         }, 5, 20);
 
-        playerMachinePurger2 = Bukkit.getScheduler().runTaskTimer(JadGens.getInstance(), () -> {
 
-            if (playerMachinePurger == null) {
-                for (int type : count.keySet()) {
-                    ItemStack item = new Machine().createItem(type);
-                    item.setAmount(count.get(type));
-                    if (Bukkit.getOfflinePlayer(player).isOnline())
+        if (giveBack) {
+            playerGiveBack = Bukkit.getScheduler().runTaskTimer(JadGens.getInstance(), () -> {
+
+                if (playerPurger == null) {
+
+                    if (!Bukkit.getOfflinePlayer(player).isOnline()) {
+                        JadGens.getInstance().getPlayersPurgingMachines().remove(player);
+                        JadGens.getInstance().getPlayersWhoDisconnectedWhilePurgingMachines().put(player, count);
+                        playerGiveBack.cancel();
+                        playerGiveBack = null;
+                        return;
+                    }
+
+                    for (int type : count.keySet()) {
+                        ItemStack item = new Machine().createItem(type);
+                        item.setAmount(count.get(type));
                         Bukkit.getPlayer(player).getLocation().getWorld().dropItemNaturally(Bukkit.getPlayer(player).getLocation(), item);
+                    }
+
+                    JadGens.getInstance().getPlayersPurgingMachines().remove(player);
+                    Bukkit.getPlayer(player).sendMessage(ChatColor.translateAlternateColorCodes('&', JadGens.getInstance().getLangFile().lang().getString("messages.actionsMessages.purgedOwnMachines")));
+                    playerGiveBack.cancel();
+                    playerGiveBack = null;
+                    return;
+
                 }
 
-                Bukkit.getPlayer(player).sendMessage(ChatColor.translateAlternateColorCodes('&', JadGens.getInstance().getLangFile().lang().getString("messages.actionsMessages.purgedOwnMachines")));
-                playerMachinePurger2.cancel();;
-                playerMachinePurger2 = null;
-                return;
-            }
-
-        }, 10, 8);
+            }, 10, 8);
+        }
     }
 
     public boolean removeIfAir(String id) {
@@ -163,7 +177,9 @@ public class MachinePurger {
         data().set("machines." + id, null);
         JadGens.getInstance().getDataFile().saveData();
 
+        mac.getLocation().getChunk().load();
         mac.getLocation().getBlock().setType(Material.AIR);
+        mac.getLocation().getChunk().unload(true, true);
     }
 
     public FileConfiguration data() {
