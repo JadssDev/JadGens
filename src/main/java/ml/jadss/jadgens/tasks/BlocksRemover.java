@@ -3,6 +3,7 @@ package ml.jadss.jadgens.tasks;
 import ml.jadss.jadgens.JadGens;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.scheduler.BukkitTask;
@@ -14,7 +15,8 @@ public class BlocksRemover {
 
     private BukkitTask task;
     private int speed = 10;
-    private List<Block> blocks = new ArrayList<>();
+    private final List<Block> blocks = new ArrayList<>();
+    private final List<Chunk> chunks = new ArrayList<>();
     private boolean SUPERMODE = false;
 
     private void startTask() {
@@ -28,7 +30,14 @@ public class BlocksRemover {
             for (int i = 0; i < this.speed; i++) {
                 Block block = null;
                 try { block = this.blocks.get(0); } catch(IndexOutOfBoundsException ignored) { stopTask("BlocksIs0"); return; }
-                if (block != null) block.setType(Material.AIR);
+                if (block != null) {
+                    if (!block.getLocation().getChunk().isLoaded()) {
+                        block.getLocation().getChunk().load();
+                        Bukkit.getConsoleSender().sendMessage("Loaded A chunk.");
+                        chunks.add(block.getLocation().getChunk());
+                    }
+                    block.setType(Material.AIR);
+                }
                 this.blocks.remove(block);
             }
             calculateSpeed();
@@ -42,13 +51,28 @@ public class BlocksRemover {
     private void stopTask(String reason) {
         if (task != null) task.cancel();
         task = null;
-        if (JadGens.getInstance().getConfig().getBoolean("machinesConfig.logRemovalTasks"))
+        if (JadGens.getInstance().getConfig().getBoolean("machinesConfig.logRemovalTasks")) {
+
+            int failed = 0;
+            int amount = chunks.size();
+            Bukkit.getConsoleSender().sendMessage("amount: " + amount + "; failed = " + failed);
+            Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3&lJadGens&e(&c&lRemoval&e) &7>> &eUnloading &b&laffected &3chunks&e..."));
+            for(Chunk chunk : chunks) {
+                chunks.remove(chunk);
+                if (!chunk.unload(true, true)) failed++;
+            }
+
+            Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&',
+                    "&3&lJadGens&e(&c&lRemoval&e) &7>> &b&lUnloaded &f" + (amount-failed) + " &3chunks&e, &c&lfailed &eto &b&lunload &f" + failed + " &3chunks&e. " + "(&e&3Total&e: &f" + amount + "&e)"));
+
+
             if (reason.equalsIgnoreCase("BlocksIs0"))
                 Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3&lJadGens&e(&c&lRemoval&e) &7>> &eTask &c&lStopped&e. &e(&bBlocks to purge is 0&e)"));
             else if (reason.equalsIgnoreCase("ShuttingDown"))
-                Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3&lJadGens&e(&c&lRemoval&e) &7>> &eTask &c&lStopped&e. &e(&bServer is shutting down.&e)"));
+                Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3&lJadGens&e(&c&lRemoval&e) &7>> &eTask &c&lStopped&e. &e(&bServer is shutting down&e)"));
             else
                 Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3&lJadGens&e(&c&lRemoval&e) &7>> &eTask &c&lStopped&e. &e(&bNo specific reason&e)"));
+        }
     }
 
     public void updateStatus(List<Block> list, boolean warn) {
