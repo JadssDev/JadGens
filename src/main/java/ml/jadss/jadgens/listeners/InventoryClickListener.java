@@ -6,10 +6,12 @@ import ml.jadss.jadgens.dependencies.nbt.NBTCompound;
 import ml.jadss.jadgens.dependencies.nbt.NBTItem;
 import ml.jadss.jadgens.utils.Fuel;
 import ml.jadss.jadgens.utils.Machine;
+import ml.jadss.jadgens.utils.MachinePurger;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
 public class InventoryClickListener implements Listener {
@@ -27,7 +29,7 @@ public class InventoryClickListener implements Listener {
             NBTCompound nbt = new NBTItem(e.getCurrentItem());
             //do shenanigans.
             if (nbt.getBoolean("JadGens_toggleItem")) {
-                Machine machine = new Machine(new NBTItem(e.getCurrentItem()).getString("JadGens_machineID"));
+                Machine machine = new Machine(nbt.getString("JadGens_machineID"));
                 if (machine.getId() == null) return;
 
                 if (machine.getOwner().equalsIgnoreCase("none")) {
@@ -36,14 +38,14 @@ public class InventoryClickListener implements Listener {
                     return;
                 }
 
-                player.closeInventory();
+//                player.closeInventory();
                 machine.setMachineEnabled(!machine.isMachineEnabled());
-                player.openInventory(machine.createGUI());
+                player.getOpenInventory().getTopInventory().setContents(machine.createGUI().getContents());
 
                 player.sendMessage(ChatColor.translateAlternateColorCodes('&', JadGens.getInstance().getLangFile().lang().getString("messages.machinesMessages.machineToggled").replace("%enabled%", machine.getMachineStatusText())));
-            } else if (new NBTItem(e.getCurrentItem()).getBoolean("JadGens_dropsItem")) {
+            } else if (nbt.getBoolean("JadGens_dropsItem")) {
                 if (e.getCursor() != null && e.getCursor().getItemMeta() != null && checker1.isFuelItem(e.getCursor())) {
-                    Machine machine = new Machine(new NBTItem(e.getCurrentItem()).getString("JadGens_machineID"));
+                    Machine machine = new Machine(nbt.getString("JadGens_machineID"));
                     if (machine.getId() == null) return;
 
                     if (machine.getOwner().equalsIgnoreCase("none")) {
@@ -85,8 +87,19 @@ public class InventoryClickListener implements Listener {
                 } else {
                     e.getWhoClicked().sendMessage(ChatColor.translateAlternateColorCodes('&', JadGens.getInstance().getLangFile().lang().getString("messages.machinesMessages.clickWithFuel")));
                 }
-            }
+            } else if (nbt.getBoolean("JadGens_closeItem")) {
+                Machine machine = new Machine(nbt.getString("JadGens_machineID"));
+                if (machine.getId() == null) return;
 
+                if (e.getAction() == InventoryAction.PICKUP_ALL) {
+                    player.closeInventory();
+                } else if (e.getAction() == InventoryAction.PICKUP_HALF) {
+                    player.getLocation().getWorld().dropItemNaturally(player.getLocation(), machine.createItem(machine.getType()));
+                    new MachinePurger().removeMachineInstant(machine.getId());
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', JadGens.getInstance().getLangFile().lang().getString("messages.machinesMessages.broken")));
+                    player.closeInventory();
+                }
+            }
         }
     }
 }
