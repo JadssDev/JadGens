@@ -218,24 +218,24 @@ public class Machine {
             gui.setItem(i, backitem);
         }
 
-        if (JadGens.getInstance().getConfig().getBoolean("machineGui.dropsCheckItem.enabled")) {
-            ItemStack dropsItem = new ItemStack(new Compatibility().matParser(JadGens.getInstance().getConfig().getString("machineGui.dropsCheckItem.item.material")),
+        if (JadGens.getInstance().getConfig().getBoolean("machineGui.dropsItem.enabled")) {
+            ItemStack dropsItem = new ItemStack(new Compatibility().matParser(JadGens.getInstance().getConfig().getString("machineGui.dropsItem.item.material")),
                     1,
-                    (short) JadGens.getInstance().getConfig().getInt("machineGui.dropsCheckItem.item.damage"));
+                    (short) JadGens.getInstance().getConfig().getInt("machineGui.dropsItem.item.damage"));
 
             ItemMeta dropsMeta = dropsItem.getItemMeta();
 
-            dropsMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', JadGens.getInstance().getConfig().getString("machineGui.dropsCheckItem.displayName")));
+            dropsMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', JadGens.getInstance().getConfig().getString("machineGui.dropsItem.displayName")));
             List<String> lore = new ArrayList<>();
             if (JadGens.getInstance().getConfig().getBoolean("machines." + this.type + ".fuels.needsFuelToProduce")) {
-                for (String s : JadGens.getInstance().getConfig().getStringList("machineGui.dropsCheckItem.lore")) {
+                for (String s : JadGens.getInstance().getConfig().getStringList("machineGui.dropsItem.lore")) {
                     //placeholders: %remaining%, %max%
                     lore.add(ChatColor.translateAlternateColorCodes('&',
                             s.replace("%remaining%", String.valueOf(this.getDropsRemaining()))
                                     .replace("%max%", String.valueOf(this.getDropsMax()))));
                 }
             } else {
-                for (String s : JadGens.getInstance().getConfig().getStringList("machineGui.dropsCheckItem.infiniteLore")) {
+                for (String s : JadGens.getInstance().getConfig().getStringList("machineGui.dropsItem.infiniteLore")) {
                     lore.add(ChatColor.translateAlternateColorCodes('&', s));
                 }
             }
@@ -248,17 +248,17 @@ public class Machine {
             item.setString("JadGens_machineID", this.getId());
 
 
-            gui.setItem(JadGens.getInstance().getConfig().getInt("machineGui.dropsCheckItem.slot") - 1, item.getItem());
+            gui.setItem(JadGens.getInstance().getConfig().getInt("machineGui.dropsItem.slot") - 1, item.getItem());
         }
 
-        if (JadGens.getInstance().getConfig().getBoolean("machineGui.ownerCheckItem.enabled")) {
-            ItemStack dropsItem = new ItemStack(new Compatibility().matParser(JadGens.getInstance().getConfig().getString("machineGui.ownerCheckItem.item.material")),
+        if (JadGens.getInstance().getConfig().getBoolean("machineGui.ownerItem.enabled")) {
+            ItemStack dropsItem = new ItemStack(new Compatibility().matParser(JadGens.getInstance().getConfig().getString("machineGui.ownerItem.item.material")),
                     1,
-                    (short) JadGens.getInstance().getConfig().getInt("machineGui.ownerCheckItem.item.damage"));
+                    (short) JadGens.getInstance().getConfig().getInt("machineGui.ownerItem.item.damage"));
 
             ItemMeta dropsMeta = dropsItem.getItemMeta();
 
-            dropsMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', JadGens.getInstance().getConfig().getString("machineGui.ownerCheckItem.displayName")));
+            dropsMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', JadGens.getInstance().getConfig().getString("machineGui.ownerItem.displayName")));
             List<String> lore = new ArrayList<>();
 
             String owner;
@@ -268,7 +268,7 @@ public class Machine {
                 owner = Bukkit.getOfflinePlayer(UUID.fromString(this.getOwner())).getName();
             }
 
-            for (String s : JadGens.getInstance().getConfig().getStringList("machineGui.ownerCheckItem.lore")) {
+            for (String s : JadGens.getInstance().getConfig().getStringList("machineGui.ownerItem.lore")) {
                 //placeholders: %owner%
                 lore.add(ChatColor.translateAlternateColorCodes('&', s.replace("%owner%", owner)));
             }
@@ -276,23 +276,23 @@ public class Machine {
             dropsMeta.setLore(lore);
             dropsItem.setItemMeta(dropsMeta);
 
-            gui.setItem(JadGens.getInstance().getConfig().getInt("machineGui.ownerCheckItem.slot") - 1, dropsItem);
+            gui.setItem(JadGens.getInstance().getConfig().getInt("machineGui.ownerItem.slot") - 1, dropsItem);
         }
 
-        if (JadGens.getInstance().getConfig().getBoolean("machineGui.enabledCheckItem.enabled")) {
+        if (JadGens.getInstance().getConfig().getBoolean("machineGui.checkItem.enabled")) {
             ItemStack enabledItem;
             if (this.isMachineEnabled()) {
-                enabledItem = new ItemStack(new Compatibility().matParser(JadGens.getInstance().getConfig().getString("machineGui.enabledCheckItem.item.enabledItem.material")),
+                enabledItem = new ItemStack(new Compatibility().matParser(JadGens.getInstance().getConfig().getString("machineGui.checkItem.item.enabledItem.material")),
                         1,
-                        (short) JadGens.getInstance().getConfig().getInt("machineGui.enabledCheckItem.item.enabledItem.damage"));
+                        (short) JadGens.getInstance().getConfig().getInt("machineGui.checkItem.item.enabledItem.damage"));
 
                 ItemMeta enabledMeta = enabledItem.getItemMeta();
 
-                enabledMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', JadGens.getInstance().getConfig().getString("machineGui.enabledCheckItem.displayName")
+                enabledMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', JadGens.getInstance().getConfig().getString("machineGui.checkItem.displayName")
                         .replace("%enabled%", this.getMachineStatusText())));
 
                 List<String> lore = new ArrayList<>();
-                for (String s : JadGens.getInstance().getConfig().getStringList("machineGui.enabledCheckItem.lore")) {
+                for (String s : JadGens.getInstance().getConfig().getStringList("machineGui.checkItem.lore")) {
                     //placeholders: %enabled%
                     lore.add(ChatColor.translateAlternateColorCodes('&', s.replace("%enabled%", this.getMachineStatusText())));
                 }
@@ -300,17 +300,17 @@ public class Machine {
                 enabledMeta.setLore(lore);
                 enabledItem.setItemMeta(enabledMeta);
             } else {
-                enabledItem = new ItemStack(new Compatibility().matParser(JadGens.getInstance().getConfig().getString("machineGui.enabledCheckItem.item.disabledItem.material")),
+                enabledItem = new ItemStack(new Compatibility().matParser(JadGens.getInstance().getConfig().getString("machineGui.checkItem.item.disabledItem.material")),
                         1,
-                        (short) JadGens.getInstance().getConfig().getInt("machineGui.enabledCheckItem.item.disabledItem.damage"));
+                        (short) JadGens.getInstance().getConfig().getInt("machineGui.checkItem.item.disabledItem.damage"));
 
                 ItemMeta enabledMeta = enabledItem.getItemMeta();
 
-                enabledMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', JadGens.getInstance().getConfig().getString("machineGui.enabledCheckItem.displayName")
+                enabledMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', JadGens.getInstance().getConfig().getString("machineGui.checkItem.displayName")
                         .replace("%enabled%", this.getMachineStatusText())));
 
                 List<String> lore = new ArrayList<>();
-                for (String s : JadGens.getInstance().getConfig().getStringList("machineGui.enabledCheckItem.lore")) {
+                for (String s : JadGens.getInstance().getConfig().getStringList("machineGui.checkItem.lore")) {
                     //placeholders: %enabled%
                     lore.add(ChatColor.translateAlternateColorCodes('&', s.replace("%enabled%", this.getMachineStatusText())));
                 }
@@ -322,8 +322,33 @@ public class Machine {
             item.setBoolean("JadGens_toggleItem", true);
             item.setString("JadGens_machineID", this.getId());
 
-            gui.setItem(JadGens.getInstance().getConfig().getInt("machineGui.enabledCheckItem.slot") - 1, item.getItem());
+            gui.setItem(JadGens.getInstance().getConfig().getInt("machineGui.checkItem.slot") - 1, item.getItem());
         }
+
+        if (JadGens.getInstance().getConfig().getBoolean("machineGui.closeItem.enabled")) {
+            ItemStack item = new ItemStack(new Compatibility().matParser(JadGens.getInstance().getConfig().getString("machineGui.closeItem.item.material")),
+                    1,
+                    (short) JadGens.getInstance().getConfig().getInt("machineGui.closeItem.item.damage"));
+
+            ItemMeta meta = item.getItemMeta();
+
+            meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', JadGens.getInstance().getConfig().getString("machineGui.closeItem.displayName")));
+
+            List<String> lore = new ArrayList<>();
+            for (String s : JadGens.getInstance().getConfig().getStringList("machineGui.closeItem.lore")) {
+                lore.add(ChatColor.translateAlternateColorCodes('&', s));
+            }
+            meta.setLore(lore);
+
+            item.setItemMeta(meta);
+
+            NBTItem nbt = new NBTItem(item);
+            nbt.setBoolean("JadGens_closeItem", true);
+            nbt.setString("JadGens_machineID", this.getId());
+
+            gui.setItem(JadGens.getInstance().getConfig().getInt("machineGui.closeItem.slot") - 1, nbt.getItem());
+        }
+
         return gui;
     }
 
@@ -624,9 +649,9 @@ public class Machine {
 
     public String getMachineStatusText() {
         if (isMachineEnabled())
-            return ChatColor.translateAlternateColorCodes('&', JadGens.getInstance().getConfig().getString("machineGui.enabledCheckItem.settings.enabledText"));
+            return ChatColor.translateAlternateColorCodes('&', JadGens.getInstance().getConfig().getString("machineGui.checkItem.settings.enabledText"));
         else
-            return ChatColor.translateAlternateColorCodes('&', JadGens.getInstance().getConfig().getString("machineGui.enabledCheckItem.settings.disabledText"));
+            return ChatColor.translateAlternateColorCodes('&', JadGens.getInstance().getConfig().getString("machineGui.checkItem.settings.disabledText"));
     }
 
     public boolean isFuelCompatible(int fuelType) {
