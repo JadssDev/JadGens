@@ -110,8 +110,10 @@ public class LangFile {
         lang().addDefault("messages.actionsMessages.managedAllPlayers", "&b&lAction &adone &eto &a&lALL &3machines&e! &e(&bCount &l%count%&e)");
 
         lang().addDefault("messages.actionsMessages.purgeOwnMachinesPermission", "JadGens.actions.purgeOwn");
-        lang().addDefault("messages.actionsMessages.purgeInQueue", "&eYour &3&lpurge &ehas been put into &b&lqueue&e, wait a couple &3&lseconds &eor &b&lminutes&e.");
+        lang().addDefault("messages.actionsMessages.purgePutInQueue", "&3&lPurge &ebeing put into &b&lQueue&e.");
         lang().addDefault("messages.actionsMessages.purgedOwnMachines", "&eYou just &b&lpurged &eyour &3&lown machines&e!");
+        lang().addDefault("messages.actionsMessages.purgedWhileOffline", "&eYou've disconnected while you purged your machines so here it is back.");
+        lang().addDefault("messages.actionsMessages.alreadyInQueue", "&eYour &b&lMachines purge &eis already in &3&lqueue&e, &b&lwait&e.");
 
         lang().addDefault("messages.actionsMessages.disableOwnMachinesPermission", "JadGens.actions.disableOwn");
         lang().addDefault("messages.actionsMessages.disabledOwnMachines", "&eAll your &3&lmachines &ehave been &c&ldisabled&e!");

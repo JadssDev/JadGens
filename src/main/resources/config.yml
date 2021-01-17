@@ -7,10 +7,21 @@ machineGui:
     material: STAINED_GLASS_PANE
     #change if you're 1.12 and below.
     damage: 3
-  dropsCheckItem:
+  ownerItem:
     enabled: true
     #1 = first slot, 9 = last slot.
-    slot: 9
+    slot: 1
+    item:
+      material: SKELETON_SKULL
+      damage: 0 #just change this is the value of the stained glass after it's id.. just keep that in mind when changing this value, also, 0 is the default damage value.
+    displayName: "&bOwner"
+    lore:
+      - "&eThis &3&lmachine &bowner &eis"
+      - "&b&l%owner%&e!"
+  dropsItem:
+    enabled: true
+    #1 = first slot, 9 = last slot.
+    slot: 2
     item:
       material: IRON_INGOT
       damage: 0 #just change this is the value of the stained glass after it's id.. just keep that in mind when changing this value, also, 0 is the default damage value.
@@ -25,18 +36,7 @@ machineGui:
     infiniteLore:
       - "&eYour &3&lmachine &ehas:"
       - "&bInfinite &3Drops&e!"
-  ownerCheckItem:
-    enabled: true
-    #1 = first slot, 9 = last slot.
-    slot: 1
-    item:
-      material: SKELETON_SKULL
-      damage: 0 #just change this is the value of the stained glass after it's id.. just keep that in mind when changing this value, also, 0 is the default damage value.
-    displayName: "&bOwner"
-    lore:
-      - "&eThis &3&lmachine &bowner &eis"
-      - "&b&l%owner%&e!"
-  enabledCheckItem:
+  checkItem:
     enabled: true
     #1 = first slot, 9 = last slot.
     slot: 5
@@ -58,6 +58,18 @@ machineGui:
       - "&7> &3%enabled%"
       - "&3"
       - "&eClick to &3toggle&e!"
+  closeItem:
+    enabled: true
+    #1 = first slot, 9 = last slot.
+    slot: 9
+    item:
+      material: BARRIER
+      damage: 0
+    #Placeholders: %enabled% > says if the machine is enabled or not using the text above.
+    displayName: "&c&lClose &eor &b&lRemove"
+    lore:
+      - "&b&lRight-click &eto &c&lRemove &ethis &3machine&e."
+      - "&b&lLeft-click &eto &cClose &ethis &3machine&e."
 
 machineParticles:
   #do you want particle system?
