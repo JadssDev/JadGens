@@ -215,6 +215,19 @@ machines:
       #use "damage" on glass panels or stuff like that.
       damage: 0
 
+    #Crafting options:
+    crafts:
+      enabled: true
+      #Do NOT use material names, it HAS to be like this, AND 1 CHARACTER PER INGREDIENT.
+      row1: "GIG" #If you do NOT want an item use a space! example: " E " -> E = Emerald.
+      row2: "IBI"
+      row3: "GIG"
+      ingredients:
+        #1 Char per ingredient! DO NOT USE MORE THEN THAT..
+        G: GLASS
+        I: IRON_BLOCK
+        B: GOLD_BLOCK
+
     #fuel options:
     fuels:
       #does the machine need fuel to produce? (making this false makes the machine not ACCEPT fuel)
@@ -297,6 +310,19 @@ machines:
       material: EMERALD_BLOCK
       #use "damage" on glass panels or stuff like that.
       damage: 0
+
+    #Crafting options:
+    crafts:
+      enabled: true
+      #Do NOT use material names, it HAS to be like this, AND 1 CHARACTER PER INGREDIENT.
+      row1: "GIG" #If you do NOT want an item use a space! example: " E " -> E = Emerald.
+      row2: "IBI"
+      row3: "GIG"
+      ingredients:
+        #1 Char per ingredient! DO NOT USE MORE THEN THAT..
+        G: GLASS
+        I: IRON_BLOCK
+        B: EMERALD_BLOCK
 
     #fuel options:
     fuels:
@@ -386,6 +412,20 @@ machines:
       #use "damage" on glass panels or stuff like that.
       damage: 0
 
+    #Crafting options:
+    crafts:
+      enabled: true
+      #Do NOT use material names, it HAS to be like this, AND 1 CHARACTER PER INGREDIENT.
+      row1: "GIG" #If you do NOT want an item use a space! example: " E " -> E = Emerald.
+      row2: "IBI"
+      row3: "GIG"
+      ingredients:
+        #1 Char per ingredient! DO NOT USE MORE THEN THAT..
+        G: GLASS
+        I: IRON_BLOCK
+        B: DIAMOND_BLOCK
+
+
     #fuel options:
     fuels:
       #does the machine need fuel to produce? (making this false makes the machine not ACCEPT fuel)
@@ -471,6 +511,20 @@ machines:
       #use "damage" on glass panels or stuff like that.
       damage: 0
 
+    #Crafting options:
+    crafts:
+      enabled: true
+      #Do NOT use material names, it HAS to be like this, AND 1 CHARACTER PER INGREDIENT.
+      row1: "GIG" #If you do NOT want an item use a space! example: " E " -> E = Emerald.
+      row2: "ILI"
+      row3: "GIG"
+      ingredients:
+        #1 Char per ingredient! DO NOT USE MORE THEN THAT..
+        G: GLASS
+        I: IRON_BLOCK
+        L: LEATHER
+
+
     #fuel options:
     fuels:
       #does the machine need fuel to produce? (making this false makes the machine not ACCEPT fuel)
@@ -551,11 +605,24 @@ fuels:
       - "&310 &3Drops&e!"
       - "&e"
       - "&bRight-click &eto &a&luse&e!"
-      - "&b&lShift &e+ &bRight-click &eto &a&lMass use&e!"
+      - "&b&lLeft-click &eto &a&lMass use&e!"
     glow: false
     item:
       material: DIAMOND
       damage: 0 #use "damage" on glass panels or stuff like that.
+
+    #Crafting options:
+    crafts:
+      enabled: false
+      #Do NOT use material names, it HAS to be like this, AND 1 CHARACTER PER INGREDIENT.
+      row1: " G " #If you do NOT want an item use a space! example: " E " -> E = Emerald.
+      row2: "GDG"
+      row3: " G "
+      ingredients:
+        #1 Char per ingredient! DO NOT USE MORE THEN THAT..
+        G: GLOWSTONE
+        D: DIAMOND
+
     drops: 10 #How many drops does this fuel give to the machine?
 
   #the value below is the ID of the fuel!
@@ -576,12 +643,215 @@ fuels:
       - "&320 &3Drops&e!"
       - "&e"
       - "&bRight-click &eto &a&luse&e!"
-      - "&b&lShift &e+ &bRight-click &eto &a&lMass use&e!"
+      - "&b&lLeft-click &eto &a&lMass use&e!"
     glow: false
     item:
       material: EMERALD
       damage: 0 #use "damage" on glass panels or stuff like that.
+
+    #Crafting options:
+    crafts:
+      enabled: false
+      #Do NOT use material names, it HAS to be like this, AND 1 CHARACTER PER INGREDIENT.
+      row1: " D " #If you do NOT want an item use a space! example: " E " -> E = Emerald.
+      row2: "GEG"
+      row3: " L "
+      ingredients:
+        #1 Char per ingredient! DO NOT USE MORE THEN THAT..
+        G: GLOWSTONE
+        E: EMERALD
+        L: GLASS
+        D: DIAMOND
+
     drops: 20 #How many drops does this fuel give to the machine?
+
+  #the value below is the ID of the fuel!
+  3:
+    shop:
+      #should this machine be displayed on shop?
+      displayOnShop: false
+      #price of the machine? the currency can be configured in the "shop" section.
+      price: 2
+      #every currency supported is in the shop category up top.
+      currency: EXP
+      #in which slot of the shop will this item be displayed? 1 to 27
+      slot: 1
+
+    displayName: "&6&lCrafted &bFuel"
+    lore:
+      - "&eThis &3&lfuel &egives your &b&lmachine"
+      - "&35 &3Drops&e!"
+      - "&e"
+      - "&bRight-click &eto &a&luse&e!"
+      - "&b&lLeft-click &eto &a&lMass use&e!"
+    glow: false
+    item:
+      material: COAL
+      damage: 0 #use "damage" on glass panels or stuff like that.
+
+    #Crafting options:
+    crafts:
+      enabled: true
+      #Do NOT use material names, it HAS to be like this, AND 1 CHARACTER PER INGREDIENT.
+      row1: " C " #If you do NOT want an item use a space! example: " E " -> E = Emerald.
+      row2: "CBC"
+      row3: " C "
+      ingredients:
+        #1 Char per ingredient! DO NOT USE MORE THEN THAT..
+        C: COAL
+        B: COAL_BLOCK
+
+    drops: 5 #How many drops does this fuel give to the machine?
+
+  #the value below is the ID of the fuel!
+  4:
+    shop:
+      #should this machine be displayed on shop?
+      displayOnShop: false
+      #price of the machine? the currency can be configured in the "shop" section.
+      price: 2
+      #every currency supported is in the shop category up top.
+      currency: EXP
+      #in which slot of the shop will this item be displayed? 1 to 27
+      slot: 1
+
+    displayName: "&6&lCrafted &bFuel"
+    lore:
+      - "&eThis &3&lfuel &egives your &b&lmachine"
+      - "&310 &3Drops&e!"
+      - "&e"
+      - "&bRight-click &eto &a&luse&e!"
+      - "&b&lLeft-click &eto &a&lMass use&e!"
+    glow: true
+    item:
+      material: COAL
+      damage: 0 #use "damage" on glass panels or stuff like that.
+
+    #Crafting options:
+    crafts:
+      enabled: true
+      #Do NOT use material names, it HAS to be like this, AND 1 CHARACTER PER INGREDIENT.
+      row1: "CCC" #If you do NOT want an item use a space! example: " E " -> E = Emerald.
+      row2: "CBC"
+      row3: "CCC"
+      ingredients:
+        #1 Char per ingredient! DO NOT USE MORE THEN THAT..
+        C: COAL
+        B: COAL_BLOCK
+
+    drops: 10 #How many drops does this fuel give to the machine?
+
+  #the value below is the ID of the fuel!
+  5:
+    shop:
+      #should this machine be displayed on shop?
+      displayOnShop: false
+      #price of the machine? the currency can be configured in the "shop" section.
+      price: 2
+      #every currency supported is in the shop category up top.
+      currency: EXP
+      #in which slot of the shop will this item be displayed? 1 to 27
+      slot: 1
+
+    displayName: "&6&lCrafted &bFuel"
+    lore:
+      - "&eThis &3&lfuel &egives your &b&lmachine"
+      - "&315 &3Drops&e!"
+      - "&e"
+      - "&bRight-click &eto &a&luse&e!"
+      - "&b&lLeft-click &eto &a&lMass use&e!"
+    glow: false
+    item:
+      material: COAL_BLOCK
+      damage: 0 #use "damage" on glass panels or stuff like that.
+
+    #Crafting options:
+    crafts:
+      enabled: true
+      #Do NOT use material names, it HAS to be like this, AND 1 CHARACTER PER INGREDIENT.
+      row1: " B " #If you do NOT want an item use a space! example: " E " -> E = Emerald.
+      row2: "BBB"
+      row3: " B "
+      ingredients:
+        #1 Char per ingredient! DO NOT USE MORE THEN THAT..
+        B: COAL_BLOCK
+
+    drops: 15 #How many drops does this fuel give to the machine?
+
+  #the value below is the ID of the fuel!
+  6:
+    shop:
+      #should this machine be displayed on shop?
+      displayOnShop: false
+      #price of the machine? the currency can be configured in the "shop" section.
+      price: 2
+      #every currency supported is in the shop category up top.
+      currency: EXP
+      #in which slot of the shop will this item be displayed? 1 to 27
+      slot: 1
+
+    displayName: "&6&lCrafted &bFuel"
+    lore:
+      - "&eThis &3&lfuel &egives your &b&lmachine"
+      - "&320 &3Drops&e!"
+      - "&e"
+      - "&bRight-click &eto &a&luse&e!"
+      - "&b&lLeft-click &eto &a&lMass use&e!"
+    glow: true
+    item:
+      material: COAL_BLOCK
+      damage: 0 #use "damage" on glass panels or stuff like that.
+
+    #Crafting options:
+    crafts:
+      enabled: true
+      #Do NOT use material names, it HAS to be like this, AND 1 CHARACTER PER INGREDIENT.
+      row1: "CBC" #If you do NOT want an item use a space! example: " E " -> E = Emerald.
+      row2: "BBB"
+      row3: "CBC"
+      ingredients:
+        #1 Char per ingredient! DO NOT USE MORE THEN THAT..
+        B: COAL_BLOCK
+        C: COAL
+
+    drops: 20 #How many drops does this fuel give to the machine?
+
+  #the value below is the ID of the fuel!
+  7:
+    shop:
+      #should this machine be displayed on shop?
+      displayOnShop: false
+      #price of the machine? the currency can be configured in the "shop" section.
+      price: 2
+      #every currency supported is in the shop category up top.
+      currency: EXP
+      #in which slot of the shop will this item be displayed? 1 to 27
+      slot: 1
+
+    displayName: "&6&lCrafted &bFuel"
+    lore:
+      - "&eThis &3&lfuel &egives your &b&lmachine"
+      - "&330 &3Drops&e!"
+      - "&e"
+      - "&bRight-click &eto &a&luse&e!"
+      - "&b&lLeft-click &eto &a&lMass use&e!"
+    glow: true
+    item:
+      material: COAL_BLOCK
+      damage: 0 #use "damage" on glass panels or stuff like that.
+
+    #Crafting options:
+    crafts:
+      enabled: true
+      #Do NOT use material names, it HAS to be like this, AND 1 CHARACTER PER INGREDIENT.
+      row1: "BBB" #If you do NOT want an item use a space! example: " E " -> E = Emerald.
+      row2: "BBB"
+      row3: "BBB"
+      ingredients:
+        #1 Char per ingredient! DO NOT USE MORE THEN THAT..
+        B: COAL_BLOCK
+
+    drops: 30 #How many drops does this fuel give to the machine?
 
   #the value below is the ID of the fuel!
   9:
@@ -593,16 +863,29 @@ fuels:
       #every currency supported is in the shop category up top.
       currency: EXP
       #in which slot of the shop will this item be displayed? 1 to 27
-      slot: -1
+      slot: 1
     displayName: "&6&lItem generator &bFuel"
     lore:
       - "&eThis &3&lfuel &egives your &b&lItem Generator machines"
       - "&32 &3Drops&e!"
       - "&e"
       - "&bRight-click &eto &a&luse&e!"
-      - "&b&lLeft-click &eto &a&lMass &buse&e!"
+      - "&b&lLeft-click &eto &a&lMass use&e!"
     glow: true
     item:
       material: GOLD_INGOT
       damage: 0 #use "damage" on glass panels or stuff like that.
+
+    #Crafting options:
+    crafts:
+      enabled: false
+      #Do NOT use material names, it HAS to be like this, AND 1 CHARACTER PER INGREDIENT.
+      row1: "DDD" #If you do NOT want an item use a space! example: " E " -> E = Emerald.
+      row2: "DGD"
+      row3: "DDD"
+      ingredients:
+        #1 Char per ingredient! DO NOT USE MORE THEN THAT..
+        G: GLOWSTONE
+        D: DIAMOND
+
     drops: 2 #How many drops does this fuel give to the machine?
