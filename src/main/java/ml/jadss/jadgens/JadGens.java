@@ -13,12 +13,14 @@ import ml.jadss.jadgens.tasks.ProduceRunnable;
 import ml.jadss.jadgens.utils.MachineLoader;
 import ml.jadss.jadgens.utils.ParticleSystem;
 import ml.jadss.jadgens.utils.ParticleType;
+import ml.jadss.jadgens.utils.RecipeManager;
 import net.milkbowl.vault.economy.Economy;
 import org.black_ixx.playerpoints.PlayerPoints;
 import org.black_ixx.playerpoints.PlayerPointsAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.inventory.Recipe;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
@@ -36,6 +38,7 @@ public class JadGens extends JavaPlugin {
     //hook booleans.
     private boolean hookedVault = false;
     private boolean hookedPlaceHolderAPI = false;
+    private boolean registeredPlaceHolderAPI = false;
     private boolean hookedPlayerPoints = false;
     //hooks
     private Economy eco;
@@ -118,6 +121,9 @@ public class JadGens extends JavaPlugin {
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
+
+        //Instantiate the custom recipes.
+        new RecipeManager().setupCrafts();
 
         //Create the Scheduler
         if (getSkyblockMode())
@@ -291,9 +297,11 @@ public class JadGens extends JavaPlugin {
         if (getServer().getPluginManager().getPlugin("PlaceholderAPI") == null) {
             return;
         }
-        try { new PlaceHolders().unregister(); } catch(NullPointerException ignored) { Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3&lJadGens &7>> &3PlaceHolderAPI &eCommitted a NPE, it was not shown so you think it is an error.")); }
         hookedPlaceHolderAPI = true;
-        new PlaceHolders().register();
+        if(!registeredPlaceHolderAPI) {
+            registeredPlaceHolderAPI = true;
+            new PlaceHolders().register();
+        }
     }
 
     /* Getters */
