@@ -20,6 +20,7 @@ import org.black_ixx.playerpoints.PlayerPointsAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.inventory.Recipe;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
@@ -82,7 +83,7 @@ public class JadGens extends JavaPlugin {
         instance = this;
 
         //Setup configs
-        getConfig().options().copyDefaults(true);
+        getConfig().options().copyDefaults();
         saveDefaultConfig();
         reloadConfig();
 
