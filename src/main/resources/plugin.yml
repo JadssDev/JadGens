@@ -5,7 +5,9 @@ load: STARTUP
 api-version: '1.13'
 authors: [Jadss_pt]
 softdepend: [Vault, PlaceHolderAPI, PlayertPoints, IridiumSkyblock, SuperiorSkyblock, SuperiorSkyblock2, FabledSkyblock]
-description: a generators plugin! hope you like it!
+description: JadGens is a machines plugin that was created with <3
+prefix: "[JadGens]> "
+
 website: jadss.ml
 commands:
   JadGens:

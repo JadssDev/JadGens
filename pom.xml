@@ -6,12 +6,12 @@
 
     <groupId>ml.jadss</groupId>
     <artifactId>JadGens</artifactId>
-    <version>3.1-JadLaxySnap</version>
+    <version>3.2-JadLaxySnap</version>
     <packaging>jar</packaging>
 
     <name>JadGens</name>
 
-    <description>A generators plugin! hope you like it!</description>
+    <description>JadGens is a machines plugin that was created with love</description>
     <properties>
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
