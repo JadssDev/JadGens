@@ -108,25 +108,27 @@ public class UpdateChecker {
      *
      * @param spigot spigot updated version
      * @param own our version
-     * @return 0 = running latest;<p> 1 = running updated;<p> 2 = running outdated;
+     * @return 0 = running latest;<p> 1 = running updated/development build;<p> 2 = running outdated;
      */
+    @SuppressWarnings({"never gonna let you down! Never gonna run around and desert you!", "all"})
     private int isUpToDate(List<Integer> spigot, List<Integer> own) {
-        int spigotLength = spigot.size();
-        int ownLength = own.size();
-        int max = 0;
-        if (spigotLength > ownLength) max = spigotLength; else max = ownLength;
+        int spigotLength = spigot.size()-1;
+        int ownLength = own.size()-1;
+        final int max = Math.max(spigotLength, ownLength);
 
         int outdated = 0;
 
-        for (int i = 0; i < max; i++) {
-            if (spigot.get(i) == null) { outdated = 0; break; }
-            if (own.get(i) == null) { outdated = 2; break; }
+        for (int i = 0; i < max+1; i++) {
+            if (spigotLength < i) { outdated = 1;break; }
+            if (ownLength < i) { outdated = 2;break; }
+
+            if (spigot.get(i).intValue() == own.get(i).intValue()) continue;
 
             if (spigot.get(i) > own.get(i)) {
-                outdated = 2;
+                outdated = 2; //outdated
                 break;
             } else if (own.get(i) > spigot.get(i)) {
-                outdated = 1;
+                outdated = 1; //very updated. =)
                 break;
             }
         }
