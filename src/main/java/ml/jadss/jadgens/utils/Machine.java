@@ -400,13 +400,14 @@ public class Machine {
         }
         //////////////////////////////////////////////
 
+        if (!this.machineEnabled) return;
+
         if (JadGens.getInstance().getConfig().getBoolean("machines." + type + ".fuels.needsFuelToProduce")) {
             if (data().getInt("machines." + id + ".drops") > 0) {
                 data().set("machines." + id + ".drops", data().getInt("machines." + id + ".drops")-1);
             } else return;
         }
 
-        if (!this.machineEnabled) return;
 
         MachineProduceEvent machineProduceEvent = new MachineProduceEvent(this);
         JadGens.getInstance().getServer().getPluginManager().callEvent(machineProduceEvent);
