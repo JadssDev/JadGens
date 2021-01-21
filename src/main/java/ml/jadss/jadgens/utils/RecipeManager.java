@@ -38,11 +38,7 @@ public class RecipeManager {
 
         for(String type : JadGens.getInstance().getConfig().getConfigurationSection("machines").getKeys(false)) {
 
-            if(JadGens.getInstance().getConfig().isSet("machines." + type + ".crafts.enabled") &&
-                    JadGens.getInstance().getConfig().getBoolean("machines." + type + ".crafts.enabled")) {
-                Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3&lJadGens &7>> &eSetting up &3" + type + " &3&lMachine &bCrafting recipe&e."));
-
-                Bukkit.getConsoleSender().sendMessage(String.valueOf(JadGens.getInstance().getConfig().getBoolean("machines." + type + ".crafts.enabled")));
+            if(JadGens.getInstance().getConfig().getBoolean("machines." + type + ".crafts.enabled")) {
                 ItemStack result = machine.createItem(Integer.parseInt(type));
 
                 if (updateMethods) {
@@ -94,10 +90,7 @@ public class RecipeManager {
 
         for(String type : JadGens.getInstance().getConfig().getConfigurationSection("fuels").getKeys(false)) {
 
-            if(JadGens.getInstance().getConfig().isSet("fuels." + type + ".crafts.enabled") &&
-                    JadGens.getInstance().getConfig().getBoolean("fuels." + type + ".crafts.enabled")) {
-                Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3&lJadGens &7>> &eSetting up &3" + type + " &3&lFuel &bCrafting recipe&e."));
-
+            if(JadGens.getInstance().getConfig().getBoolean("fuels." + type + ".crafts.enabled")) {
                 ItemStack result = fuel.createItem(Integer.parseInt(type));
 
                 if (updateMethods) {
