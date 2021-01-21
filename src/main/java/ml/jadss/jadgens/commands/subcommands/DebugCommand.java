@@ -23,6 +23,7 @@ public class DebugCommand {
         for(String name : apis) { sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&3" + name));}
         sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&b&m----------------------------"));
         sender.sendMessage("End.");
+
         JadGens.getInstance().getBlocksRemover().updateStatus(null, true);
     }
 }
