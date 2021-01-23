@@ -179,7 +179,7 @@ public class MachinePurger {
 
         mac.getLocation().getChunk().load();
         mac.getLocation().getBlock().setType(Material.AIR);
-        mac.getLocation().getChunk().unload(true, true);
+        mac.getLocation().getChunk().unload(true);
     }
 
     public FileConfiguration data() {
