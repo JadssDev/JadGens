@@ -112,6 +112,7 @@
 <!--            <id>placeholderapi</id>-->
 <!--            <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>-->
 <!--        </repository>-->
+        <!-- The repository above is from placeholderapi, read the dependency of placeholderAPI to know why this is commented.-->
     </repositories>
 
     <dependencies>
@@ -128,7 +129,7 @@
             <version>1.7</version>
             <scope>provided</scope>
         </dependency>
-        <!--PlaceHolderAPI-->
+        <!--PlaceHolderAPI (I've ditched placeholderapi since it is always fucking down, I can't be asked to wait 5 minutes, so I just stored it in the local repository, you can do the same or enable the repository above)-->
         <dependency>
             <groupId>me.clip</groupId>
             <artifactId>placeholderapi</artifactId>
