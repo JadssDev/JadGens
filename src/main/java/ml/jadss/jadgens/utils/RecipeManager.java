@@ -5,8 +5,10 @@ import ml.jadss.jadgens.JadGens;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.lang.reflect.Constructor;
@@ -27,23 +29,26 @@ public class RecipeManager {
         try {
             updateMethods = true;
             nameSpacedKey = Class.forName("org.bukkit.NamespacedKey");
-            nameSpacedKeyConstructor = nameSpacedKey.getConstructor(JavaPlugin.class, String.class);
+            nameSpacedKeyConstructor = nameSpacedKey.getConstructor(Plugin.class, String.class);
             shapedRecipeConstructor = ShapedRecipe.class.getConstructor(nameSpacedKey, ItemStack.class);
         } catch(ClassNotFoundException | NoSuchMethodException ignored) {
             updateMethods = false;
+            ignored.printStackTrace();
         }
+        Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3&lJadGens&e(&b&lDebug&e) &7>> &eUsing &3Updated methods &e-> &b&l" + updateMethods + "!"));
     }
 
     public void setupCrafts() {
 
         for(String type : JadGens.getInstance().getConfig().getConfigurationSection("machines").getKeys(false)) {
 
-            if(JadGens.getInstance().getConfig().getBoolean("machines." + type + ".crafts.enabled")) {
+            if(JadGens.getInstance().getConfig().isSet("machines." + type + ".crafts.enabled") &&
+                    JadGens.getInstance().getConfig().getBoolean("machines." + type + ".crafts.enabled")) {
                 ItemStack result = machine.createItem(Integer.parseInt(type));
 
                 if (updateMethods) {
                     Object nameSpaceObj;
-                    try { nameSpaceObj = nameSpacedKeyConstructor.newInstance();
+                    try { nameSpaceObj = nameSpacedKeyConstructor.newInstance(JadGens.getInstance(), "JadGens_MachineCraft_" + type);
                     } catch(IllegalAccessException | InvocationTargetException | InstantiationException ex) {
                         Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3&lJadGens &7>> &eAn error with the crafting, please report."));
                         ex.printStackTrace();
@@ -90,12 +95,13 @@ public class RecipeManager {
 
         for(String type : JadGens.getInstance().getConfig().getConfigurationSection("fuels").getKeys(false)) {
 
-            if(JadGens.getInstance().getConfig().getBoolean("fuels." + type + ".crafts.enabled")) {
+            if(JadGens.getInstance().getConfig().isSet("fuels." + type + ".crafts.enabled") &&
+                    JadGens.getInstance().getConfig().getBoolean("fuels." + type + ".crafts.enabled")) {
                 ItemStack result = fuel.createItem(Integer.parseInt(type));
 
                 if (updateMethods) {
                     Object nameSpaceObj;
-                    try { nameSpaceObj = nameSpacedKeyConstructor.newInstance();
+                    try { nameSpaceObj = nameSpacedKeyConstructor.newInstance(JadGens.getInstance(), "JadGens_Machine_" + type);
                     } catch(IllegalAccessException | InvocationTargetException | InstantiationException ex) {
                         Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3&lJadGens &7>> &eAn error with the crafting, please report."));
                         ex.printStackTrace();

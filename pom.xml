@@ -6,7 +6,7 @@
 
     <groupId>ml.jadss</groupId>
     <artifactId>JadGens</artifactId>
-    <version>3.2.2-JadLaxySnap</version>
+    <version>3.2.4-JadLaxySnap</version>
     <packaging>jar</packaging>
 
     <name>JadGens</name>
@@ -108,10 +108,10 @@
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
-        <repository>
-            <id>placeholderapi</id>
-            <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
-        </repository>
+<!--        <repository>-->
+<!--            <id>placeholderapi</id>-->
+<!--            <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>-->
+<!--        </repository>-->
     </repositories>
 
     <dependencies>

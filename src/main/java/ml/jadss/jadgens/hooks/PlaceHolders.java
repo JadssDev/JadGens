@@ -7,7 +7,6 @@ import ml.jadss.jadgens.utils.MachineLookup;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 
 public class PlaceHolders extends PlaceholderExpansion {
 
@@ -15,17 +14,17 @@ public class PlaceHolders extends PlaceholderExpansion {
     MachineLimiter limiter = new MachineLimiter();
 
     @Override
-    public @NotNull String getIdentifier() {
+    public String getIdentifier() {
         return "jadgens";
     }
 
     @Override
-    public @NotNull String getAuthor() {
+    public String getAuthor() {
         return "Jadss";
     }
 
     @Override
-    public @NotNull String getVersion() {
+    public String getVersion() {
         return JadGens.getInstance().getDescription().getVersion();
     }
 
