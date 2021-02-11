@@ -115,7 +115,7 @@ public class JadGensAPI {
      */
     protected void logAPI(String msg) {
         if (!isAPIValid()) return;
-        if (!JadGens.getInstance().isAPIDebugEnabled()) {
+        if (JadGens.getInstance().isAPIDebugEnabled()) {
             Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', msg));
         }
     }
