@@ -2,6 +2,9 @@ package dev.jadss.jadgens.listeners;
 
 import dev.jadss.jadapi.bukkitImpl.entities.JPlayer;
 import dev.jadss.jadgens.api.MachinesAPI;
+import dev.jadss.jadgens.api.machines.MachineInstance;
+import dev.jadss.jadgens.events.MachinePlaceEvent;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -21,7 +24,15 @@ public class BlockPlaceListener implements Listener {
                 return;
             }
             //Cancel and updated block.
-            api.createMachine(api.getMachineConfigurationByItem(event.getItemInHand()), event.getPlayer().getUniqueId(), event.getBlock().getLocation());
+            MachineInstance instance = api.createMachine(api.getMachineConfigurationByItem(event.getItemInHand()), event.getPlayer().getUniqueId(), event.getBlock().getLocation());
+
+            MachinePlaceEvent machinePlaceEvent = new MachinePlaceEvent(instance);
+            Bukkit.getPluginManager().callEvent(machinePlaceEvent);
+            if (machinePlaceEvent.isCancelled()) {
+                instance.remove();
+                event.setCancelled(true);
+                return;
+            }
 
             //Notify
             new JPlayer(event.getPlayer()).sendMessage(api.getGeneralConfiguration().getMessages().machineMessages.placed);

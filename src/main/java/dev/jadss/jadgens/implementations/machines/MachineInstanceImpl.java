@@ -21,6 +21,8 @@ import dev.jadss.jadgens.api.config.serializers.MachineInformation;
 import dev.jadss.jadgens.api.machines.Machine;
 import dev.jadss.jadgens.api.machines.MachineInstance;
 import dev.jadss.jadgens.api.player.MachinesUser;
+import dev.jadss.jadgens.events.MachineProduceEvent;
+import dev.jadss.jadgens.events.MachineToggledEvent;
 import dev.jadss.jadgens.hooks.Hook;
 import dev.jadss.jadgens.implementations.MachinesManager;
 import net.milkbowl.vault.economy.Economy;
@@ -134,8 +136,17 @@ public class MachineInstanceImpl implements MachineInstance {
                 if (item.getNBTBoolean("JadGens_Status_Item")) {
                     inventory.setItem(e.getSlot(), (ItemStack) null);
 
-                    this.setEnabled(!this.isEnabled());
+                    MachineToggledEvent machineToggleEvent = new MachineToggledEvent(machine.getInstance(), player, !this.isEnabled());
+                    Bukkit.getPluginManager().callEvent(machineToggleEvent);
+                    if (machineToggleEvent.isCancelled()) {
+                        e.setCancelled(true); // idk why
+                        return;
+                    } else {
+                        this.setEnabled(machineToggleEvent.isEnabled());
+                    }
 
+
+                    //Update item..
                     MenuItemConfiguration updatedItemConfig = this.isEnabled() ? menuConfig.statusItem.enabled : menuConfig.statusItem.disabled;
 
                     int updatedStatusItemSlot = updatedItemConfig.slot;
@@ -209,6 +220,8 @@ public class MachineInstanceImpl implements MachineInstance {
     //explanation: prevent a machine from ticking for the first 5 ticks it has been placed to prevent a lag spike.
     public int dontCareTicks = 5;
 
+    private boolean warnedAboutInvalid = false;
+
     @Override
     public void tick() {
         if (dontCareTicks > 0) {
@@ -236,7 +249,10 @@ public class MachineInstanceImpl implements MachineInstance {
                 Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3&lJadGens &7>> &eDetected an &3invalid machine&e. ID -> " + this.machine.getId()));
                 return;
             } else {
-                Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3&lJadGens &7>> &eDetected an &3invalid machine&e. ID -> " + this.machine.getId()));
+                if (!warnedAboutInvalid) {
+                    Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3&lJadGens &7>> &eDetected an &3invalid machine&e. ID -> " + this.machine.getId()));
+                    warnedAboutInvalid = true;
+                }
             }
         }
 
@@ -311,13 +327,21 @@ public class MachineInstanceImpl implements MachineInstance {
         if (world == null)
             world = new JWorld(machine.getLocation().getWorld());
 
+        MachineProduceEvent machineProduceEvent = new MachineProduceEvent(this, forcefully);
+        Bukkit.getPluginManager().callEvent(machineProduceEvent);
+        if (machineProduceEvent.isCancelled()) {
+            if (!forcefully)
+                return;
+            //forcefully cannot be cancelled.
+        }
+
         LoadedParticleConfiguration particleConfig = machine.getMachineConfiguration().getParticleConfiguration();
         if (particleConfig.isParticlesEnabled() && particleConfig.showOnProduce()) {
             JParticle particle = machine.getMachineConfiguration().getParticleConfiguration().getParticle();
             Location location = machine.getLocation();
 
             for (int i = 0; i < particleConfig.getParticleRows(); i++) {
-                for (int x = 0; x < particleConfig.getParticleCount(); x++) {
+                for (int j = 0; j < particleConfig.getParticleCount(); j++) {
                     world.spawnParticle(location, particle, particleConfig.getParticleSpeed(), particleConfig.getParticleCount());
                 }
             }
