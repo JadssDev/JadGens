@@ -100,7 +100,8 @@ public class MachinesManager implements MachinesAPI, Runnable {
             users.add(user);
         }
 
-        Bukkit.getScheduler().runTaskTimer(loadingInfo.plugin, this, 1L, 1L);
+        //The delay is to prevent Anti-invalidation!
+        Bukkit.getScheduler().runTaskTimer(loadingInfo.plugin, this, 20*10L, 1L);
 
         Bukkit.getScheduler().runTaskTimer(loadingInfo.plugin, () -> {
             this.save();
