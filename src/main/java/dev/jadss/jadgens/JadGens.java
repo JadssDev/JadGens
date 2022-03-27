@@ -127,12 +127,6 @@ public final class JadGens extends JavaPlugin {
     public void onDisable() {
         this.manager.save();
 
-        try {
-            JadAPIPlugin.get(JadGens.class).register(false);
-        } catch(Exception ex) {
-            ex.printStackTrace();
-        }
-
         //Register instance!
         instance = null;
 
