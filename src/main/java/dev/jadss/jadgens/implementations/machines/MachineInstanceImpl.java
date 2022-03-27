@@ -217,7 +217,7 @@ public class MachineInstanceImpl implements MachineInstance {
         this.ticksToGenerate = ticks;
     }
 
-    //explanation: prevent a machine from ticking for the first 5 ticks it has been placed to prevent a lag spike.
+    //explanation: prevent a machine from ticking for the first 5 ticks it has been placed to prevent a lag spike and auto-invalidation of the machine
     public int dontCareTicks = 5;
 
     private boolean warnedAboutInvalid = false;

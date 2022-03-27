@@ -2,6 +2,7 @@ name: JadGens
 version: '${project.version}'
 main: dev.jadss.jadgens.JadGens
 load: STARTUP
+api-version: 1.13
 softdepend: [ JadAPI, PlayerPoints, Vault, PlaceholderAPI ]
 authors: [ jadss ]
 description: JadGens is a customizable machines plugin.

@@ -6,7 +6,7 @@
 
     <groupId>dev.jadss</groupId>
     <artifactId>JadGens</artifactId>
-    <version>5.0-JadLaxyDev</version>
+    <version>5.1.0-JadLaxyDev</version>
     <packaging>jar</packaging>
 
     <name>JadGens</name>
@@ -44,6 +44,23 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.3.0</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <show>public</show>
+                    <nohelp>true</nohelp>
+                </configuration>
             </plugin>
         </plugins>
         <resources>
