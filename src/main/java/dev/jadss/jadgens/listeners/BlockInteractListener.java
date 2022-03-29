@@ -1,5 +1,7 @@
 package dev.jadss.jadgens.listeners;
 
+import dev.jadss.jadapi.bukkitImpl.enums.JVersion;
+import dev.jadss.jadapi.utils.JReflection;
 import dev.jadss.jadgens.api.MachinesAPI;
 import dev.jadss.jadgens.api.config.interfaces.LoadedFuelConfiguration;
 import dev.jadss.jadgens.api.machines.MachineInstance;
@@ -19,8 +21,10 @@ public class BlockInteractListener implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onInteract(PlayerInteractEvent event) {
         //Check if it's the main hand this is getting called at!
-        if (event.getItem() != null && event.getPlayer().getItemInHand() != null && !event.getItem().equals(event.getPlayer().getItemInHand()))
-            return;
+        if (JVersion.getServerVersion().isNewerOrEqual(JVersion.v1_9))
+            if (((Enum<?>) JReflection.executeMethodByName(event.getClass(), "getHand", event)).name().equals("OFF_HAND"))
+                return;
+        ;
 
         if (api.isFuel(event.getItem())) {
 
@@ -61,6 +65,11 @@ public class BlockInteractListener implements Listener {
                 //Update it!
                 fuelAmount = machineFuelEvent.getFuelAmount();
 
+                if (fuelCount == playerFuelCount)
+                    event.getPlayer().setItemInHand(null);
+                else
+                    event.getPlayer().getItemInHand().setAmount(playerFuelCount - fuelCount);
+
                 //Set fuel!
                 machine.setFuelAmount(fuelAmount);
 
@@ -87,6 +96,8 @@ public class BlockInteractListener implements Listener {
             MachineInstance machine = api.getMachine(event.getClickedBlock().getLocation());
             if(machine == null)
                 return;
+
+            event.setCancelled(true);
 
             if (machine.getMachine().getOwner() == null) {
                 event.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', api.getGeneralConfiguration().getMessages().machineMessages.noOwner));
