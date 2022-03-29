@@ -25,6 +25,7 @@ import dev.jadss.jadgens.api.machines.Machine;
 import dev.jadss.jadgens.api.machines.MachineInstance;
 import dev.jadss.jadgens.api.machines.MachinesList;
 import dev.jadss.jadgens.api.player.MachinesUser;
+import dev.jadss.jadgens.controller.ConfigVersions;
 import dev.jadss.jadgens.implementations.config.GeneralConfigurationImpl;
 import dev.jadss.jadgens.implementations.config.LoadedFuelConfigurationImpl;
 import dev.jadss.jadgens.implementations.config.LoadedMachineConfigurationImpl;
@@ -90,7 +91,13 @@ public class MachinesManager implements MachinesAPI, Runnable {
         //Load Data
         Bukkit.getScheduler().runTask(loadingInfo.plugin, () -> {
             for (MachineInformation machineInformation : loadingInfo.machineData.machines) {
-                Machine machine = new MachineImpl(machineInformation, this);
+                Machine machine = null;
+                try {
+                    machine = new MachineImpl(machineInformation, this);
+                } catch(RuntimeException ex) {
+                    Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3&lJadGens &7>> &eError while loading a &3&lMachine&e! it has been &b&lskipped&e!"));
+                    continue;
+                }
                 this.machines.add(machine.getInstance());
             }
         });
@@ -322,8 +329,8 @@ public class MachinesManager implements MachinesAPI, Runnable {
             for (MachinesUser user : this.users)
                 playerData.add(user.save());
 
-            this.playerData.save(new PlayerDataList(playerData.stream().toArray(PlayerInformation[]::new)));
-            this.machineData.save(new MachineDataList(machineData.stream().toArray(MachineInformation[]::new)));
+            this.playerData.save(new PlayerDataList(ConfigVersions.getLatest().getConfigVersion(), playerData.stream().toArray(PlayerInformation[]::new)));
+            this.machineData.save(new MachineDataList(ConfigVersions.getLatest().getConfigVersion(), machineData.stream().toArray(MachineInformation[]::new)));
 
             isCurrentlySaving = false;
 
