@@ -2,10 +2,13 @@ package dev.jadss.jadgens.api.config.generalConfig;
 
 import dev.jadss.jadgens.api.config.generalConfig.limits.MachineLimits;
 import dev.jadss.jadgens.api.config.interfaces.Configuration;
+import dev.jadss.jadgens.controller.VersionControlled;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public class Permissions implements Configuration {
+public class Permissions implements Configuration, VersionControlled {
+
+    public final String configVersion;
 
     public final String machineBypassPermission;
 
@@ -23,6 +26,11 @@ public class Permissions implements Configuration {
     public final MachineLimits machineLimitsGroups;
 
     public Permissions() {
-        this(null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null);
+    }
+
+    @Override
+    public String getVersion() {
+        return configVersion;
     }
 }
