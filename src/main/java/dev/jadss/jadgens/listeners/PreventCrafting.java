@@ -12,10 +12,8 @@ public class PreventCrafting implements Listener {
 
     @EventHandler
     public void onCraft(CraftItemEvent event) {
-        boolean shouldCancel = false;
-
         for (ItemStack item : event.getInventory().getMatrix())
-            if (api.isMachine(item)) {
+            if (api.isMachine(item) || api.isFuel(item)) {
                 event.setCancelled(true);
                 break;
             }
