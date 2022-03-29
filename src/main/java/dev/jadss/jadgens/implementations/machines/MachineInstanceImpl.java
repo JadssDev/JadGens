@@ -2,7 +2,6 @@ package dev.jadss.jadgens.implementations.machines;
 
 import dev.jadss.jadapi.JadAPIPlugin;
 import dev.jadss.jadapi.bukkitImpl.enums.JParticle;
-import dev.jadss.jadapi.bukkitImpl.enums.JVersion;
 import dev.jadss.jadapi.bukkitImpl.item.JInventory;
 import dev.jadss.jadapi.bukkitImpl.item.JItemStack;
 import dev.jadss.jadapi.bukkitImpl.item.JMaterial;
@@ -121,6 +120,8 @@ public class MachineInstanceImpl implements MachineInstance {
         String quickEventId2 = JQuickEvent.generateID();
         String quickEventId3 = JQuickEvent.generateID();
 
+        player.openInventory(inventory.getInventory());
+
         new JQuickEvent(plugin, InventoryClickEvent.class, e -> {
             if (e.getWhoClicked().getUniqueId().equals(player.getUniqueId())) {
                 e.setCancelled(true);
@@ -160,9 +161,9 @@ public class MachineInstanceImpl implements MachineInstance {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', this.isEnabled() ? MachinesAPI.getInstance().getGeneralConfiguration().getMessages().machineMessages.toggledOn : MachinesAPI.getInstance().getGeneralConfiguration().getMessages().machineMessages.toggledOff));
 
                     inventory.setItem(updatedStatusItemSlot, updatedStatusItem);
-                } else if (item.getNBTBoolean("JadGens_Fuel_Item")) {
+                } else if (item.getNBTBoolean("JadGens_Fuel_Item")) { //todo: Remove this functionality, it's too buggy.
                     if (e.getCursor() != null && e.getCursor().getType() != Material.AIR) {
-                        if (MachinesAPI.getInstance().isFuel(e.getCursor())) {
+                        if (MachinesAPI.getInstance().isFuel(e.getView().getCursor())) {
                             LoadedFuelConfiguration fuel = MachinesAPI.getInstance().getFuelConfigurationByItem(e.getView().getCursor());
 
                             int count = 0;
@@ -172,7 +173,7 @@ public class MachineInstanceImpl implements MachineInstance {
                                 this.setFuelAmount(this.getFuelAmount() + fuel.getFuelAmount());
                                 e.getView().getCursor().setAmount(e.getView().getCursor().getAmount() - 1);
                             }
-                            e.getWhoClicked().sendMessage(ChatColor.translateAlternateColorCodes('&', MachinesAPI.getInstance().getGeneralConfiguration().getMessages().fuelMessages.usedMultipleFuels.replace("%amout%", String.valueOf(count))));
+                            e.getWhoClicked().sendMessage(ChatColor.translateAlternateColorCodes('&', MachinesAPI.getInstance().getGeneralConfiguration().getMessages().fuelMessages.usedMultipleFuels.replace("%amount%", String.valueOf(count))));
                         }
                     }
                 } else if (item.getNBTBoolean("JadGens_Close_Item")) {
@@ -186,7 +187,7 @@ public class MachineInstanceImpl implements MachineInstance {
                     }
                 }
             }
-        }, EventPriority.LOWEST, -1, -1, quickEventId1).register(true);
+        }, EventPriority.MONITOR, -1, -1, quickEventId1).register(true);
 
         new JQuickEvent(plugin, InventoryCloseEvent.class, e -> {
             if (e.getPlayer().getUniqueId().equals(player.getUniqueId())) {
@@ -194,7 +195,7 @@ public class MachineInstanceImpl implements MachineInstance {
                 JQuickEvent.getQuickEvent(quickEventId2).register(false);
                 JQuickEvent.getQuickEvent(quickEventId3).register(false);
             }
-        }, EventPriority.LOWEST, -1, -1, quickEventId2).register(true);
+        }, EventPriority.MONITOR, -1, -1, quickEventId2).register(true);
 
         new JQuickEvent(plugin, PlayerQuitEvent.class, e -> {
             if (e.getPlayer().getUniqueId().equals(player.getUniqueId())) {
@@ -202,9 +203,7 @@ public class MachineInstanceImpl implements MachineInstance {
                 JQuickEvent.getQuickEvent(quickEventId2).register(false);
                 JQuickEvent.getQuickEvent(quickEventId3).register(false);
             }
-        }, EventPriority.LOWEST, -1, -1, quickEventId3).register(true);
-
-        player.openInventory(inventory.buildInventory());
+        }, EventPriority.MONITOR, -1, -1, quickEventId3).register(true);
     }
 
     @Override
