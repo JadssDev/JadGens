@@ -33,6 +33,11 @@ public class PlaceholderAPIHook implements Hook {
     }
 
     @Override
+    public String getDisplayNameWithColors() {
+        return "&3&lPlaceholderAPI";
+    }
+
+    @Override
     public boolean isAvailable() {
         return isAvailable;
     }

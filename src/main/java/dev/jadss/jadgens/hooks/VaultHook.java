@@ -21,6 +21,11 @@ public class VaultHook implements Hook {
     }
 
     @Override
+    public String getDisplayNameWithColors() {
+        return "&aVault";
+    }
+
+    @Override
     public boolean isAvailable() {
         return isAvailable;
     }

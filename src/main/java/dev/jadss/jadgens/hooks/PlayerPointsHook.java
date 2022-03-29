@@ -21,6 +21,11 @@ public class PlayerPointsHook implements Hook {
     }
 
     @Override
+    public String getDisplayNameWithColors() {
+        return "&c&lPlayerPoints";
+    }
+
+    @Override
     public boolean isAvailable() {
         return isAvailable;
     }

@@ -20,6 +20,12 @@ public interface Hook {
     String getDisplayName();
 
     /**
+     * The name to display with colors!
+     * @return the name to display with colors!
+     */
+    String getDisplayNameWithColors();
+
+    /**
      * Check if this hook succeeded.
      * @return if the hook succeeded.
      */
