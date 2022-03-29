@@ -25,16 +25,26 @@ public class Utilities {
 
     public static String fromLocation(Location location) {
         if(location.getWorld() == null) throw new RuntimeException("World cannot be null!");
-        return location.getWorld().getName() + "_" + location.getBlockX() + "_" + location.getBlockY() + "_" + location.getBlockZ();
+        return location.getWorld().getName() + "_J_" + location.getBlockX() + "_J_" + location.getBlockY() + "_J_" + location.getBlockZ();
     }
 
     //careful, will cause exception if executed onEnable!
     public static Location fromId(String id) {
-        if(id == null) throw new RuntimeException("Id cannot be null!");
-        String[] lines = id.split("_");
+        if(id == null)
+            throw new RuntimeException("Id cannot be null!");
+
+        String[] lines;
+
+        if (!id.contains("_J_")) {
+            //Old format
+            lines = id.split("_");
+        } else {
+            lines = id.split("_J_");
+        }
 
         JWorld world = JWorld.getJWorlds().stream().filter(w -> w.getName().equalsIgnoreCase(lines[0])).findFirst().orElse(null);
-        if (world == null) throw new RuntimeException("Could not find the world specified.");
+        if (world == null)
+            throw new RuntimeException("Could not find the world specified.");
 
         return new Location(world.getWorld(), Integer.parseInt(lines[1]), Integer.parseInt(lines[2]), Integer.parseInt(lines[3]));
     }
