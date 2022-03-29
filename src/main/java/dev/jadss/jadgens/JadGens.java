@@ -12,6 +12,8 @@ import dev.jadss.jadgens.api.config.serializers.lists.MachineDataList;
 import dev.jadss.jadgens.api.config.serializers.lists.MachineList;
 import dev.jadss.jadgens.api.config.serializers.lists.PlayerDataList;
 import dev.jadss.jadgens.commands.JadGensCommand;
+import dev.jadss.jadgens.controller.ConfigVersions;
+import dev.jadss.jadgens.controller.VersionController;
 import dev.jadss.jadgens.hooks.Hook;
 import dev.jadss.jadgens.hooks.PlaceholderAPIHook;
 import dev.jadss.jadgens.hooks.PlayerPointsHook;
@@ -61,6 +63,7 @@ public final class JadGens extends JavaPlugin {
     private MachinesManager manager;
 
     public JadGens() {
+        Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3&lJadGens &7>> &3&lJadGens &eis &bloading&e..."));
         instance = this;
 
         getDataFolder().mkdir();
@@ -73,15 +76,17 @@ public final class JadGens extends JavaPlugin {
 
         playerDataConfig = new CustomConfig<>(PLAYERS_DATA_FILE, this, PlayerDataList.class);
         machineDataConfig = new CustomConfig<>(MACHINES_DATA_FILE, this, MachineDataList.class);
+
+        Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3&lJadgens &7>> &3&lJadGens &afinished &eloading!"));
     }
 
     @Override
     public void onLoad() {
+        Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3&lJadGens &7>> &eLoading &3&lJadGens &eHooks..."));
         //Initialize hooks.
         try { hooks.add(new PlaceholderAPIHook()); } catch(Throwable ignored) {}
         try { hooks.add(new PlayerPointsHook());   } catch(Throwable ignored) {}
         try { hooks.add(new VaultHook());          } catch(Throwable ignored) {}
-
 
         //Load the configurations and create a LoadingInformation object for The GensManager.
         if(getLoadInformation()) {
@@ -157,6 +162,8 @@ public final class JadGens extends JavaPlugin {
     }
 
     private boolean getLoadInformation() {
+        Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3&lJadGens &7>> &eLoading &3&lConfigurations &e..."));
+
         GeneralConfiguration generalConfig = this.generalConfig.get();
         Permissions permissionsConfig = this.permissionsConfig.get();
 
@@ -173,19 +180,36 @@ public final class JadGens extends JavaPlugin {
             permissionsConfig = this.permissionsConfig.save(ConfigDefaults.defaultPermissionsConfiguration());
 
         if(machineList == null)
-            machineList = this.machinesConfig.save(new MachineList(ConfigDefaults.defaultMachineConfigurations()));
+            machineList = this.machinesConfig.save(new MachineList(ConfigVersions.getLatest().getConfigVersion(), ConfigDefaults.defaultMachineConfigurations()));
 
         if(fuelList == null)
-            fuelList = this.fuelsConfig.save(new FuelList(ConfigDefaults.defaultFuelConfiguration()));
+            fuelList = this.fuelsConfig.save(new FuelList(ConfigVersions.getLatest().getConfigVersion(), ConfigDefaults.defaultFuelConfiguration()));
 
         if(machineData == null)
-            machineData = this.machineDataConfig.save(new MachineDataList(new MachineInformation[0]));
+            machineData = this.machineDataConfig.save(new MachineDataList(ConfigVersions.getLatest().getConfigVersion(), new MachineInformation[0]));
 
         if(playerData == null)
-            playerData = this.playerDataConfig.save(new PlayerDataList(new PlayerInformation[0]));
+            playerData = this.playerDataConfig.save(new PlayerDataList(ConfigVersions.getLatest().getConfigVersion(), new PlayerInformation[0]));
 
         if (generalConfig == null || permissionsConfig == null || machineList == null || fuelList == null || machineData == null)
             return false;
+
+        Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3&lJadGens &7>> &eFinished loading &3&lConfigurations &efrom &bfiles&e!"));
+
+        Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3&lJadGens &7>> &eChecking &b&lMigration&e..."));
+
+        generalConfig = VersionController.migrate(generalConfig);
+        this.generalConfig.save(generalConfig);
+        permissionsConfig = VersionController.migrate(permissionsConfig);
+        this.permissionsConfig.save(permissionsConfig);
+        machineList = VersionController.migrate(machineList);
+        this.machinesConfig.save(machineList);
+        fuelList = VersionController.migrate(fuelList);
+        this.fuelsConfig.save(fuelList);
+        machineData = VersionController.migrate(machineData);
+        this.machineDataConfig.save(machineData);
+        playerData = VersionController.migrate(playerData);
+        this.playerDataConfig.save(playerData);
 
         this.loadInfo = new LoadingInformation(this,
                 machineList,
