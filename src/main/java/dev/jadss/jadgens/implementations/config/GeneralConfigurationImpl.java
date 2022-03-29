@@ -4,8 +4,6 @@ import dev.jadss.jadgens.api.config.generalConfig.Permissions;
 import dev.jadss.jadgens.api.config.generalConfig.messages.MessagesConfiguration;
 import dev.jadss.jadgens.api.config.interfaces.GeneralConfiguration;
 
-import java.security.Permission;
-
 public class GeneralConfigurationImpl implements GeneralConfiguration {
 
     private final boolean removeInvalidMachines;

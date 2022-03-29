@@ -43,7 +43,7 @@ public class LoadedMachineConfigurationImpl implements LoadedMachineConfiguratio
         this.usableFuels = machineConfiguration.fuels.fuelSpecifics;
 
         JMaterial finalBlockType = JMaterial.getRegistryMaterials().find(machineConfiguration.blockType.toUpperCase());
-        if(finalBlockType == null || finalBlockType.getMaterial(JMaterial.Type.BOTH) == null) {
+        if (finalBlockType == null || finalBlockType.getMaterial(JMaterial.Type.BOTH) == null) {
             Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3&lJadGens &7>> &eInvalid block type: &b" + machineConfiguration.blockType.toUpperCase() + "&e, the &3block &especified has to be a &bblock &eand &bitem&e."));
             finalBlockType = JMaterial.getRegistryMaterials().find(JMaterial.MaterialEnum.STONE);
         }
@@ -55,7 +55,7 @@ public class LoadedMachineConfigurationImpl implements LoadedMachineConfiguratio
         this.item.setDisplayName(machineConfiguration.machineItem.displayName);
         this.item.setLore(machineConfiguration.machineItem.lore);
 
-        if(machineConfiguration.machineItem.glow)
+        if (machineConfiguration.machineItem.glow)
             this.item.addEnchantment(JadGens.getInstance().getGlowEnchantment().asEnchantment(), 69); //yes funny.
 
         this.item.setNBTBoolean("JadGens_Machine", true);

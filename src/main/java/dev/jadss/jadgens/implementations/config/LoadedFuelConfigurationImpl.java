@@ -2,6 +2,7 @@ package dev.jadss.jadgens.implementations.config;
 
 import dev.jadss.jadapi.bukkitImpl.item.JItemStack;
 import dev.jadss.jadapi.bukkitImpl.item.JMaterial;
+import dev.jadss.jadgens.JadGens;
 import dev.jadss.jadgens.api.config.fuelConfig.FuelConfiguration;
 import dev.jadss.jadgens.api.config.interfaces.LoadedFuelConfiguration;
 import org.bukkit.Bukkit;
@@ -29,6 +30,9 @@ public class LoadedFuelConfigurationImpl implements LoadedFuelConfiguration {
 
         this.item.setDisplayName(configuration.fuelItem.displayName);
         this.item.setLore(configuration.fuelItem.lore);
+
+        if (configuration.fuelItem.glow)
+            this.item.addEnchantment(JadGens.getInstance().getGlowEnchantment().asEnchantment(), 69); //yes funny.
 
         this.item.setNBTBoolean("JadGens_Fuel", true);
         this.item.setNBTString("JadGens_Fuel_Type", configuration.fuelType);
