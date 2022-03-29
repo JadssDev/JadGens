@@ -110,7 +110,7 @@ public final class JadGens extends JavaPlugin {
         //Load hooks!
         hooks.forEach(hook -> {
             hook.hook(getServer());
-            Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3&lJadGens &7>> &eHooked into &3&l" + hook.getDisplayName() + "&e!"));
+            Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3&lJadGens &7>> &eHooked into &3&l" + hook.getDisplayNameWithColors() + "&e!"));
         });
 
         //Load the GensManager.
