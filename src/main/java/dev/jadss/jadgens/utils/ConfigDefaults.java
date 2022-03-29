@@ -24,6 +24,7 @@ import dev.jadss.jadgens.api.config.machineConfig.misc.MachineParticleConfigurat
 import dev.jadss.jadgens.api.config.machineConfig.production.*;
 import dev.jadss.jadgens.api.config.machineConfig.production.nbt.MachineItemNBTConfiguration;
 import dev.jadss.jadgens.api.config.machineConfig.production.nbt.MachineNBTEntry;
+import dev.jadss.jadgens.controller.ConfigVersions;
 
 public class ConfigDefaults {
 
@@ -406,7 +407,7 @@ public class ConfigDefaults {
 
         MessagesConfiguration messages = new MessagesConfiguration(helpCommand, giveCommand, actionsCommand, shopCommand, infoCommand, machineMenuConfiguration, shopMenuConfiguration, dropsMenuConfiguration, giveMenu, machineMessagesConfiguration, fuelMessagesConfiguration, shopMessagesConfiguration, dropsMessageConfiguration, globalMessages);
 
-        return new GeneralConfiguration(true, true, true, false, true, messages);
+        return new GeneralConfiguration(ConfigVersions.getLatest().getConfigVersion(), true, true, true, false, true, messages);
     }
 
     public static Permissions defaultPermissionsConfiguration() {
@@ -433,6 +434,6 @@ public class ConfigDefaults {
             machineLimits = new MachineLimits("&7Default", 20, groups);
         }
 
-        return new Permissions(machineBypassPermission, giveCommandPermission, actionsCommandPermission, actionsCommandManagerOthersPermission, actionsCommandPurgePermission, actionsCommandEnablePermission, actionsCommandDisablePermission, shopCommandPermission, machineLimits);
+        return new Permissions(ConfigVersions.getLatest().getConfigVersion(), machineBypassPermission, giveCommandPermission, actionsCommandPermission, actionsCommandManagerOthersPermission, actionsCommandPurgePermission, actionsCommandEnablePermission, actionsCommandDisablePermission, shopCommandPermission, machineLimits);
     }
 }
