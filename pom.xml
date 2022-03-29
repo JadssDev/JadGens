@@ -6,7 +6,7 @@
 
     <groupId>dev.jadss</groupId>
     <artifactId>JadGens</artifactId>
-    <version>5.1.0-JadLaxyDev</version>
+    <version>5.1.3-JadLaxyDev</version>
     <packaging>jar</packaging>
 
     <name>JadGens</name>
