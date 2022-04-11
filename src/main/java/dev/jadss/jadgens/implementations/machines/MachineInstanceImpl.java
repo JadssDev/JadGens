@@ -273,6 +273,10 @@ public class MachineInstanceImpl implements MachineInstance {
     @Override
     public void tickHologram() {
         LoadedHologramConfiguration hologramConfiguration = this.machine.getMachineConfiguration().getHologramConfiguration();
+
+        if (!hologramConfiguration.isHologramEnabled())
+            return;
+
         if (hologram == null) {
             Location location = this.machine.getLocation().clone().add(0.5, 0, 0.5);
             hologram = new JHologram(location, true, hologramConfiguration.parseHologramLines(machine));
