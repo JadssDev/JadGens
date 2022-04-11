@@ -17,8 +17,16 @@ public interface LoadedHologramConfiguration {
      */
     boolean isHologramEnabled();
 
+    /**
+     * Get the status on placeholder.
+     * @return the status on placeholder.
+     */
     String getStatusOnPlaceholder();
 
+    /**
+     * Get the status off placeholder.
+     * @return the status off placeholder.
+     */
     String getStatusOffPlaceholder();
 
     /**
