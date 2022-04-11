@@ -21,10 +21,14 @@ public class BlockInteractListener implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onInteract(PlayerInteractEvent event) {
         //Check if it's the main hand this is getting called at!
-        if (JVersion.getServerVersion().isNewerOrEqual(JVersion.v1_9))
-            if (((Enum<?>) JReflection.executeMethodByName(event.getClass(), "getHand", event)).name().equals("OFF_HAND"))
+        if (JVersion.getServerVersion().isNewerOrEqual(JVersion.v1_9)) {
+            Enum<?> handEnum = ((Enum<?>) JReflection.executeMethodByName(event.getClass(), "getHand", event));
+
+            if (handEnum == null)
                 return;
-        ;
+            if (handEnum.name().equals("OFF_HAND"))
+                return;
+        }
 
         if (api.isFuel(event.getItem())) {
 
