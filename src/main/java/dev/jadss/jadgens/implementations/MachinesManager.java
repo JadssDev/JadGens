@@ -31,6 +31,7 @@ import dev.jadss.jadgens.implementations.config.LoadedFuelConfigurationImpl;
 import dev.jadss.jadgens.implementations.config.LoadedMachineConfigurationImpl;
 import dev.jadss.jadgens.implementations.machines.MachineImpl;
 import dev.jadss.jadgens.implementations.machines.MachinesListImpl;
+import dev.jadss.jadgens.implementations.player.UserMachineDropsInstance;
 import dev.jadss.jadgens.implementations.player.UserManager;
 import dev.jadss.jadgens.utils.CustomConfig;
 import dev.jadss.jadgens.utils.LoadingInformation;
@@ -45,6 +46,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class MachinesManager implements MachinesAPI, Runnable {
 
@@ -88,12 +90,18 @@ public class MachinesManager implements MachinesAPI, Runnable {
         playerData = loadingInfo.playerDataConfig;
         machineData = loadingInfo.machineDataConfig;
 
+        Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3&lJadGens &7>> &eScheduled &3Loading data task&e, awaiting for &b&lexecution&e!!"));
         //Load Data
         Bukkit.getScheduler().runTask(loadingInfo.plugin, () -> {
+            Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3&lJadGens &7>> &eStarting to &bload &3&lMachines&e..."));
             for (MachineInformation machineInformation : loadingInfo.machineData.machines) {
                 Machine machine = null;
                 try {
                     machine = new MachineImpl(machineInformation, this);
+                    if (machine.getMachineConfiguration() == null) {
+                        Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3&lJadGens &7>> &eThe Machine with &3ID " + machine.getId() + " &ewas &c&lremoved &edue to not having a &bvalid Configuration&e!"));
+                        continue;
+                    }
                 } catch(RuntimeException ex) {
                     Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3&lJadGens &7>> &eError while loading a &3&lMachine&e! it has been &b&lskipped&e!"));
                     continue;
@@ -102,18 +110,31 @@ public class MachinesManager implements MachinesAPI, Runnable {
             }
         });
 
+        Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3&lJadGens &7>> &eStarting to &bload &3&lPlayer Data&e..."));
         for (PlayerInformation playerInformation : loadingInfo.playerDataList.playerData) {
             UserManager user = new UserManager(playerInformation, this);
+            List<UserMachineDropsInstance> errorInstances = user.getAllDropsInformation().stream()
+                    .filter(instance -> instance.getMachineConfiguration() == null)
+                    .map(instance -> (UserMachineDropsInstance) instance)
+                    .collect(Collectors.toCollection(ArrayList::new));
+
+            if (errorInstances.size() >= 1) {
+                Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3&lJadGens &7>> &eThe Player with &3UUID " + user.getPlayer() + " &ehas invalid &3Drop Information&e! &3Fixing&e..."));
+                errorInstances.forEach(user::removeDropInstance);
+                Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3&lJadGens &7>> &cProblematic instances &ehave been &cremoved &efrom " + user.getPlayer() + "&e!"));
+                Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3&lJadGens &7>> &eAmount of &c&lProblematic instances " + "(Size &e&m->&e " + errorInstances.size() + ")"));
+            }
+
+            user.updateDrops();
             users.add(user);
         }
+        Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3&lJadGens &7>> &eFinished loading &3&lPlayer Data&e!"));
+
+        Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3&lJadGens &7>> &eStarting up the &3&lMachines&e! &bHere goes EVERYTHING&e!!"));
 
         //The delay is to prevent Anti-invalidation!
         Bukkit.getScheduler().runTaskTimer(loadingInfo.plugin, this, 20*10L, 1L);
-
-        Bukkit.getScheduler().runTaskTimer(loadingInfo.plugin, () -> {
-            this.save();
-        }, 5 * 60 * 30, 5 * 60 * 30);
-
+        Bukkit.getScheduler().runTaskTimer(loadingInfo.plugin, this::save, 5 * 60 * 30, 5 * 60 * 30);
 
         joinQuickEvent = new JQuickEvent(JadAPIPlugin.get(JadGens.class), PlayerJoinEvent.class, event -> {
             MachinesUser user = getPlayer(event.getPlayer().getUniqueId());
@@ -123,6 +144,9 @@ public class MachinesManager implements MachinesAPI, Runnable {
                 user.setXpToCollect(0);
             }
         }, EventPriority.LOWEST, -1, -1, JQuickEvent.generateID()).register(true);
+
+        Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3&lJadGens &7>> &3Manager &ehas been &a&lsuccessfully loaded&e!!"));
+
     }
 
     @Override
