@@ -11,53 +11,53 @@ import java.io.File;
 
 public class CustomConfig<T> implements Configuration {
 
+    private static final ObjectMapper JSON_PARSER = new ObjectMapper().configure(SerializationConfig.Feature.INDENT_OUTPUT, true);
+    public static final ObjectMapper PUBLIC_JSON_PARSER = new ObjectMapper().configure(SerializationConfig.Feature.INDENT_OUTPUT, true);
+
     private final File file;
-    private final ObjectMapper mapper;
     private final Class<T> clazz;
 
-    //Defines if the file was created during this instance, OR NOT.
-    private final boolean isNew;
+    public final boolean didExist;
 
     public CustomConfig(String fileName, JadGens plugin, Class<T> clazz) {
         this.file = new File(plugin.getDataFolder(), fileName);
 
         this.clazz = clazz;
 
-        this.mapper = new ObjectMapper();
-        this.mapper.configure(SerializationConfig.Feature.INDENT_OUTPUT, true);
-
         if (!file.exists()) {
-            isNew = false;
+            didExist = false;
             try {
                 if (file.createNewFile())
-                    Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + "Created Configuration file.");
+                    Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3&lJadGens &7>> &b&lCreated &3" + fileName + "&e!"));
             } catch (Exception ex) {
                 ex.printStackTrace();
                 Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3&lJadGens &7>> &eAn error occurred while trying to &acreate &b" + file.getAbsolutePath() + "."));
                 return;
             }
         } else {
-            isNew = true;
+            didExist = true;
         }
+    }
+
+    public File getFile() {
+        return file;
     }
 
     public T get() {
         try {
-            return mapper.readValue(file, clazz);
+            return JSON_PARSER.readValue(file, clazz);
         } catch (Exception ex) {
-            if (isNew)
-                ex.printStackTrace();
+            ex.printStackTrace();
             return null;
         }
     }
 
     public T save(T object) {
         try {
-            mapper.writeValue(file, object);
+            JSON_PARSER.writeValue(file, object);
             return object;
         } catch (Exception ex) {
-            if (isNew)
-                ex.printStackTrace();
+            ex.printStackTrace();
             return null;
         }
     }
