@@ -278,7 +278,8 @@ public class MachineInstanceImpl implements MachineInstance {
             return;
 
         if (hologram == null) {
-            Location location = this.machine.getLocation().clone().add(0.5, 0, 0.5);
+            Location location = this.machine.getLocation().clone().add(0.5, -2, 0.5);
+            location.add(0, hologramConfiguration.getHologramYAxisOffset(), 0);
             hologram = new JHologram(location, true, hologramConfiguration.parseHologramLines(machine));
         }
 
