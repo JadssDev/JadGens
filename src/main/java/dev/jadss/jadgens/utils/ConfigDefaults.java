@@ -54,7 +54,7 @@ public class ConfigDefaults {
                     "&aStatus: &b%status%",
                     "&aFuel: &b%fuel%/%max%",
                     "&a&m----------------------------"
-            }, "&a&lEnabled", "&c&lDisabled");
+            }, 1, "&a&lEnabled", "&c&lDisabled");
 
             MachineParticleConfiguration particles = new MachineParticleConfiguration(true, true, false, false, "CRIT_MAGIC", 25, 5, 1, 1);
 
@@ -96,7 +96,7 @@ public class ConfigDefaults {
                     "&aStatus: &b%status%",
                     "&aFuel: &b%fuel%/%max%",
                     "&b&m----------------------------"
-            }, "&a&lEnabled", "&c&lDisabled");
+            }, 1, "&a&lEnabled", "&c&lDisabled");
 
             MachineParticleConfiguration particles = new MachineParticleConfiguration(true, true, false, false, "CRIT_MAGIC", 25, 5, 1, 1);
 
@@ -134,7 +134,7 @@ public class ConfigDefaults {
                     "&aStatus: &b%status%",
                     "&aFuel: &b%fuel%/%max%",
                     "&3&m----------------------------"
-            }, "&a&lEnabled", "&c&lDisabled");
+            }, 1, "&a&lEnabled", "&c&lDisabled");
 
             MachineParticleConfiguration particles = new MachineParticleConfiguration(true, true, false, false, "CRIT_MAGIC", 25, 5, 1, 1);
 
@@ -173,7 +173,7 @@ public class ConfigDefaults {
                     "&aStatus: &b%status%",
                     "&aFuel: &b%fuel%/%max%",
                     "&3&m----------------------------"
-            }, "&a&lEnabled", "&c&lDisabled");
+            }, 1, "&a&lEnabled", "&c&lDisabled");
 
             MachineParticleConfiguration particles = new MachineParticleConfiguration(true, true, false, false, "CRIT_MAGIC", 25, 5, 1, 1);
 
