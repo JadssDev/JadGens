@@ -18,6 +18,8 @@ public class LoadedHologramConfigurationImpl implements LoadedHologramConfigurat
     private final boolean enabled;
     private final String[] lines;
 
+    private final int yAxisOffset;
+
     private final String statusOn;
     private final String statusOff;
 
@@ -26,6 +28,8 @@ public class LoadedHologramConfigurationImpl implements LoadedHologramConfigurat
 
         this.enabled = configuration.getSuperConfiguration().hologramConfiguration.enabled;
         this.lines = configuration.getSuperConfiguration().hologramConfiguration.lines;
+
+        this.yAxisOffset = configuration.getSuperConfiguration().hologramConfiguration.yAxisOffset;
 
         this.statusOn = configuration.getSuperConfiguration().hologramConfiguration.statusOn;
         this.statusOff = configuration.getSuperConfiguration().hologramConfiguration.statusOff;
@@ -54,6 +58,11 @@ public class LoadedHologramConfigurationImpl implements LoadedHologramConfigurat
     @Override
     public String[] getHologramLines() {
         return lines;
+    }
+
+    @Override
+    public int getHologramYAxisOffset() {
+        return yAxisOffset;
     }
 
     private final HashMap<UUID, String> playerNames = new HashMap<>();
