@@ -9,10 +9,12 @@ public class MachineHologramConfiguration implements Configuration {
     public final boolean enabled;
     public final String[] lines;
 
+    public final int yAxisOffset;
+
     public final String statusOn;
     public final String statusOff;
 
     public MachineHologramConfiguration() {
-        this(false, null, null, null);
+        this(false, null, 0, null, null);
     }
 }

@@ -10,7 +10,6 @@ public interface LoadedHologramConfiguration {
      */
     LoadedMachineConfiguration getSuperConfiguration();
 
-
     /**
      * Checks if the hologram is enabled.
      * @return true if the hologram is enabled, false otherwise.
@@ -34,6 +33,12 @@ public interface LoadedHologramConfiguration {
      * @return the lines of the hologram!
      */
     String[] getHologramLines();
+
+    /**
+     * Gets the hologram Y axis offset. This is the Y axis offset of the hologram.
+     * @return the hologram Y axis offset.
+     */
+    int getHologramYAxisOffset();
 
     /**
      * Gets the hologram lines with the machine information.
