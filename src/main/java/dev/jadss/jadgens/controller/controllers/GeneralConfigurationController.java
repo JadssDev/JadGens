@@ -10,6 +10,9 @@ public class GeneralConfigurationController extends VersionMigrator<GeneralConfi
         addMigrator(ConfigVersions.NO_VERSION, (config) -> new GeneralConfiguration(ConfigVersions.NO_VERSION.getNext().getConfigVersion(),
                 config.removeInvalidMachines, config.protectMachines, config.protectCrafting,
                 config.produceIfOffline, config.stopProduceIfChunkIsUnloaded, config.messages));
+        addMigrator(ConfigVersions.VERSION_1, (config) -> new GeneralConfiguration(ConfigVersions.VERSION_1.getNext().getConfigVersion(),
+                config.removeInvalidMachines, config.protectMachines, config.protectCrafting,
+                config.produceIfOffline, config.stopProduceIfChunkIsUnloaded, config.messages));
     }
 
     @Override

@@ -8,6 +8,7 @@ public class MachineDataListController extends VersionMigrator<MachineDataList> 
 
     public MachineDataListController() {
         addMigrator(ConfigVersions.NO_VERSION, (list) -> new MachineDataList(ConfigVersions.NO_VERSION.getNext().getConfigVersion(), list.machines));
+        addMigrator(ConfigVersions.VERSION_1, (list) -> new MachineDataList(ConfigVersions.VERSION_1.getNext().getConfigVersion(), list.machines));
     }
 
     @Override

@@ -8,6 +8,7 @@ public class FuelListController extends VersionMigrator<FuelList> {
 
     public FuelListController() {
         addMigrator(ConfigVersions.NO_VERSION, (list) -> new FuelList(ConfigVersions.NO_VERSION.getNext().getConfigVersion(), list.fuels));
+        addMigrator(ConfigVersions.VERSION_1, (list) -> new FuelList(ConfigVersions.VERSION_1.getNext().getConfigVersion(), list.fuels));
     }
 
     @Override
