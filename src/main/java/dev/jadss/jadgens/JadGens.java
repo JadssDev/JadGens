@@ -80,6 +80,8 @@ public final class JadGens extends JavaPlugin {
         Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3&lJadgens &7>> &3&lJadGens &afinished &eloading!"));
     }
 
+    private boolean failedAtLoading = false;
+
     @Override
     public void onLoad() {
         Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3&lJadGens &7>> &eLoading &3&lJadGens &eHooks..."));
@@ -94,6 +96,7 @@ public final class JadGens extends JavaPlugin {
         } else {
             Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3&lJadGens &7>> &c&lConfigurations &bFailed at loading&e!"));
             getServer().getPluginManager().disablePlugin(this);
+            failedAtLoading = true;
             return;
         }
 
@@ -102,6 +105,12 @@ public final class JadGens extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        if (failedAtLoading) {
+            Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3&lJadGens &7>> Stopping..."));
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+
         //Setup JadAPI instance and Enchantments.
         new JGens().register(true);
 
@@ -130,6 +139,9 @@ public final class JadGens extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        if (failedAtLoading)
+            return;
+
         this.manager.save();
 
         //Register instance!
@@ -173,41 +185,87 @@ public final class JadGens extends JavaPlugin {
         MachineDataList machineData = machineDataConfig.get();
         PlayerDataList playerData = playerDataConfig.get();
 
-        if(generalConfig == null)
-            generalConfig = this.generalConfig.save(ConfigDefaults.defaultGeneralConfiguration());
+        String preventedDamage = ChatColor.translateAlternateColorCodes('&', "&3&lJadGens &7>> &eJadGens has &b&lfound &cerrors &ewhile trying to &bload your files&e, and &3&lJadGens &ehas been stopped to prevent &c&ldamage &eto your &bfiles&e. Please check your files and try again.");
 
-        if (permissionsConfig == null)
-            permissionsConfig = this.permissionsConfig.save(ConfigDefaults.defaultPermissionsConfiguration());
+        if(generalConfig == null) {
+            if (!this.generalConfig.didExist) {
+                generalConfig = this.generalConfig.save(ConfigDefaults.defaultGeneralConfiguration());
+            } else {
+                //File could not be reed.
+                Bukkit.getConsoleSender().sendMessage(preventedDamage);
+                return false;
+            }
+        }
 
-        if(machineList == null)
-            machineList = this.machinesConfig.save(new MachineList(ConfigVersions.getLatest().getConfigVersion(), ConfigDefaults.defaultMachineConfigurations()));
+        if (permissionsConfig == null) {
+            if (!this.permissionsConfig.didExist) {
+                permissionsConfig = this.permissionsConfig.save(ConfigDefaults.defaultPermissionsConfiguration());
+            } else {
+                //File could not be reed.
+                Bukkit.getConsoleSender().sendMessage(preventedDamage);
+                return false;
+            }
+        }
 
-        if(fuelList == null)
-            fuelList = this.fuelsConfig.save(new FuelList(ConfigVersions.getLatest().getConfigVersion(), ConfigDefaults.defaultFuelConfiguration()));
+        if(machineList == null) {
+            if (!this.machinesConfig.didExist) {
+                machineList = this.machinesConfig.save(new MachineList(ConfigVersions.getLatest().getConfigVersion(), ConfigDefaults.defaultMachineConfigurations()));
+            } else {
+                //File could not be reed.
+                Bukkit.getConsoleSender().sendMessage(preventedDamage);
+                return false;
+            }
+        }
 
-        if(machineData == null)
-            machineData = this.machineDataConfig.save(new MachineDataList(ConfigVersions.getLatest().getConfigVersion(), new MachineInformation[0]));
+        if(fuelList == null) {
+            if (!this.fuelsConfig.didExist) {
+                fuelList = this.fuelsConfig.save(new FuelList(ConfigVersions.getLatest().getConfigVersion(), ConfigDefaults.defaultFuelConfiguration()));
+            } else {
+                //File could not be reed.
+                Bukkit.getConsoleSender().sendMessage(preventedDamage);
+                return false;
+            }
+        }
 
-        if(playerData == null)
-            playerData = this.playerDataConfig.save(new PlayerDataList(ConfigVersions.getLatest().getConfigVersion(), new PlayerInformation[0]));
+        if(machineData == null) {
+            if (!this.machineDataConfig.didExist) {
+                machineData = this.machineDataConfig.save(new MachineDataList(ConfigVersions.getLatest().getConfigVersion(), new MachineInformation[0]));
+            } else {
+                //File could not be reed.
+                Bukkit.getConsoleSender().sendMessage(preventedDamage);
+                return false;
+            }
+        }
 
-        if (generalConfig == null || permissionsConfig == null || machineList == null || fuelList == null || machineData == null)
-            return false;
+        if(playerData == null) {
+            if (!this.playerDataConfig.didExist) {
+                playerData = this.playerDataConfig.save(new PlayerDataList(ConfigVersions.getLatest().getConfigVersion(), new PlayerInformation[0]));
+            } else {
+                //File could not be reed.
+                Bukkit.getConsoleSender().sendMessage(preventedDamage);
+                return false;
+            }
+        }
 
         Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3&lJadGens &7>> &eFinished loading &3&lConfigurations &efrom &bfiles&e!"));
 
-        Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3&lJadGens &7>> &eChecking &b&lMigration&e..."));
+        Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3&lJadGens &7>> &eChecking &b&lMigration status &eof the &3Loaded Configuration files&e... Please wait..."));
 
         generalConfig = VersionController.migrate(generalConfig);
         this.generalConfig.save(generalConfig);
+
         permissionsConfig = VersionController.migrate(permissionsConfig);
         this.permissionsConfig.save(permissionsConfig);
+
         machineList = VersionController.migrate(machineList);
         this.machinesConfig.save(machineList);
+
         fuelList = VersionController.migrate(fuelList);
         this.fuelsConfig.save(fuelList);
+
         machineData = VersionController.migrate(machineData);
         this.machineDataConfig.save(machineData);
+
         playerData = VersionController.migrate(playerData);
         this.playerDataConfig.save(playerData);
 
