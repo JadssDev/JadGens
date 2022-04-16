@@ -46,8 +46,10 @@ public class LoadedMachineProductionConfigurationImpl implements LoadedMachinePr
             MachineItemNBTConfiguration nbt = itemProc.nbtConfiguration;
 
             JItemStack item = new JItemStack(JMaterial.getRegistryMaterials().find(itemProc.itemType));
-            item.setDisplayName(itemProc.displayName);
-            item.setLore(itemProc.lore);
+            if (itemProc.displayName != null)
+                item.setDisplayName(itemProc.displayName);
+            if (itemProc.lore != null)
+                item.setLore(itemProc.lore);
 
             if (nbt != null && nbt.enabled) {
                 for (MachineNBTEntry entry : nbt.entries) {
