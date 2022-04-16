@@ -1,6 +1,5 @@
 package dev.jadss.jadgens.implementations.player;
 
-import dev.jadss.jadgens.api.MachinesAPI;
 import dev.jadss.jadgens.api.config.interfaces.LoadedMachineConfiguration;
 import dev.jadss.jadgens.api.config.playerConfig.MachineDropsPlayerInformation;
 import dev.jadss.jadgens.api.player.UserMachineDrops;
