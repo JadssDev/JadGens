@@ -39,8 +39,15 @@ public class UserManager implements MachinesUser {
             drops.add(new UserMachineDropsInstance(drop, gensManager));
 
         xpToCollect = information.xpToCollect;
+    }
 
+    //Custom method
+    public void updateDrops() {
         gensManager.getMachineConfigurations().forEach(this::getDropInformation);
+    }
+
+    public void removeDropInstance(UserMachineDropsInstance instance) {
+        this.drops.remove(instance);
     }
 
     @Override
