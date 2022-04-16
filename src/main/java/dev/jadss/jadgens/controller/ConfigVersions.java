@@ -5,21 +5,26 @@ import java.util.Arrays;
 import java.util.List;
 
 public enum ConfigVersions {
-    NO_VERSION(-1), //Represents a config from the start.
-    VERSION_1(1); //Represents the config from the start but with a version associated with it!
+    NO_VERSION(-1, "No changelog"), //Represents a config from the start.
+    VERSION_1(1, "Added the version to the configuration files!"), //Represents the config from the start but with a version associated with it!
+    VERSION_2(2, "Added a new value to machine holograms, \"YAxisOffset\", this value controls how high the hologram of the machine spawns!!"); //New version!
 
     private static final List<ConfigVersions> VALUES = Arrays.asList(values());
 
     private final int version;
+    private final String[] changelog;
 
-    ConfigVersions(int version) {
+    ConfigVersions(int version, String... changelog) {
         this.version = version;
+        this.changelog = changelog;
     }
-
-
 
     public int getVersion() {
         return version;
+    }
+
+    public String[] getChangelog() {
+        return changelog;
     }
 
     public String getConfigVersion() {

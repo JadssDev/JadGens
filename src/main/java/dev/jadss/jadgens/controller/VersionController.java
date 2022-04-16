@@ -27,8 +27,12 @@ public class VersionController {
                 T object = versionControlled;
 
                 while (!migrator.isLatest(object)) {
+                    ConfigVersions nextVersion = object.getConfigVersion().getNext();
+                    Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3&lJadGens &7>> &eMigrating &3&l" + versionControlledClass.getSimpleName() + " &eto version &b" + nextVersion + "&e. Please wait.."));
+                    Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3&lJadGens &7>> &eChangelog:"));
+                    for (String s : nextVersion.getChangelog())
+                        Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&e- &b" + s));
                     object = migrator.migrate(object);
-                    Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3&lJadGens &7>> &eMigrating &3&l" + versionControlledClass.getSimpleName() + " &eto version &b" + ConfigVersions.getVersionFromConfigString(object.getVersion()) + "&e. Please wait.."));
                 }
 
                 return object;
