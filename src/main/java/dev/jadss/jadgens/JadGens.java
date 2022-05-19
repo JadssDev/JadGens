@@ -1,7 +1,6 @@
 package dev.jadss.jadgens;
 
 import dev.jadss.jadapi.JadAPI;
-import dev.jadss.jadapi.JadAPIPlugin;
 import dev.jadss.jadapi.bukkitImpl.enchantments.EnchantmentInstance;
 import dev.jadss.jadgens.api.config.generalConfig.GeneralConfiguration;
 import dev.jadss.jadgens.api.config.generalConfig.Permissions;
@@ -24,11 +23,11 @@ import dev.jadss.jadgens.listeners.BlockInteractListener;
 import dev.jadss.jadgens.listeners.BlockPlaceListener;
 import dev.jadss.jadgens.listeners.ProtectMachinesListener;
 import dev.jadss.jadgens.utils.*;
+import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.security.Permission;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,7 +51,9 @@ public final class JadGens extends JavaPlugin {
     private final CustomConfig<PlayerDataList> playerDataConfig;
     private final CustomConfig<MachineDataList> machineDataConfig;
 
+    @Getter
     private static JadGens instance;
+
     private final List<Hook> hooks = new ArrayList<>();
 
     private MetricsHandler metrics;
@@ -167,10 +168,6 @@ public final class JadGens extends JavaPlugin {
 
     public EnchantmentInstance getGlowEnchantment() {
         return glowEnch.getRegistered();
-    }
-
-    public static JadGens getInstance() {
-        return instance;
     }
 
     private boolean getLoadInformation() {
