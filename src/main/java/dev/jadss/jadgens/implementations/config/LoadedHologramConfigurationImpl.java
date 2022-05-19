@@ -5,7 +5,6 @@ import dev.jadss.jadgens.api.config.interfaces.LoadedMachineConfiguration;
 import dev.jadss.jadgens.api.machines.Machine;
 import org.bukkit.Bukkit;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.UUID;
 

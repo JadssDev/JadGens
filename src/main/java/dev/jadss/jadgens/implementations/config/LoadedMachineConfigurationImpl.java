@@ -5,12 +5,17 @@ import dev.jadss.jadapi.bukkitImpl.item.JMaterial;
 import dev.jadss.jadgens.JadGens;
 import dev.jadss.jadgens.api.config.interfaces.*;
 import dev.jadss.jadgens.api.config.machineConfig.MachineConfiguration;
+import dev.jadss.jadgens.implementations.MachinesManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class LoadedMachineConfigurationImpl implements LoadedMachineConfiguration {
 
@@ -23,24 +28,37 @@ public class LoadedMachineConfigurationImpl implements LoadedMachineConfiguratio
     private final int ticksDelay;
 
     private final boolean needsFuel;
-    private final boolean allFuelsAllowed;
+    private final boolean needsSpecificFuel;
     private final int maxFuel;
-    private final String[] usableFuels;
+    private final List<LoadedFuelConfiguration> specificFuels;
+
+    private final boolean allowToReceiveFuelThroughHoppers;
 
     private final JMaterial blockMaterial;
 
     private final JItemStack item;
 
-    public LoadedMachineConfigurationImpl(MachineConfiguration machineConfiguration) {
+    public LoadedMachineConfigurationImpl(MachinesManager manager, MachineConfiguration machineConfiguration) {
         this.superConfig = machineConfiguration;
 
         this.ticksDelay = machineConfiguration.ticksToGenerate;
 
         this.needsFuel = machineConfiguration.fuels.needsFuelToProduce;
 
-        this.allFuelsAllowed = !machineConfiguration.fuels.needsSpecificFuel;
+        this.needsSpecificFuel = machineConfiguration.fuels.needsSpecificFuel;
         this.maxFuel = machineConfiguration.fuels.maxFuel;
-        this.usableFuels = machineConfiguration.fuels.fuelSpecifics;
+        this.specificFuels = Arrays.stream(machineConfiguration.fuels.fuelSpecifics)
+                .map(name -> {
+                    LoadedFuelConfiguration fuelConfig = manager.getFuelConfiguration(name);
+                    if (fuelConfig == null)
+                        Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3&lJadGens &7>> &eAn error occurred while loading &bMachine &a" + this.getConfigurationName() + "&e! " +
+                                "&eCould not find the &b&lfuel configuration &efor the &aname &eof &c&l" + name + "&e!"));
+                    return fuelConfig;
+                })
+                .collect(Collectors.toCollection(ArrayList::new));
+        this.specificFuels.removeIf(Objects::isNull);
+
+        this.allowToReceiveFuelThroughHoppers = machineConfiguration.allowToReceiveFuelThroughHoppers;
 
         JMaterial finalBlockType = JMaterial.getRegistryMaterials().find(machineConfiguration.blockType.toUpperCase());
         if (finalBlockType == null || finalBlockType.getMaterial(JMaterial.Type.BOTH) == null) {
@@ -82,8 +100,28 @@ public class LoadedMachineConfigurationImpl implements LoadedMachineConfiguratio
     }
 
     @Override
+    public boolean IsSpecificFuelNeeded() {
+        return needsSpecificFuel;
+    }
+
+    @Override
+    public List<String> getSpecificFuelNeeded() {
+        return specificFuels.stream().map(LoadedFuelConfiguration::getConfigurationName).collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    @Override
+    public List<LoadedFuelConfiguration> getSpecificFuelConfigurationsNeeded() {
+        return new ArrayList<>(specificFuels);
+    }
+
+    @Override
     public boolean needsFuelToProduce() {
         return needsFuel;
+    }
+
+    @Override
+    public boolean isAllowedToReceiveFuelThroughHoppers() {
+        return allowToReceiveFuelThroughHoppers;
     }
 
     @Override
@@ -98,10 +136,10 @@ public class LoadedMachineConfigurationImpl implements LoadedMachineConfiguratio
 
     @Override
     public boolean isFuelCompatible(LoadedFuelConfiguration fuel) {
-        if (allFuelsAllowed)
+        if (!needsSpecificFuel)
             return true;
 
-        return Arrays.stream(usableFuels).anyMatch(fuel.getConfigurationName()::equalsIgnoreCase);
+        return specificFuels.stream().map(LoadedFuelConfiguration::getConfigurationName).anyMatch(fuel.getConfigurationName()::equalsIgnoreCase);
     }
 
     //todo: on a reload of config, find a way to update this.
