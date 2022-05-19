@@ -6,6 +6,8 @@ import dev.jadss.jadgens.api.config.machineConfig.MachineConfiguration;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
+
 /**
  * Represents a Loaded and Usable MachineConfiguration!
  */
@@ -33,10 +35,34 @@ public interface LoadedMachineConfiguration {
     int getMaxFuelAmount();
 
     /**
+     * Checks if this machine needs a specific fuel to produce!
+     * @return true if it needs a specific fuel, false otherwise.
+     */
+    boolean IsSpecificFuelNeeded();
+
+    /**
+     * Get the specific fuel needed for this machine!
+     * @return the specific fuel, or List empty if none is specific.
+     */
+    List<String> getSpecificFuelNeeded();
+
+    /**
+     * Get the specific fuel needed for this machine!
+     * @return the specific fuel, or List empty if none is specific.
+     */
+    List<LoadedFuelConfiguration> getSpecificFuelConfigurationsNeeded();
+
+    /**
      * Checks if this machine needs fuel to produce!
      * @return if the machine needs fuel to produce!
      */
     boolean needsFuelToProduce();
+
+    /**
+     * Checks if this machine is allowed to receive fuel through hoppers!
+     * @return true if it can, false otherwise.
+     */
+    boolean isAllowedToReceiveFuelThroughHoppers();
 
     //Holograms.
 
