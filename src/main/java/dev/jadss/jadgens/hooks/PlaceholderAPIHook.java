@@ -2,7 +2,6 @@ package dev.jadss.jadgens.hooks;
 
 import dev.jadss.jadgens.api.MachinesAPI;
 import dev.jadss.jadgens.api.config.interfaces.LoadedMachineConfiguration;
-import dev.jadss.jadgens.api.player.MachinesUser;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
