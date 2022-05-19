@@ -1,10 +1,11 @@
 package dev.jadss.jadgens.api.config.machineConfig.misc;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import dev.jadss.jadgens.api.config.interfaces.Configuration;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-@org.codehaus.jackson.annotate.JsonPropertyOrder(value = { "enabled", "showOnProduce", "showOnPlace", "showOnBreak", "particleType", "particleCount", "speed", "radius", "times", "rows" })
+@JsonPropertyOrder(value = { "enabled", "showOnProduce", "showOnPlace", "showOnBreak", "particleType", "particleCount", "speed", "radius", "times", "rows" })
 public class MachineParticleConfiguration implements Configuration {
 
     public final boolean enabled;
