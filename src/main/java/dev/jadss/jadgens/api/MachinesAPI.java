@@ -89,6 +89,7 @@ public interface MachinesAPI extends UnsafeMachinesAPI {
 
     /**
      * Get a player by his UUID!
+     * @param player the UUID of the player!
      * @return The {@link MachinesUser} object with the player information!
      */
     MachinesUser getPlayer(UUID player);

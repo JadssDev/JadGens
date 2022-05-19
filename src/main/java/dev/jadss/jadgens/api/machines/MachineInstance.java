@@ -43,6 +43,11 @@ public interface MachineInstance {
      */
     void tickHologram();
 
+    /**
+     * Ticks the hoppers around this machine to see if it should fuel.
+     */
+    void tickHopper();
+
     //Enabled thingies.
 
     /**
