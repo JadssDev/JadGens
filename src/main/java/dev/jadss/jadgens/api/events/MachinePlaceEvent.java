@@ -1,14 +1,14 @@
-package dev.jadss.jadgens.events;
+package dev.jadss.jadgens.api.events;
 
 import dev.jadss.jadgens.api.machines.MachineInstance;
 import org.bukkit.event.HandlerList;
 
 /**
- * Get the machine that was placed!
+ * Called when a machine is placed.
  */
 public class MachinePlaceEvent extends MachineEvent {
 
-    private static final HandlerList handlerList = new HandlerList();
+    private static final HandlerList HANDLER_LIST = new HandlerList();
 
     public MachinePlaceEvent(MachineInstance machine) {
         super(machine);
@@ -16,10 +16,10 @@ public class MachinePlaceEvent extends MachineEvent {
 
     @Override
     public HandlerList getHandlers() {
-        return handlerList;
+        return HANDLER_LIST;
     }
 
     public static HandlerList getHandlerList() {
-        return handlerList;
+        return HANDLER_LIST;
     }
 }

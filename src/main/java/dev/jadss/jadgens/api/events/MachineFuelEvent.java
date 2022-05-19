@@ -1,5 +1,6 @@
-package dev.jadss.jadgens.events;
+package dev.jadss.jadgens.api.events;
 
+import dev.jadss.jadgens.api.config.interfaces.LoadedFuelConfiguration;
 import dev.jadss.jadgens.api.machines.MachineInstance;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
@@ -9,17 +10,19 @@ import org.bukkit.event.HandlerList;
  */
 public class MachineFuelEvent extends MachineEvent {
 
-    private static HandlerList handlerList = new HandlerList();
+    private static final HandlerList HANDLER_LIST = new HandlerList();
 
     private final Player player;
     private final boolean isFuelMultiple;
     private int fuelAmount;
+    private LoadedFuelConfiguration fuel;
 
-    public MachineFuelEvent(MachineInstance machine, Player player, int fuelAmount, boolean isFuelMultiple) {
+    public MachineFuelEvent(MachineInstance machine, Player player, int fuelAmount, boolean isFuelMultiple, LoadedFuelConfiguration fuel) {
         super(machine);
         this.player = player;
         this.fuelAmount = fuelAmount;
         this.isFuelMultiple = isFuelMultiple;
+        this.fuel = fuel;
     }
 
     /**
@@ -36,6 +39,14 @@ public class MachineFuelEvent extends MachineEvent {
      */
     public void setFuelAmount(int fuelAmount) {
         this.fuelAmount = fuelAmount;
+    }
+
+    /**
+     * Get the fuel that was used to fuel the machine!
+     * @return the fuel that was used to fuel the machine!
+     */
+    public LoadedFuelConfiguration getFuel() {
+        return fuel;
     }
 
     /**
@@ -56,10 +67,10 @@ public class MachineFuelEvent extends MachineEvent {
 
     @Override
     public HandlerList getHandlers() {
-        return handlerList;
+        return HANDLER_LIST;
     }
 
     public static HandlerList getHandlerList() {
-        return handlerList;
+        return HANDLER_LIST;
     }
 }

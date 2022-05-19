@@ -1,4 +1,4 @@
-package dev.jadss.jadgens.events;
+package dev.jadss.jadgens.api.events;
 
 import dev.jadss.jadgens.api.machines.MachineInstance;
 import lombok.Getter;
@@ -11,7 +11,7 @@ import org.bukkit.event.HandlerList;
 @Getter
 public class MachineProduceEvent extends MachineEvent {
 
-    private static final HandlerList handlerList = new HandlerList();
+    private static final HandlerList HANDLER_LIST = new HandlerList();
 
     private final boolean forcefully;
 
@@ -30,10 +30,10 @@ public class MachineProduceEvent extends MachineEvent {
 
     @Override
     public HandlerList getHandlers() {
-        return handlerList;
+        return HANDLER_LIST;
     }
 
     public static HandlerList getHandlerList() {
-        return handlerList;
+        return HANDLER_LIST;
     }
 }

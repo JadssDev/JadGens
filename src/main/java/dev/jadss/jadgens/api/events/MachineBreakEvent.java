@@ -1,15 +1,15 @@
-package dev.jadss.jadgens.events;
+package dev.jadss.jadgens.api.events;
 
 import dev.jadss.jadgens.api.machines.MachineInstance;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 
 /**
- * Get the machine that was broken!
+ * Called when a machine is broken!
  */
 public class MachineBreakEvent extends MachineEvent {
 
-    private static final HandlerList handlerList = new HandlerList();
+    private static final HandlerList HANDLER_LIST = new HandlerList();
 
     private final Player player;
 
@@ -28,10 +28,10 @@ public class MachineBreakEvent extends MachineEvent {
 
     @Override
     public HandlerList getHandlers() {
-        return handlerList;
+        return HANDLER_LIST;
     }
 
     public static HandlerList getHandlerList() {
-        return handlerList;
+        return HANDLER_LIST;
     }
 }
