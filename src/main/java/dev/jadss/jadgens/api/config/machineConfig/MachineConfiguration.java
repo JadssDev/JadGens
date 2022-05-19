@@ -13,6 +13,7 @@ public class MachineConfiguration implements Configuration {
     public final String machineType;
     public final int ticksToGenerate;
     public final String blockType;
+    public final boolean allowToReceiveFuelThroughHoppers;
 
     // RECIPE
 
@@ -33,6 +34,6 @@ public class MachineConfiguration implements Configuration {
     public final MachineParticleConfiguration particleConfiguration;
 
     public MachineConfiguration() {
-        this(null, 0, null, null, null, null, null, null, null, null);
+        this(null, 0, null, false, null, null, null, null, null, null, null);
     }
 }
