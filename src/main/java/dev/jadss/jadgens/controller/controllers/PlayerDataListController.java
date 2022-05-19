@@ -9,6 +9,7 @@ public class PlayerDataListController extends VersionMigrator<PlayerDataList> {
     public PlayerDataListController() {
         addMigrator(ConfigVersions.NO_VERSION, (list) -> new PlayerDataList(ConfigVersions.NO_VERSION.getNext().getConfigVersion(), list.playerData));
         addMigrator(ConfigVersions.VERSION_1, (list) -> new PlayerDataList(ConfigVersions.VERSION_1.getNext().getConfigVersion(), list.playerData));
+        addMigrator(ConfigVersions.VERSION_2, (list) -> new PlayerDataList(ConfigVersions.VERSION_2.getNext().getConfigVersion(), list.playerData));
     }
 
     @Override

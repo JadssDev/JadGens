@@ -19,16 +19,16 @@ public class VersionController {
 
     @SuppressWarnings("unchecked")
     public static <T extends VersionControlled> T migrate(T versionControlled) {
-        Class<?> versionControlledClass = versionControlled.getClass();
         for (Map.Entry<Class<? extends VersionControlled>, VersionMigrator<? extends VersionControlled>> entry : map.entrySet()) {
-            if (entry.getKey().equals(versionControlledClass)) {
+            if (entry.getKey().equals(versionControlled.getClass())) {
 
                 VersionMigrator<T> migrator = (VersionMigrator<T>) entry.getValue();
                 T object = versionControlled;
 
                 while (!migrator.isLatest(object)) {
                     ConfigVersions nextVersion = object.getConfigVersion().getNext();
-                    Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3&lJadGens &7>> &eMigrating &3&l" + versionControlledClass.getSimpleName() + " &eto version &b" + nextVersion + "&e. Please wait.."));
+                    Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&',
+                            "&3&lJadGens &7>> &eMigrating &3&l" + versionControlled.getClass().getSimpleName() + " &eto version &b" + nextVersion + "&e. Please wait.."));
                     Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3&lJadGens &7>> &eChangelog:"));
                     for (String s : nextVersion.getChangelog())
                         Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&e- &b" + s));

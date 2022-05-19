@@ -20,11 +20,17 @@ public class MachineListController extends VersionMigrator<MachineList> {
                 MachineHologramConfiguration oldHologram = machineConfig.hologramConfiguration;
                 MachineHologramConfiguration newHologram = new MachineHologramConfiguration(oldHologram.enabled, oldHologram.lines, 1, oldHologram.statusOn, oldHologram.statusOff);
 
-                return new MachineConfiguration(machineConfig.machineType, machineConfig.ticksToGenerate, machineConfig.blockType, machineConfig.recipe,
+                return new MachineConfiguration(machineConfig.machineType, machineConfig.ticksToGenerate, machineConfig.blockType, true, machineConfig.recipe,
                         machineConfig.machineItem, machineConfig.shop, machineConfig.fuels, machineConfig.productionConfig, newHologram, machineConfig.particleConfiguration);
             }).collect(Collectors.toCollection(ArrayList::new));
 
-            return new MachineList(ConfigVersions.VERSION_1.getNext().getConfigVersion(), newMachineList.stream().toArray(MachineConfiguration[]::new));
+            return new MachineList(ConfigVersions.VERSION_1.getNext().getConfigVersion(), newMachineList.toArray(new MachineConfiguration[0]));
+        });
+        addMigrator(ConfigVersions.VERSION_2, (list) -> {
+            List<MachineConfiguration> newMachineList = Arrays.asList(list.machines).stream().map(machineConfig ->
+                    new MachineConfiguration(machineConfig.machineType, machineConfig.ticksToGenerate, machineConfig.blockType, true, machineConfig.recipe,
+                    machineConfig.machineItem, machineConfig.shop, machineConfig.fuels, machineConfig.productionConfig, machineConfig.hologramConfiguration, machineConfig.particleConfiguration)).collect(Collectors.toCollection(ArrayList::new));
+            return new MachineList(ConfigVersions.VERSION_2.getNext().getConfigVersion(), newMachineList.toArray(new MachineConfiguration[0]));
         });
     }
 

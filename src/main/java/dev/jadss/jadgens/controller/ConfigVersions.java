@@ -7,7 +7,9 @@ import java.util.List;
 public enum ConfigVersions {
     NO_VERSION(-1, "No changelog"), //Represents a config from the start.
     VERSION_1(1, "Added the version to the configuration files!"), //Represents the config from the start but with a version associated with it!
-    VERSION_2(2, "Added a new value to machine holograms, \"YAxisOffset\", this value controls how high the hologram of the machine spawns!!"); //New version!
+    VERSION_2(2, "Added a new value to machine holograms, \"YAxisOffset\", this value controls how high the hologram of the machine spawns!!"), //New version!
+    VERSION_3(3, "Made it so you could actually disable the Machine GUI, missed feature when migrating!",
+            "Added a new option for machines to choose if they can receive fuel from hoppers."); //Newer version now =)
 
     private static final List<ConfigVersions> VALUES = Arrays.asList(values());
 
@@ -30,7 +32,6 @@ public enum ConfigVersions {
     public String getConfigVersion() {
         return version + "-DO-NOT-CHANGE";
     }
-
 
     public ConfigVersions getNext() {
         if (this == getLatest())

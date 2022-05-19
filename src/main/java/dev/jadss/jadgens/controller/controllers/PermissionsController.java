@@ -15,6 +15,10 @@ public class PermissionsController extends VersionMigrator<Permissions> {
                 permissions.giveCommandPermission, permissions.actionsCommandPermission, permissions.actionsCommandManageOthersPermission,
                 permissions.actionsCommandPurgePermission, permissions.actionsCommandEnablePermission, permissions.actionsCommandDisablePermission,
                 permissions.shopCommandPermission, permissions.machineLimitsGroups));
+        addMigrator(ConfigVersions.VERSION_2, (permissions) -> new Permissions(ConfigVersions.VERSION_2.getNext().getConfigVersion(), permissions.machineBypassPermission,
+                permissions.giveCommandPermission, permissions.actionsCommandPermission, permissions.actionsCommandManageOthersPermission,
+                permissions.actionsCommandPurgePermission, permissions.actionsCommandEnablePermission, permissions.actionsCommandDisablePermission,
+                permissions.shopCommandPermission, permissions.machineLimitsGroups));
     }
 
     @Override
