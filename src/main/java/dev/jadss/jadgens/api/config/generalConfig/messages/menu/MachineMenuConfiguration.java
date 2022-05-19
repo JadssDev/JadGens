@@ -13,6 +13,8 @@ public class MachineMenuConfiguration implements Configuration {
     public final String title;
     public final int rows;
 
+    public final boolean enabled;
+
     public final MenuItemConfiguration backgroundItem;
 
     public final MachineOwnerItemConfiguration ownerItem;
@@ -21,6 +23,6 @@ public class MachineMenuConfiguration implements Configuration {
     public final MachineCloseItemConfiguration closeItem;
 
     public MachineMenuConfiguration() {
-        this(null, 0, null, null, null, null, null);
+        this(null, 0, false, null, null, null, null, null);
     }
 }
