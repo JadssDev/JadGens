@@ -1,17 +1,16 @@
 package dev.jadss.jadgens.utils;
 
-import dev.jadss.jadapi.bukkitImpl.item.JMaterial;
 import dev.jadss.jadgens.api.ShopEconomy;
 import dev.jadss.jadgens.api.config.CraftingIngredient;
 import dev.jadss.jadgens.api.config.RecipeConfiguration;
-import dev.jadss.jadgens.api.config.generalConfig.Permissions;
-import dev.jadss.jadgens.api.config.generalConfig.limits.LimitGroup;
-import dev.jadss.jadgens.api.config.generalConfig.limits.MachineLimits;
-import dev.jadss.jadgens.api.config.generalConfig.messages.*;
 import dev.jadss.jadgens.api.config.fuelConfig.FuelConfiguration;
 import dev.jadss.jadgens.api.config.fuelConfig.FuelItemConfiguration;
 import dev.jadss.jadgens.api.config.fuelConfig.FuelShopConfiguration;
 import dev.jadss.jadgens.api.config.generalConfig.GeneralConfiguration;
+import dev.jadss.jadgens.api.config.generalConfig.Permissions;
+import dev.jadss.jadgens.api.config.generalConfig.limits.LimitGroup;
+import dev.jadss.jadgens.api.config.generalConfig.limits.MachineLimits;
+import dev.jadss.jadgens.api.config.generalConfig.messages.*;
 import dev.jadss.jadgens.api.config.generalConfig.messages.commands.*;
 import dev.jadss.jadgens.api.config.generalConfig.messages.menu.*;
 import dev.jadss.jadgens.api.config.generalConfig.messages.menu.specifics.MachineCloseItemConfiguration;
@@ -68,7 +67,7 @@ public class ConfigDefaults {
                 recipeConfig = new RecipeConfiguration(true, row1, row2, row3, ingredients);
             }
 
-            machines[0] = new MachineConfiguration("Level_Generator", 300, "GOLD_BLOCK", recipeConfig, item, shop, fuel, production, holograms, particles);
+            machines[0] = new MachineConfiguration("Level_Generator", 300, "GOLD_BLOCK", true, recipeConfig, item, shop, fuel, production, holograms, particles);
         }
 
         {
@@ -110,7 +109,7 @@ public class ConfigDefaults {
                 recipeConfig = new RecipeConfiguration(true, row1, row2, row3, ingredients);
             }
 
-            machines[1] = new MachineConfiguration("Fuel_Generator", 150, "EMERALD_BLOCK", recipeConfig, item, shop, fuel, production, holograms, particles);
+            machines[1] = new MachineConfiguration("Fuel_Generator", 150, "EMERALD_BLOCK", true, recipeConfig, item, shop, fuel, production, holograms, particles);
         }
 
         {
@@ -149,7 +148,7 @@ public class ConfigDefaults {
                 recipeConfig = new RecipeConfiguration(true, row1, row2, row3, ingredients);
             }
 
-            machines[2] = new MachineConfiguration("Diamond_Generator", 450, "DIAMOND_BLOCK", recipeConfig, item, shop, fuel, production, holograms, particles);
+            machines[2] = new MachineConfiguration("Diamond_Generator", 450, "DIAMOND_BLOCK", true, recipeConfig, item, shop, fuel, production, holograms, particles);
         }
 
         {
@@ -188,7 +187,7 @@ public class ConfigDefaults {
                 recipeConfig = new RecipeConfiguration(true, row1, row2, row3, ingredients);
             }
 
-            machines[3] = new MachineConfiguration("Leather_Generator", 450, "IRON_BLOCK", recipeConfig, item, shop, fuel, production, holograms, particles);
+            machines[3] = new MachineConfiguration("Leather_Generator", 450, "IRON_BLOCK", true, recipeConfig, item, shop, fuel, production, holograms, particles);
         }
 
         return machines;
@@ -324,7 +323,7 @@ public class ConfigDefaults {
 
             MenuItemConfiguration backgroundItem = new MenuItemConfiguration("CYAN_STAINED_GLASS_PANE", "", new String[] { "" }, false, -1);
 
-            machineMenuConfiguration = new MachineMenuConfiguration("&3&lMachine", 1, backgroundItem, ownerItem, dropsItem, statusItem, closeItem);
+            machineMenuConfiguration = new MachineMenuConfiguration("&3&lMachine", 1, true, backgroundItem, ownerItem, dropsItem, statusItem, closeItem);
         }
 
         MachineMessagesConfiguration machineMessagesConfiguration;
