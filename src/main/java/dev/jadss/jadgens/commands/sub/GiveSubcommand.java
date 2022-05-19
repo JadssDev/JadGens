@@ -60,51 +60,43 @@ public class GiveSubcommand {
                     next++;
                 }
 
-                String id1 =  JQuickEvent.generateID();
+                String id1 = JQuickEvent.generateID();
                 String id2 = JQuickEvent.generateID();
                 String id3 = JQuickEvent.generateID();
 
-                new JQuickEvent(JadAPIPlugin.get(JadGens.class), InventoryClickEvent.class, e -> {
-                    if (e.isCancelled())
-                        return;
-                    if (player.getUniqueId().equals(e.getWhoClicked().getUniqueId())) {
-                        e.setCancelled(true);
-                        if (e.getClickedInventory() != null && e.getCurrentItem() != null && e.getCurrentItem().getType() != JMaterial.getRegistryMaterials().find(JMaterial.MaterialEnum.AIR).getMaterial(JMaterial.Type.ITEM).getKey()) {
-                            JItemStack itemClick = new JItemStack(e.getCurrentItem());
-                            if (itemClick.getNBTBoolean("Give_Machine")) {
-                                LoadedMachineConfiguration machine = API.getMachineConfiguration(itemClick.getNBTString("Give_Machine_Configuration"));
-                                if (e.getClick() == ClickType.LEFT) {
-                                    player.getInventory().addItem(machine.getSuperMachineItem().setAmount(1).buildItemStack());
-                                } else if (e.getClick() == ClickType.RIGHT) {
-                                    player.getInventory().addItem(machine.getSuperMachineItem().setAmount(64).buildItemStack());
-                                }
-                            } else if (itemClick.getNBTBoolean("Give_Fuel")) {
-                                LoadedFuelConfiguration fuel = API.getFuelConfiguration(itemClick.getNBTString("Give_Fuel_Configuration"));
-                                if (e.getClick() == ClickType.LEFT) {
-                                    player.getInventory().addItem(fuel.getSuperItem().setAmount(1).buildItemStack());
-                                } else if (e.getClick() == ClickType.RIGHT) {
-                                    player.getInventory().addItem(fuel.getSuperItem().setAmount(64).buildItemStack());
-                                }
+                new JQuickEvent<>(JadAPIPlugin.get(JadGens.class), InventoryClickEvent.class, EventPriority.MONITOR, event -> {
+                    event.setCancelled(true);
+                    if (event.getClickedInventory() != null && event.getCurrentItem() != null && event.getCurrentItem().getType() != JMaterial.getRegistryMaterials().find(JMaterial.MaterialEnum.AIR).getMaterial(JMaterial.Type.ITEM).getKey()) {
+                        JItemStack itemClick = new JItemStack(event.getCurrentItem());
+                        if (itemClick.getNBTBoolean("Give_Machine")) {
+                            LoadedMachineConfiguration machine = API.getMachineConfiguration(itemClick.getNBTString("Give_Machine_Configuration"));
+                            if (event.getClick() == ClickType.LEFT) {
+                                player.getInventory().addItem(machine.getSuperMachineItem().setAmount(1).buildItemStack());
+                            } else if (event.getClick() == ClickType.RIGHT) {
+                                player.getInventory().addItem(machine.getSuperMachineItem().setAmount(64).buildItemStack());
+                            }
+                        } else if (itemClick.getNBTBoolean("Give_Fuel")) {
+                            LoadedFuelConfiguration fuel = API.getFuelConfiguration(itemClick.getNBTString("Give_Fuel_Configuration"));
+                            if (event.getClick() == ClickType.LEFT) {
+                                player.getInventory().addItem(fuel.getSuperItem().setAmount(1).buildItemStack());
+                            } else if (event.getClick() == ClickType.RIGHT) {
+                                player.getInventory().addItem(fuel.getSuperItem().setAmount(64).buildItemStack());
                             }
                         }
                     }
-                }, EventPriority.MONITOR, -1, -1, id1).register(true);
+                }, -1, -1, e -> !e.isCancelled() && player.getUniqueId().equals(e.getWhoClicked().getUniqueId()), id1).register(true);
 
-                new JQuickEvent(JadAPIPlugin.get(JadGens.class), InventoryCloseEvent.class, e -> {
-                    if (player.getUniqueId().equals(e.getPlayer().getUniqueId())) {
-                        JQuickEvent.getQuickEvent(id1).register(false);
-                        JQuickEvent.getQuickEvent(id2).register(false);
-                        JQuickEvent.getQuickEvent(id3).register(false);
-                    }
-                }, EventPriority.LOWEST, -1, -1, id2).register(true);
+                new JQuickEvent<>(JadAPIPlugin.get(JadGens.class), InventoryCloseEvent.class, EventPriority.LOWEST, event -> {
+                    JQuickEvent.getQuickEvent(id1).register(false);
+                    JQuickEvent.getQuickEvent(id2).register(false);
+                    JQuickEvent.getQuickEvent(id3).register(false);
+                }, -1, -1, e -> player.getUniqueId().equals(e.getPlayer().getUniqueId()), id2).register(true);
 
-                new JQuickEvent(JadAPIPlugin.get(JadGens.class), PlayerQuitEvent.class, e -> {
-                    if (player.getUniqueId().equals(e.getPlayer().getUniqueId())) {
-                        JQuickEvent.getQuickEvent(id1).register(false);
-                        JQuickEvent.getQuickEvent(id2).register(false);
-                        JQuickEvent.getQuickEvent(id3).register(false);
-                    }
-                }, EventPriority.LOWEST, -1, -1, id3).register(true);
+                new JQuickEvent<>(JadAPIPlugin.get(JadGens.class), PlayerQuitEvent.class, EventPriority.LOWEST, e -> {
+                    JQuickEvent.getQuickEvent(id1).register(false);
+                    JQuickEvent.getQuickEvent(id2).register(false);
+                    JQuickEvent.getQuickEvent(id3).register(false);
+                }, -1, -1, e -> player.getUniqueId().equals(e.getPlayer().getUniqueId()), id3).register(true);
 
                 player.openInventory(giveInventory.getInventory());
             } else {
@@ -142,7 +134,7 @@ public class GiveSubcommand {
             int amount;
             try {
                 amount = Integer.parseInt(args[2]);
-            } catch(Exception ignored) {
+            } catch (Exception ignored) {
                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&', API.getGeneralConfiguration().getMessages().globalMessages.notANumber));
                 return;
             }
@@ -154,7 +146,7 @@ public class GiveSubcommand {
             String configurationId = args[1];
 
             if (isMachine) {
-                if(args.length == 3) {
+                if (args.length == 3) {
                     if (sender instanceof Player) {
                         Player player = (Player) sender;
                         LoadedMachineConfiguration machineConfig = API.getMachineConfiguration(configurationId);
@@ -188,7 +180,7 @@ public class GiveSubcommand {
                     }
                 }
             } else if (isFuel) {
-                if(args.length == 3) {
+                if (args.length == 3) {
                     if (sender instanceof Player) {
                         Player player = (Player) sender;
                         LoadedFuelConfiguration fuelConfig = API.getFuelConfiguration(configurationId);
