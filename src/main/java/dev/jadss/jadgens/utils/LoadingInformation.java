@@ -10,8 +10,6 @@ import dev.jadss.jadgens.api.config.serializers.lists.MachineList;
 import dev.jadss.jadgens.api.config.serializers.lists.PlayerDataList;
 import lombok.AllArgsConstructor;
 
-import java.security.Permission;
-
 /**
  * This information is necessary for the Manager to load up!
  */
