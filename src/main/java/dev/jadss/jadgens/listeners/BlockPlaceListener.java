@@ -3,7 +3,7 @@ package dev.jadss.jadgens.listeners;
 import dev.jadss.jadapi.bukkitImpl.entities.JPlayer;
 import dev.jadss.jadgens.api.MachinesAPI;
 import dev.jadss.jadgens.api.machines.MachineInstance;
-import dev.jadss.jadgens.events.MachinePlaceEvent;
+import dev.jadss.jadgens.api.events.MachinePlaceEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;

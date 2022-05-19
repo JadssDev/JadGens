@@ -2,9 +2,7 @@ package dev.jadss.jadgens.listeners;
 
 import dev.jadss.jadapi.bukkitImpl.item.JItemStack;
 import dev.jadss.jadgens.api.MachinesAPI;
-import dev.jadss.jadgens.api.config.interfaces.LoadedMachineConfiguration;
 import dev.jadss.jadgens.api.machines.MachineInstance;
-import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;

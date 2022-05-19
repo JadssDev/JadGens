@@ -5,10 +5,9 @@ import dev.jadss.jadapi.utils.JReflection;
 import dev.jadss.jadgens.api.MachinesAPI;
 import dev.jadss.jadgens.api.config.interfaces.LoadedFuelConfiguration;
 import dev.jadss.jadgens.api.machines.MachineInstance;
-import dev.jadss.jadgens.events.MachineFuelEvent;
+import dev.jadss.jadgens.api.events.MachineFuelEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -61,7 +60,7 @@ public class BlockInteractListener implements Listener {
 
                 int fuelAmount = fuel.getFuelAmount() * fuelCount;
 
-                MachineFuelEvent machineFuelEvent = new MachineFuelEvent(machine, event.getPlayer(), fuelAmount, true);
+                MachineFuelEvent machineFuelEvent = new MachineFuelEvent(machine, event.getPlayer(), fuelAmount, true, fuel);
                 Bukkit.getPluginManager().callEvent(machineFuelEvent);
                 if (machineFuelEvent.isCancelled())
                     return;
@@ -79,7 +78,7 @@ public class BlockInteractListener implements Listener {
 
                 event.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', api.getGeneralConfiguration().getMessages().fuelMessages.usedMultipleFuels.replace("%amount%", "" + fuelCount)));
             } else if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-                MachineFuelEvent machineFuelEvent = new MachineFuelEvent(machine, event.getPlayer(), fuel.getFuelAmount(), false);
+                MachineFuelEvent machineFuelEvent = new MachineFuelEvent(machine, event.getPlayer(), fuel.getFuelAmount(), false, fuel);
                 Bukkit.getPluginManager().callEvent(machineFuelEvent);
                 if (machineFuelEvent.isCancelled())
                     return;
@@ -96,7 +95,8 @@ public class BlockInteractListener implements Listener {
                     event.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', api.getGeneralConfiguration().getMessages().fuelMessages.reachedMaxCapacity));
                 }
             }
-        } else if (!api.isMachine(event.getItem()) && event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+        } else if (api.getGeneralConfiguration().getMessages().machineMenu.enabled && (!api.isMachine(event.getItem()) && event.getAction() == Action.RIGHT_CLICK_BLOCK)) {
+
             MachineInstance machine = api.getMachine(event.getClickedBlock().getLocation());
             if(machine == null)
                 return;
