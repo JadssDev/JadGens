@@ -203,98 +203,89 @@ public class MenusManagerImpl implements MenusManager {
         String quickEventId2 = JQuickEvent.generateID();
         String quickEventId3 = JQuickEvent.generateID();
 
-        new JQuickEvent(JadAPIPlugin.get(JadGens.class), InventoryClickEvent.class, e -> {
-            if (e.isCancelled())
-                return;
+        new JQuickEvent<>(JadAPIPlugin.get(JadGens.class), InventoryClickEvent.class, EventPriority.MONITOR, event -> {
+            event.setCancelled(true);
+            if (event.getClickedInventory() != null && event.getCurrentItem() != null && event.getCurrentItem().getType() != Material.AIR) {
+                JItemStack item = new JItemStack(event.getCurrentItem());
+                if (item.getNBTBoolean("Choose_Machines")) {
+                    JQuickEvent.getQuickEvent(quickEventId1).register(false);
+                    JQuickEvent.getQuickEvent(quickEventId2).register(false);
+                    JQuickEvent.getQuickEvent(quickEventId3).register(false);
 
-            if (e.getWhoClicked().getUniqueId().equals(player.getUniqueId())) {
-                e.setCancelled(true);
-                if (e.getClickedInventory() != null && e.getCurrentItem() != null && e.getCurrentItem().getType() != Material.AIR) {
-                    JItemStack item = new JItemStack(e.getCurrentItem());
-                    if (item.getNBTBoolean("Choose_Machines")) {
-                        JQuickEvent.getQuickEvent(quickEventId1).register(false);
-                        JQuickEvent.getQuickEvent(quickEventId2).register(false);
-                        JQuickEvent.getQuickEvent(quickEventId3).register(false);
+                    player.closeInventory();
 
-                        player.closeInventory();
+                    bypassBuiltInDelay.add(player.getUniqueId());
+                    this.openShopMenu(ShopType.MACHINES, player, null, null, () -> {
+                        bypassBuiltInDelay.remove(player.getUniqueId());
+                        if (postClose != null)
+                            postClose.run();
+                    });
+                } else if (item.getNBTBoolean("Choose_Fuels")) {
+                    JQuickEvent.getQuickEvent(quickEventId1).register(false);
+                    JQuickEvent.getQuickEvent(quickEventId2).register(false);
+                    JQuickEvent.getQuickEvent(quickEventId3).register(false);
 
-                        bypassBuiltInDelay.add(player.getUniqueId());
-                        this.openShopMenu(ShopType.MACHINES, player, null, null, () -> {
-                            bypassBuiltInDelay.remove(player.getUniqueId());
-                            if(postClose != null)
-                                postClose.run();
-                        });
-                    } else if (item.getNBTBoolean("Choose_Fuels")) {
-                        JQuickEvent.getQuickEvent(quickEventId1).register(false);
-                        JQuickEvent.getQuickEvent(quickEventId2).register(false);
-                        JQuickEvent.getQuickEvent(quickEventId3).register(false);
+                    player.closeInventory();
 
-                        player.closeInventory();
+                    bypassBuiltInDelay.add(player.getUniqueId());
+                    this.openShopMenu(ShopType.FUELS, player, null, null, () -> {
+                        bypassBuiltInDelay.remove(player.getUniqueId());
+                        if (postClose != null)
+                            postClose.run();
+                    });
+                } else if (item.getNBTBoolean("Shop_Fuel_Item")) {
+                    LoadedFuelConfiguration fuel = MachinesAPI.getInstance().getFuelConfiguration(item.getNBTString("Configuration"));
+                    int slot = player.getInventory().firstEmpty();
+                    if (slot == -1) {
+                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', MachinesAPI.getInstance().getGeneralConfiguration().getMessages().shopMessages.noInventorySlot));
+                        return;
+                    }
 
-                        bypassBuiltInDelay.add(player.getUniqueId());
-                        this.openShopMenu(ShopType.FUELS, player, null, null, () -> {
-                            bypassBuiltInDelay.remove(player.getUniqueId());
-                            if(postClose != null)
-                                postClose.run();
-                        });
-                    } else if (item.getNBTBoolean("Shop_Fuel_Item")) {
-                        LoadedFuelConfiguration fuel = MachinesAPI.getInstance().getFuelConfiguration(item.getNBTString("Configuration"));
-                        int slot = player.getInventory().firstEmpty();
-                        if (slot == -1) {
-                            player.sendMessage(ChatColor.translateAlternateColorCodes('&', MachinesAPI.getInstance().getGeneralConfiguration().getMessages().shopMessages.noInventorySlot));
-                            return;
-                        }
+                    if (clickDelay.containsKey(player.getUniqueId()) && clickDelay.get(player.getUniqueId()) > System.currentTimeMillis())
+                        return;
+                    clickDelay.put(player.getUniqueId(), System.currentTimeMillis() + 50);
 
-                        if (clickDelay.containsKey(player.getUniqueId()) && clickDelay.get(player.getUniqueId()) > System.currentTimeMillis())
-                            return;
-                        clickDelay.put(player.getUniqueId(), System.currentTimeMillis() + 50);
+                    if (hasEnoughCreds(player, fuel.getSuperConfiguration().shop.economyType, fuel.getSuperConfiguration().shop.cost)) {
+                        player.getInventory().addItem(fuel.getItem());
+                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', MachinesAPI.getInstance().getGeneralConfiguration().getMessages().shopMessages.purchaseSuccessful));
+                    }
+                } else if (item.getNBTBoolean("Shop_Machine_Item")) {
+                    LoadedMachineConfiguration machine = MachinesAPI.getInstance().getMachineConfiguration(item.getNBTString("Configuration"));
+                    int slot = player.getInventory().firstEmpty();
+                    if (slot == -1) {
+                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', MachinesAPI.getInstance().getGeneralConfiguration().getMessages().shopMessages.noInventorySlot));
+                        return;
+                    }
 
-                        if (hasEnoughCreds(player, fuel.getSuperConfiguration().shop.economyType, fuel.getSuperConfiguration().shop.cost)) {
-                            player.getInventory().addItem(fuel.getItem());
-                            player.sendMessage(ChatColor.translateAlternateColorCodes('&', MachinesAPI.getInstance().getGeneralConfiguration().getMessages().shopMessages.purchaseSuccessful));
-                        }
-                    } else if (item.getNBTBoolean("Shop_Machine_Item")) {
-                        LoadedMachineConfiguration machine = MachinesAPI.getInstance().getMachineConfiguration(item.getNBTString("Configuration"));
-                        int slot = player.getInventory().firstEmpty();
-                        if (slot == -1) {
-                            player.sendMessage(ChatColor.translateAlternateColorCodes('&', MachinesAPI.getInstance().getGeneralConfiguration().getMessages().shopMessages.noInventorySlot));
-                            return;
-                        }
+                    if (clickDelay.containsKey(player.getUniqueId()) && clickDelay.get(player.getUniqueId()) > System.currentTimeMillis())
+                        return;
+                    clickDelay.put(player.getUniqueId(), System.currentTimeMillis() + 50);
 
-                        if (clickDelay.containsKey(player.getUniqueId()) && clickDelay.get(player.getUniqueId()) > System.currentTimeMillis())
-                            return;
-                        clickDelay.put(player.getUniqueId(), System.currentTimeMillis() + 50);
-
-                        if (hasEnoughCreds(player, machine.getSuperConfiguration().shop.economyType, machine.getSuperConfiguration().shop.cost)) {
-                            player.getInventory().addItem(machine.getMachineItem());
-                            player.sendMessage(ChatColor.translateAlternateColorCodes('&', MachinesAPI.getInstance().getGeneralConfiguration().getMessages().shopMessages.purchaseSuccessful));
-                        }
+                    if (hasEnoughCreds(player, machine.getSuperConfiguration().shop.economyType, machine.getSuperConfiguration().shop.cost)) {
+                        player.getInventory().addItem(machine.getMachineItem());
+                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', MachinesAPI.getInstance().getGeneralConfiguration().getMessages().shopMessages.purchaseSuccessful));
                     }
                 }
             }
-        }, EventPriority.MONITOR, -1, -1, quickEventId1).register(true);
+        }, -1, -1, e -> !e.isCancelled() && e.getWhoClicked().getUniqueId().equals(player.getUniqueId()), quickEventId1).register(true);
 
 
-        new JQuickEvent(JadAPIPlugin.get(JadGens.class), InventoryCloseEvent.class, e -> {
-            if (e.getPlayer().getUniqueId().equals(player.getUniqueId())) {
-                JQuickEvent.getQuickEvent(quickEventId1).register(false);
-                JQuickEvent.getQuickEvent(quickEventId2).register(false);
-                JQuickEvent.getQuickEvent(quickEventId3).register(false);
-                if (postClose != null)
-                    postClose.run();
-            }
-        }, EventPriority.MONITOR, -1, -1, quickEventId2).register(true);
+        new JQuickEvent<>(JadAPIPlugin.get(JadGens.class), InventoryCloseEvent.class, EventPriority.MONITOR, event -> {
+            JQuickEvent.getQuickEvent(quickEventId1).register(false);
+            JQuickEvent.getQuickEvent(quickEventId2).register(false);
+            JQuickEvent.getQuickEvent(quickEventId3).register(false);
+            if (postClose != null)
+                postClose.run();
+        }, -1, -1, e -> e.getPlayer().getUniqueId().equals(player.getUniqueId()), quickEventId2).register(true);
 
 
-        new JQuickEvent(JadAPIPlugin.get(JadGens.class), PlayerQuitEvent.class, e -> {
-            if (e.getPlayer().getUniqueId().equals(player.getUniqueId())) {
-                JQuickEvent.getQuickEvent(quickEventId1).register(false);
-                JQuickEvent.getQuickEvent(quickEventId2).register(false);
-                JQuickEvent.getQuickEvent(quickEventId3).register(false);
-                if (postClose != null)
-                    postClose.run();
-            }
-        }, EventPriority.MONITOR, -1, -1, quickEventId3).register(true);
+        new JQuickEvent<>(JadAPIPlugin.get(JadGens.class), PlayerQuitEvent.class, EventPriority.MONITOR, event -> {
+            JQuickEvent.getQuickEvent(quickEventId1).register(false);
+            JQuickEvent.getQuickEvent(quickEventId2).register(false);
+            JQuickEvent.getQuickEvent(quickEventId3).register(false);
+            if (postClose != null)
+                postClose.run();
+        }, -1, -1, e -> e.getPlayer().getUniqueId().equals(player.getUniqueId()), quickEventId3).register(true);
 
     }
 
@@ -305,7 +296,7 @@ public class MenusManagerImpl implements MenusManager {
 
         MachinesUser user = MachinesAPI.getInstance().getPlayer(player.getUniqueId());
 
-        if(user == null)
+        if (user == null)
             throw new RuntimeException("User is null?? Blunder.");
 
         List<UserMachineDrops> drops = user.getAllDropsInformation();
@@ -352,79 +343,72 @@ public class MenusManagerImpl implements MenusManager {
         String quickEventId2 = JQuickEvent.generateID();
         String quickEventId3 = JQuickEvent.generateID();
 
-        new JQuickEvent(JadAPIPlugin.get(JadGens.class), InventoryClickEvent.class, e -> {
-            if (e.isCancelled())
-                return;
+        new JQuickEvent<>(JadAPIPlugin.get(JadGens.class), InventoryClickEvent.class, EventPriority.MONITOR, e -> {
+            e.setCancelled(true);
+            if (e.getClickedInventory() != null && e.getCurrentItem() != null && e.getCurrentItem().getType() != Material.AIR) {
+                JItemStack item = new JItemStack(e.getCurrentItem());
+                if (item.getNBTBoolean("Drop_Item")) {
+                    String machineConfigurationName = item.getNBTString("Drop_Item_Type");
+                    LoadedMachineConfiguration configuration = MachinesAPI.getInstance().getMachineConfiguration(machineConfigurationName);
+                    UserMachineDrops drop = user.getDropInformation(configuration);
 
-            if (e.getWhoClicked().getUniqueId().equals(player.getUniqueId())) {
-                e.setCancelled(true);
-                if (e.getClickedInventory() != null && e.getCurrentItem() != null && e.getCurrentItem().getType() != Material.AIR) {
-                    JItemStack item = new JItemStack(e.getCurrentItem());
-                    if (item.getNBTBoolean("Drop_Item")) {
-                        String machineConfigurationName = item.getNBTString("Drop_Item_Type");
-                        LoadedMachineConfiguration configuration = MachinesAPI.getInstance().getMachineConfiguration(machineConfigurationName);
-                        UserMachineDrops drop = user.getDropInformation(configuration);
+                    if (player.getInventory().firstEmpty() == -1) {
+                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', MachinesAPI.getInstance().getGeneralConfiguration().getMessages().shopMessages.noInventorySlot));
+                        return;
+                    }
 
-                        if (player.getInventory().firstEmpty() == -1) {
-                            player.sendMessage(ChatColor.translateAlternateColorCodes('&', MachinesAPI.getInstance().getGeneralConfiguration().getMessages().shopMessages.noInventorySlot));
-                            return;
+                    if (e.getClick() == ClickType.LEFT || e.getClick() == ClickType.SHIFT_LEFT) {
+                        if (drop.hasAtLeast(1)) {
+                            drop.removeAmount(1);
+                            HashMap<Integer, ItemStack> map = player.getInventory().addItem(configuration.getProductionConfiguration().getProduceItem().setAmount(1).buildItemStack());
+                            if (!map.isEmpty()) // fail safe...
+                                drop.addAmount(1);
+                            player.sendMessage(ChatColor.translateAlternateColorCodes('&', MachinesAPI.getInstance().getGeneralConfiguration().getMessages().dropsMessages.dropsCollected.replace("%amount%", "" + 1)));
+                        } else
+                            player.sendMessage(ChatColor.translateAlternateColorCodes('&', MachinesAPI.getInstance().getGeneralConfiguration().getMessages().dropsMessages.notEnoughDropsToCollect));
+                    } else if (e.getClick() == ClickType.RIGHT) {
+                        if (drop.hasAtLeast(64)) {
+                            drop.removeAmount(64);
+                            HashMap<Integer, ItemStack> map = player.getInventory().addItem(configuration.getProductionConfiguration().getProduceItem().setAmount(64).buildItemStack());
+                            if (!map.isEmpty()) // fail safe...
+                                drop.addAmount(64);
+                            player.sendMessage(ChatColor.translateAlternateColorCodes('&', MachinesAPI.getInstance().getGeneralConfiguration().getMessages().dropsMessages.dropsCollected.replace("%amount%", "" + 64)));
+                        } else
+                            player.sendMessage(ChatColor.translateAlternateColorCodes('&', MachinesAPI.getInstance().getGeneralConfiguration().getMessages().dropsMessages.notEnoughDropsToCollect));
+                    } else if (e.getClick() == ClickType.SHIFT_RIGHT) {
+                        int amountOfItems = 0;
+                        while (player.getInventory().firstEmpty() != -1 && drop.getAmount() > 0) {
+                            int amount = drop.getAmount() >= 64 ? 64 : (int) drop.getAmount();
+                            drop.removeAmount(amount);
+                            amountOfItems += amount;
+                            HashMap<Integer, ItemStack> map = player.getInventory().addItem(configuration.getProductionConfiguration().getProduceItem().setAmount(amount).buildItemStack());
+                            if (!map.isEmpty()) // fail safe...
+                                drop.addAmount(amount);
                         }
-
-                        if (e.getClick() == ClickType.LEFT || e.getClick() == ClickType.SHIFT_LEFT) {
-                            if (drop.hasAtLeast(1)) {
-                                drop.removeAmount(1);
-                                HashMap<Integer, ItemStack> map = player.getInventory().addItem(configuration.getProductionConfiguration().getProduceItem().setAmount(1).buildItemStack());
-                                if (!map.isEmpty()) // fail safe...
-                                    drop.addAmount(1);
-                                player.sendMessage(ChatColor.translateAlternateColorCodes('&', MachinesAPI.getInstance().getGeneralConfiguration().getMessages().dropsMessages.dropsCollected.replace("%amount%", "" + 1)));
-                            } else player.sendMessage(ChatColor.translateAlternateColorCodes('&', MachinesAPI.getInstance().getGeneralConfiguration().getMessages().dropsMessages.notEnoughDropsToCollect));
-                        } else if (e.getClick() == ClickType.RIGHT) {
-                            if (drop.hasAtLeast(64)) {
-                                drop.removeAmount(64);
-                                HashMap<Integer, ItemStack> map = player.getInventory().addItem(configuration.getProductionConfiguration().getProduceItem().setAmount(64).buildItemStack());
-                                if (!map.isEmpty()) // fail safe...
-                                    drop.addAmount(64);
-                                player.sendMessage(ChatColor.translateAlternateColorCodes('&', MachinesAPI.getInstance().getGeneralConfiguration().getMessages().dropsMessages.dropsCollected.replace("%amount%", "" + 64)));
-                            } else player.sendMessage(ChatColor.translateAlternateColorCodes('&', MachinesAPI.getInstance().getGeneralConfiguration().getMessages().dropsMessages.notEnoughDropsToCollect));
-                        } else if (e.getClick() == ClickType.SHIFT_RIGHT) {
-                            int amountOfItems = 0;
-                            while (player.getInventory().firstEmpty() != -1 && drop.getAmount() > 0) {
-                                int amount = drop.getAmount() >= 64 ? 64 : (int) drop.getAmount();
-                                drop.removeAmount(amount);
-                                amountOfItems += amount;
-                                HashMap<Integer, ItemStack> map = player.getInventory().addItem(configuration.getProductionConfiguration().getProduceItem().setAmount(amount).buildItemStack());
-                                if (!map.isEmpty()) // fail safe...
-                                    drop.addAmount(amount);
-                            }
-                            player.sendMessage(ChatColor.translateAlternateColorCodes('&', MachinesAPI.getInstance().getGeneralConfiguration().getMessages().dropsMessages.dropsCollected.replace("%amount%", "" + amountOfItems)));
-                        }
+                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', MachinesAPI.getInstance().getGeneralConfiguration().getMessages().dropsMessages.dropsCollected.replace("%amount%", "" + amountOfItems)));
                     }
                 }
             }
-        }, EventPriority.MONITOR, -1, -1, quickEventId1).register(true);
+        }, -1, -1, e -> !e.isCancelled() && e.getWhoClicked().getUniqueId().equals(player.getUniqueId()), quickEventId1).register(true);
 
-        new JQuickEvent(JadAPIPlugin.get(JadGens.class), InventoryCloseEvent.class, e -> {
-            if (e.getPlayer().getUniqueId().equals(player.getUniqueId())) {
-                JQuickEvent.getQuickEvent(quickEventId1).register(false);
-                JQuickEvent.getQuickEvent(quickEventId2).register(false);
-                JQuickEvent.getQuickEvent(quickEventId3).register(false);
-                Bukkit.getScheduler().cancelTask(taskId);
-                if (postClose != null)
-                    postClose.run();
-            }
-        }, EventPriority.MONITOR, -1, -1, quickEventId2).register(true);
+        new JQuickEvent<>(JadAPIPlugin.get(JadGens.class), InventoryCloseEvent.class, EventPriority.MONITOR, event -> {
+            JQuickEvent.getQuickEvent(quickEventId1).register(false);
+            JQuickEvent.getQuickEvent(quickEventId2).register(false);
+            JQuickEvent.getQuickEvent(quickEventId3).register(false);
+            Bukkit.getScheduler().cancelTask(taskId);
+            if (postClose != null)
+                postClose.run();
+        }, -1, -1, e -> e.getPlayer().getUniqueId().equals(player.getUniqueId()), quickEventId2).register(true);
 
 
-        new JQuickEvent(JadAPIPlugin.get(JadGens.class), PlayerQuitEvent.class, e -> {
-            if (e.getPlayer().getUniqueId().equals(player.getUniqueId())) {
-                JQuickEvent.getQuickEvent(quickEventId1).register(false);
-                JQuickEvent.getQuickEvent(quickEventId2).register(false);
-                JQuickEvent.getQuickEvent(quickEventId3).register(false);
-                Bukkit.getScheduler().cancelTask(taskId);
-                if (postClose != null)
-                    postClose.run();
-            }
-        }, EventPriority.MONITOR, -1, -1, quickEventId3).register(true);
+        new JQuickEvent<>(JadAPIPlugin.get(JadGens.class), PlayerQuitEvent.class, EventPriority.MONITOR, event -> {
+            JQuickEvent.getQuickEvent(quickEventId1).register(false);
+            JQuickEvent.getQuickEvent(quickEventId2).register(false);
+            JQuickEvent.getQuickEvent(quickEventId3).register(false);
+            Bukkit.getScheduler().cancelTask(taskId);
+            if (postClose != null)
+                postClose.run();
+        }, -1, -1, e -> e.getPlayer().getUniqueId().equals(player.getUniqueId()), quickEventId3).register(true);
     }
 
     public boolean hasEnoughCreds(Player player, ShopEconomy type, int cost) {

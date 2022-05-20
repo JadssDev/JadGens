@@ -136,14 +136,14 @@ public class MachinesManager implements MachinesAPI, Runnable {
         Bukkit.getScheduler().runTaskTimer(loadingInfo.plugin, this, 20*10L, 1L);
         Bukkit.getScheduler().runTaskTimer(loadingInfo.plugin, this::save, 5 * 60 * 30, 5 * 60 * 30);
 
-        joinQuickEvent = new JQuickEvent(JadAPIPlugin.get(JadGens.class), PlayerJoinEvent.class, event -> {
+        joinQuickEvent = new JQuickEvent<>(JadAPIPlugin.get(JadGens.class), PlayerJoinEvent.class, EventPriority.LOWEST, event -> {
             MachinesUser user = getPlayer(event.getPlayer().getUniqueId());
 
             if (user.getXpToCollect() != 0) {
                 event.getPlayer().setLevel(event.getPlayer().getLevel() + user.getXpToCollect());
                 user.setXpToCollect(0);
             }
-        }, EventPriority.LOWEST, -1, -1, JQuickEvent.generateID()).register(true);
+        }, -1, -1, e -> true, JQuickEvent.generateID()).register(true);
 
         Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3&lJadGens &7>> &3Manager &ehas been &a&lsuccessfully loaded&e!!"));
 
@@ -288,7 +288,7 @@ public class MachinesManager implements MachinesAPI, Runnable {
         if (isMachineConfigurationExistent(configuration.machineType))
             throw new RuntimeException("Fuel configuration already existent!");
 
-        LoadedMachineConfiguration loadedConfiguration = new LoadedMachineConfigurationImpl(configuration);
+        LoadedMachineConfiguration loadedConfiguration = new LoadedMachineConfigurationImpl(this, configuration);
         this.machineConfigurations.add(loadedConfiguration);
 
         RecipeConfiguration recipeConfig = loadedConfiguration.getSuperConfiguration().recipe;
