@@ -308,6 +308,9 @@ public class MachineInstanceImpl implements MachineInstance {
         if (JVersion.getServerVersion().isLowerOrEqual(JVersion.v1_7))
             return; //JadAPI does not support this.
 
+        if (!this.machine.getMachineConfiguration().needsFuelToProduce())
+            return;
+
         if (hopperTicks <= 0) {
             hopperTicks = 300;
             BlockFace[] faces = {BlockFace.UP, BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST};
