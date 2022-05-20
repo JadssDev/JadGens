@@ -354,6 +354,10 @@ public class MachineInstanceImpl implements MachineInstance {
                     if (MachinesAPI.getInstance().isFuel(item.buildItemStack())) {
                         LoadedFuelConfiguration fuel = MachinesAPI.getInstance().getFuelConfigurationByItem(item.buildItemStack());
 
+                        //Check if this fuel is valid for this machine.
+                        if (!this.machine.getMachineConfiguration().isFuelCompatible(fuel))
+                            continue;
+
                         //Check if we can even add this fuel to the machine!
                         if (fuel.getFuelAmount() + this.getFuelAmount() > this.getMachine().getMachineConfiguration().getMaxFuelAmount())
                             continue;
