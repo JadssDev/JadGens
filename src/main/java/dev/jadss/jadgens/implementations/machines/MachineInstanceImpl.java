@@ -16,7 +16,6 @@ import dev.jadss.jadapi.management.nms.objects.world.block.state.StateList;
 import dev.jadss.jadapi.management.nms.objects.world.positions.BlockPosition;
 import dev.jadss.jadgens.JadGens;
 import dev.jadss.jadgens.api.MachinesAPI;
-import dev.jadss.jadgens.api.config.fuelConfig.FuelConfiguration;
 import dev.jadss.jadgens.api.config.generalConfig.messages.menu.MachineMenuConfiguration;
 import dev.jadss.jadgens.api.config.generalConfig.messages.menu.MenuItemConfiguration;
 import dev.jadss.jadgens.api.config.interfaces.LoadedFuelConfiguration;
@@ -33,7 +32,6 @@ import dev.jadss.jadgens.api.player.MachinesUser;
 import dev.jadss.jadgens.hooks.Hook;
 import dev.jadss.jadgens.implementations.MachinesManager;
 import net.milkbowl.vault.economy.Economy;
-import net.minecraft.server.v1_8_R3.IBlockData;
 import org.black_ixx.playerpoints.PlayerPointsAPI;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -270,6 +268,7 @@ public class MachineInstanceImpl implements MachineInstance {
         //Update hologram
         tickHologram();
 
+        //Update hopper!
         tickHopper();
 
         if (canProduce()) {
@@ -324,7 +323,8 @@ public class MachineInstanceImpl implements MachineInstance {
                 }
 
                 if (EnumDirection.fromBlockFace(face).opposite() ==
-                        world.getBlockData(new BlockPosition(adjacentBlock.getX(), adjacentBlock.getY(), adjacentBlock.getZ())).getState(StateList.FACING)) {
+                        world.getBlockData(new BlockPosition(adjacentBlock.getX(), adjacentBlock.getY(), adjacentBlock.getZ()))
+                                .getState(StateList.FACING)) {
                     hoppers.add(adjacentBlock);
                 }
             }
@@ -351,10 +351,6 @@ public class MachineInstanceImpl implements MachineInstance {
                         }
                     }
 
-                    //We have Mr. Item I think, well if we don't.................
-                    if (item == null)
-                        throw new RuntimeException("Item not found.");
-
                     if (MachinesAPI.getInstance().isFuel(item.buildItemStack())) {
                         LoadedFuelConfiguration fuel = MachinesAPI.getInstance().getFuelConfigurationByItem(item.buildItemStack());
 
@@ -376,6 +372,7 @@ public class MachineInstanceImpl implements MachineInstance {
                         }
 
                         //Add fuel.
+                        this.setFuelAmount(this.getFuelAmount() + fuel.getFuelAmount());
 
                         //Update hopper.
                         instance.getInventory().setContents(Arrays.stream(items).map(JItemStack::buildItemStack).toArray(ItemStack[]::new));
