@@ -1,9 +1,7 @@
 package dev.jadss.jadgens.utils;
 
 import dev.jadss.jadapi.bukkitImpl.misc.JWorld;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.World;
 
 import java.util.ArrayList;
 import java.util.Arrays;
