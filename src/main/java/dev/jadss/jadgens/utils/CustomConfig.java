@@ -1,18 +1,26 @@
 package dev.jadss.jadgens.utils;
 
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import dev.jadss.jadgens.JadGens;
 import dev.jadss.jadgens.api.config.interfaces.Configuration;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.SerializationConfig;
 
 import java.io.File;
 
 public class CustomConfig<T> implements Configuration {
 
-    private static final ObjectMapper JSON_PARSER = new ObjectMapper().configure(SerializationConfig.Feature.INDENT_OUTPUT, true);
-    public static final ObjectMapper PUBLIC_JSON_PARSER = new ObjectMapper().configure(SerializationConfig.Feature.INDENT_OUTPUT, true);
+    private static final ObjectMapper JSON_PARSER = JsonMapper.builder()
+            .configure(SerializationFeature.INDENT_OUTPUT, true)
+            .configure(JsonGenerator.Feature.IGNORE_UNKNOWN, true)
+            .configure(MapperFeature.AUTO_DETECT_GETTERS, false)
+            .configure(MapperFeature.AUTO_DETECT_FIELDS, true)
+            .configure(MapperFeature.AUTO_DETECT_SETTERS, false)
+            .build();
 
     private final File file;
     private final Class<T> clazz;
