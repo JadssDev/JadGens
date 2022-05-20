@@ -2,7 +2,9 @@ package dev.jadss.jadgens.api.machines;
 
 import dev.jadss.jadgens.api.actions.ActionResult;
 import dev.jadss.jadgens.api.actions.MachineActionType;
-import dev.jadss.jadgens.api.actions.impl.*;
+import dev.jadss.jadgens.api.actions.impl.DisabledActionResult;
+import dev.jadss.jadgens.api.actions.impl.EnabledActionResult;
+import dev.jadss.jadgens.api.actions.impl.PurgedActionResult;
 import dev.jadss.jadgens.implementations.machines.MachinesListImpl;
 
 import java.util.List;
