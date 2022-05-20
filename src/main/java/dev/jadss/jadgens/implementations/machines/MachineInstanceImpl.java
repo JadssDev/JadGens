@@ -2,14 +2,21 @@ package dev.jadss.jadgens.implementations.machines;
 
 import dev.jadss.jadapi.JadAPIPlugin;
 import dev.jadss.jadapi.bukkitImpl.enums.JParticle;
+import dev.jadss.jadapi.bukkitImpl.enums.JVersion;
 import dev.jadss.jadapi.bukkitImpl.item.JInventory;
 import dev.jadss.jadapi.bukkitImpl.item.JItemStack;
 import dev.jadss.jadapi.bukkitImpl.item.JMaterial;
 import dev.jadss.jadapi.bukkitImpl.misc.JHologram;
 import dev.jadss.jadapi.bukkitImpl.misc.JWorld;
 import dev.jadss.jadapi.management.JQuickEvent;
+import dev.jadss.jadapi.management.nms.NMS;
+import dev.jadss.jadapi.management.nms.enums.EnumDirection;
+import dev.jadss.jadapi.management.nms.objects.world.WorldServer;
+import dev.jadss.jadapi.management.nms.objects.world.block.state.StateList;
+import dev.jadss.jadapi.management.nms.objects.world.positions.BlockPosition;
 import dev.jadss.jadgens.JadGens;
 import dev.jadss.jadgens.api.MachinesAPI;
+import dev.jadss.jadgens.api.config.fuelConfig.FuelConfiguration;
 import dev.jadss.jadgens.api.config.generalConfig.messages.menu.MachineMenuConfiguration;
 import dev.jadss.jadgens.api.config.generalConfig.messages.menu.MenuItemConfiguration;
 import dev.jadss.jadgens.api.config.interfaces.LoadedFuelConfiguration;
@@ -17,24 +24,32 @@ import dev.jadss.jadgens.api.config.interfaces.LoadedHologramConfiguration;
 import dev.jadss.jadgens.api.config.interfaces.LoadedMachineProductionConfiguration;
 import dev.jadss.jadgens.api.config.interfaces.LoadedParticleConfiguration;
 import dev.jadss.jadgens.api.config.serializers.MachineInformation;
+import dev.jadss.jadgens.api.events.MachineFuelByHopperEvent;
+import dev.jadss.jadgens.api.events.MachineProduceEvent;
+import dev.jadss.jadgens.api.events.MachineToggledEvent;
 import dev.jadss.jadgens.api.machines.Machine;
 import dev.jadss.jadgens.api.machines.MachineInstance;
 import dev.jadss.jadgens.api.player.MachinesUser;
-import dev.jadss.jadgens.events.MachineProduceEvent;
-import dev.jadss.jadgens.events.MachineToggledEvent;
 import dev.jadss.jadgens.hooks.Hook;
 import dev.jadss.jadgens.implementations.MachinesManager;
 import net.milkbowl.vault.economy.Economy;
+import net.minecraft.server.v1_8_R3.IBlockData;
 import org.black_ixx.playerpoints.PlayerPointsAPI;
 import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.Hopper;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static dev.jadss.jadgens.utils.Utilities.replace;
 
@@ -122,88 +137,82 @@ public class MachineInstanceImpl implements MachineInstance {
 
         player.openInventory(inventory.getInventory());
 
-        new JQuickEvent(plugin, InventoryClickEvent.class, e -> {
-            if (e.getWhoClicked().getUniqueId().equals(player.getUniqueId())) {
-                e.setCancelled(true);
+        new JQuickEvent<>(plugin, InventoryClickEvent.class, EventPriority.MONITOR, event -> {
+            event.setCancelled(true);
 
-                if (e.getCurrentItem() == null || e.getCurrentItem().getType() == Material.AIR)
+            if (event.getCurrentItem() == null || event.getCurrentItem().getType() == Material.AIR)
+                return;
+
+            if (!event.getClickedInventory().equals(inventory.buildInventory()))
+                return;
+
+            JItemStack item = new JItemStack(event.getCurrentItem());
+
+            if (item.getNBTBoolean("JadGens_Status_Item")) {
+                inventory.setItem(event.getSlot(), (ItemStack) null);
+
+                MachineToggledEvent machineToggleEvent = new MachineToggledEvent(machine.getInstance(), player, !this.isEnabled());
+                Bukkit.getPluginManager().callEvent(machineToggleEvent);
+                if (machineToggleEvent.isCancelled()) {
+                    event.setCancelled(true); // idk why
                     return;
-
-                if (!e.getClickedInventory().equals(inventory.buildInventory()))
-                    return;
-
-                JItemStack item = new JItemStack(e.getCurrentItem());
-
-                if (item.getNBTBoolean("JadGens_Status_Item")) {
-                    inventory.setItem(e.getSlot(), (ItemStack) null);
-
-                    MachineToggledEvent machineToggleEvent = new MachineToggledEvent(machine.getInstance(), player, !this.isEnabled());
-                    Bukkit.getPluginManager().callEvent(machineToggleEvent);
-                    if (machineToggleEvent.isCancelled()) {
-                        e.setCancelled(true); // idk why
-                        return;
-                    } else {
-                        this.setEnabled(machineToggleEvent.isEnabled());
-                    }
+                } else {
+                    this.setEnabled(machineToggleEvent.isEnabled());
+                }
 
 
-                    //Update item..
-                    MenuItemConfiguration updatedItemConfig = this.isEnabled() ? menuConfig.statusItem.enabled : menuConfig.statusItem.disabled;
+                //Update item..
+                MenuItemConfiguration updatedItemConfig = this.isEnabled() ? menuConfig.statusItem.enabled : menuConfig.statusItem.disabled;
 
-                    int updatedStatusItemSlot = updatedItemConfig.slot;
-                    JItemStack updatedStatusItem = new JItemStack(JMaterial.getRegistryMaterials().find(updatedItemConfig.itemType))
-                            .setDisplayName(updatedItemConfig.displayName)
-                            .setLore(updatedItemConfig.lore)
-                            .setNBTBoolean("JadGens_Status_Item", true);
-                    if (updatedItemConfig.glow)
-                        updatedStatusItem.addEnchantment(JadGens.getInstance().getGlowEnchantment().asEnchantment(), 69);
+                int updatedStatusItemSlot = updatedItemConfig.slot;
+                JItemStack updatedStatusItem = new JItemStack(JMaterial.getRegistryMaterials().find(updatedItemConfig.itemType))
+                        .setDisplayName(updatedItemConfig.displayName)
+                        .setLore(updatedItemConfig.lore)
+                        .setNBTBoolean("JadGens_Status_Item", true);
+                if (updatedItemConfig.glow)
+                    updatedStatusItem.addEnchantment(JadGens.getInstance().getGlowEnchantment().asEnchantment(), 69);
 
-                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', this.isEnabled() ? MachinesAPI.getInstance().getGeneralConfiguration().getMessages().machineMessages.toggledOn : MachinesAPI.getInstance().getGeneralConfiguration().getMessages().machineMessages.toggledOff));
+                player.sendMessage(ChatColor.translateAlternateColorCodes('&', this.isEnabled() ? MachinesAPI.getInstance().getGeneralConfiguration().getMessages().machineMessages.toggledOn : MachinesAPI.getInstance().getGeneralConfiguration().getMessages().machineMessages.toggledOff));
 
-                    inventory.setItem(updatedStatusItemSlot, updatedStatusItem);
-                } else if (item.getNBTBoolean("JadGens_Fuel_Item")) { //todo: Remove this functionality, it's too buggy.
-                    if (e.getCursor() != null && e.getCursor().getType() != Material.AIR) {
-                        if (MachinesAPI.getInstance().isFuel(e.getView().getCursor())) {
-                            LoadedFuelConfiguration fuel = MachinesAPI.getInstance().getFuelConfigurationByItem(e.getView().getCursor());
+                inventory.setItem(updatedStatusItemSlot, updatedStatusItem);
+            } else if (item.getNBTBoolean("JadGens_Fuel_Item")) { //todo: Remove this functionality, it's too buggy.
+                if (event.getCursor() != null && event.getCursor().getType() != Material.AIR) {
+                    if (MachinesAPI.getInstance().isFuel(event.getView().getCursor())) {
+                        LoadedFuelConfiguration fuel = MachinesAPI.getInstance().getFuelConfigurationByItem(event.getView().getCursor());
 
-                            int count = 0;
-                            while (this.getFuelAmount() + fuel.getFuelAmount() <= machine.getMachineConfiguration().getMaxFuelAmount() && e.getWhoClicked().getItemInHand().getType() != Material.AIR) {
-                                count++;
+                        int count = 0;
+                        while (this.getFuelAmount() + fuel.getFuelAmount() <= machine.getMachineConfiguration().getMaxFuelAmount() && event.getWhoClicked().getItemInHand().getType() != Material.AIR) {
+                            count++;
 
-                                this.setFuelAmount(this.getFuelAmount() + fuel.getFuelAmount());
-                                e.getView().getCursor().setAmount(e.getView().getCursor().getAmount() - 1);
-                            }
-                            e.getWhoClicked().sendMessage(ChatColor.translateAlternateColorCodes('&', MachinesAPI.getInstance().getGeneralConfiguration().getMessages().fuelMessages.usedMultipleFuels.replace("%amount%", String.valueOf(count))));
+                            this.setFuelAmount(this.getFuelAmount() + fuel.getFuelAmount());
+                            event.getView().getCursor().setAmount(event.getView().getCursor().getAmount() - 1);
                         }
-                    }
-                } else if (item.getNBTBoolean("JadGens_Close_Item")) {
-                    if (e.getClick() == (MachinesAPI.getInstance().getGeneralConfiguration().getMessages().machineMenu.closeItem.invertClicks ? ClickType.RIGHT : ClickType.LEFT)) {
-                        e.getWhoClicked().closeInventory();
-                    } else if (e.getClick() == (MachinesAPI.getInstance().getGeneralConfiguration().getMessages().machineMenu.closeItem.invertClicks ? ClickType.LEFT : ClickType.RIGHT)) {
-                        if (e.getWhoClicked().getInventory().addItem(machine.getMachineConfiguration().getMachineItem()).size() == 0)
-                            this.remove();
-
-                        player.closeInventory();
+                        event.getWhoClicked().sendMessage(ChatColor.translateAlternateColorCodes('&', MachinesAPI.getInstance().getGeneralConfiguration().getMessages().fuelMessages.usedMultipleFuels.replace("%amount%", String.valueOf(count))));
                     }
                 }
-            }
-        }, EventPriority.MONITOR, -1, -1, quickEventId1).register(true);
+            } else if (item.getNBTBoolean("JadGens_Close_Item")) {
+                if (event.getClick() == (MachinesAPI.getInstance().getGeneralConfiguration().getMessages().machineMenu.closeItem.invertClicks ? ClickType.RIGHT : ClickType.LEFT)) {
+                    event.getWhoClicked().closeInventory();
+                } else if (event.getClick() == (MachinesAPI.getInstance().getGeneralConfiguration().getMessages().machineMenu.closeItem.invertClicks ? ClickType.LEFT : ClickType.RIGHT)) {
+                    if (event.getWhoClicked().getInventory().addItem(machine.getMachineConfiguration().getMachineItem()).size() == 0)
+                        this.remove();
 
-        new JQuickEvent(plugin, InventoryCloseEvent.class, e -> {
-            if (e.getPlayer().getUniqueId().equals(player.getUniqueId())) {
-                JQuickEvent.getQuickEvent(quickEventId1).register(false);
-                JQuickEvent.getQuickEvent(quickEventId2).register(false);
-                JQuickEvent.getQuickEvent(quickEventId3).register(false);
+                    player.closeInventory();
+                }
             }
-        }, EventPriority.MONITOR, -1, -1, quickEventId2).register(true);
+        }, -1, -1, e -> e.getWhoClicked().getUniqueId().equals(player.getUniqueId()), quickEventId1).register(true);
 
-        new JQuickEvent(plugin, PlayerQuitEvent.class, e -> {
-            if (e.getPlayer().getUniqueId().equals(player.getUniqueId())) {
-                JQuickEvent.getQuickEvent(quickEventId1).register(false);
-                JQuickEvent.getQuickEvent(quickEventId2).register(false);
-                JQuickEvent.getQuickEvent(quickEventId3).register(false);
-            }
-        }, EventPriority.MONITOR, -1, -1, quickEventId3).register(true);
+        new JQuickEvent<>(plugin, InventoryCloseEvent.class, EventPriority.MONITOR, event -> {
+            JQuickEvent.getQuickEvent(quickEventId1).register(false);
+            JQuickEvent.getQuickEvent(quickEventId2).register(false);
+            JQuickEvent.getQuickEvent(quickEventId3).register(false);
+        }, -1, -1, e -> e.getPlayer().getUniqueId().equals(player.getUniqueId()), quickEventId2).register(true);
+
+        new JQuickEvent<>(plugin, PlayerQuitEvent.class, EventPriority.MONITOR, event -> {
+            JQuickEvent.getQuickEvent(quickEventId1).register(false);
+            JQuickEvent.getQuickEvent(quickEventId2).register(false);
+            JQuickEvent.getQuickEvent(quickEventId3).register(false);
+        }, -1, -1, e -> e.getPlayer().getUniqueId().equals(player.getUniqueId()), quickEventId3).register(true);
     }
 
     @Override
@@ -218,6 +227,9 @@ public class MachineInstanceImpl implements MachineInstance {
 
     //explanation: prevent a machine from ticking for the first 5 ticks it has been placed to prevent a lag spike and auto-invalidation of the machine
     public int dontCareTicks = 5;
+    //explanation for hopper ticks: Every few ticks we check for hoppers and if there are any, we want to check if they have a fuel on the first inventory slot
+    //                              and if they do, remove 1 from the amount, and fuel the machine the amount of the fuel.
+    public int hopperTicks = 300;
 
     private boolean warnedAboutInvalid = false;
 
@@ -258,13 +270,15 @@ public class MachineInstanceImpl implements MachineInstance {
         //Update hologram
         tickHologram();
 
+        tickHopper();
+
         if (canProduce()) {
             if (this.ticksToGenerate <= 0) {
                 produce(false);
                 this.ticksToGenerate = this.machine.getMachineConfiguration().getTicksDelay();
-                return;
+            } else {
+                this.ticksToGenerate--;
             }
-            this.ticksToGenerate--;
         }
     }
 
@@ -283,12 +297,96 @@ public class MachineInstanceImpl implements MachineInstance {
             hologram = new JHologram(location, true, hologramConfiguration.parseHologramLines(machine));
         }
 
-        if(hologramTickDelay <= 0) {
+        if (hologramTickDelay <= 0) {
             hologramTickDelay = 40;
             hologram.edit(hologramConfiguration.parseHologramLines(machine));
-            return;
+        } else {
+            hologramTickDelay--;
         }
-        hologramTickDelay--;
+    }
+
+    public void tickHopper() {
+        if (JVersion.getServerVersion().isLowerOrEqual(JVersion.v1_7))
+            return; //JadAPI does not support this.
+
+        if (hopperTicks <= 0) {
+            hopperTicks = 300;
+            BlockFace[] faces = {BlockFace.UP, BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST};
+            Block machineBlock = this.machine.getLocation().getBlock();
+            WorldServer world = NMS.toWorldServer(machineBlock.getWorld());
+
+            List<Block> hoppers = new ArrayList<>();
+
+            for (BlockFace face : faces) {
+                Block adjacentBlock;
+                if ((adjacentBlock = machineBlock.getRelative(face)).getType() != JMaterial.getRegistryMaterials().find(JMaterial.MaterialEnum.HOPPER).getMaterial(JMaterial.Type.BLOCK).getKey()) {
+                    continue;
+                }
+
+                if (EnumDirection.fromBlockFace(face).opposite() ==
+                        world.getBlockData(new BlockPosition(adjacentBlock.getX(), adjacentBlock.getY(), adjacentBlock.getZ())).getState(StateList.FACING)) {
+                    hoppers.add(adjacentBlock);
+                }
+            }
+
+            for (Block hopper : hoppers) {
+                Hopper instance = (Hopper) hopper.getState();
+                int index;
+                JItemStack[] items = Arrays.stream(instance.getInventory().getContents()).map(JItemStack::new).toArray(JItemStack[]::new);
+                check:
+                {
+                    if (items.length == 0)
+                        continue; //Next!
+
+                    JItemStack item = null;
+                    for (int i = 0; true; i++) {
+                        //Prevent sneaky IndexOutOfBoundsException.
+                        if (items.length - 1 < i)
+                            break check;
+
+                        item = items[i];
+                        if (item != null) {
+                            index = i;
+                            break;
+                        }
+                    }
+
+                    //We have Mr. Item I think, well if we don't.................
+                    if (item == null)
+                        throw new RuntimeException("Item not found.");
+
+                    if (MachinesAPI.getInstance().isFuel(item.buildItemStack())) {
+                        LoadedFuelConfiguration fuel = MachinesAPI.getInstance().getFuelConfigurationByItem(item.buildItemStack());
+
+                        //Check if we can even add this fuel to the machine!
+                        if (fuel.getFuelAmount() + this.getFuelAmount() > this.getMachine().getMachineConfiguration().getMaxFuelAmount())
+                            continue;
+
+                        //Call event, see if it gets cancelled.
+                        MachineFuelByHopperEvent event = new MachineFuelByHopperEvent(this, fuel.getFuelAmount(), fuel);
+                        Bukkit.getPluginManager().callEvent(event);
+                        if (event.isCancelled())
+                            continue;
+
+                        //Remove fuel..
+                        if (item.buildItemStack().getAmount() == 1) {
+                            items[index] = null;
+                        } else {
+                            item.setAmount(item.buildItemStack().getAmount() - 1);
+                        }
+
+                        //Add fuel.
+
+                        //Update hopper.
+                        instance.getInventory().setContents(Arrays.stream(items).map(JItemStack::buildItemStack).toArray(ItemStack[]::new));
+
+                        instance.update(true, false);
+                    }
+                }
+            }
+        } else {
+            hopperTicks--;
+        }
     }
 
     @Override
