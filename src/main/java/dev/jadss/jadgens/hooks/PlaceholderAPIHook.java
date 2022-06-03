@@ -1,6 +1,7 @@
 package dev.jadss.jadgens.hooks;
 
 import dev.jadss.jadgens.api.MachinesAPI;
+import dev.jadss.jadgens.api.config.generalConfig.limits.LimitGroup;
 import dev.jadss.jadgens.api.config.interfaces.LoadedMachineConfiguration;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.Server;
@@ -111,9 +112,11 @@ public class PlaceholderAPIHook implements Hook {
                     if (action.equalsIgnoreCase("total")) {
                         return "" + MachinesAPI.getInstance().getPlayer(player.getUniqueId()).getMachines().getMachinesInstances().size();
                     } else if (action.equalsIgnoreCase("limit")) {
-                        return "" + MachinesAPI.getInstance().getPlayer(player.getUniqueId()).getLimitGroup().limit;
+                        LimitGroup group = MachinesAPI.getInstance().getPlayer(player.getUniqueId()).getLimitGroup();
+                        return "" + (group == null ? MachinesAPI.getInstance().getGeneralConfiguration().getPermissions().machineLimitsGroups.defaultLimit : group.limit);
                     } else if (action.equalsIgnoreCase("limitgroup")) {
-                        return MachinesAPI.getInstance().getPlayer(player.getUniqueId()).getLimitGroup().limitGroupName;
+                        LimitGroup group = MachinesAPI.getInstance().getPlayer(player.getUniqueId()).getLimitGroup();
+                        return "" + (group == null ? MachinesAPI.getInstance().getGeneralConfiguration().getPermissions().machineLimitsGroups.defaultLimitGroupName : group.limit);
                     } else if (action.equalsIgnoreCase("remaining")) {
                         int limit = MachinesAPI.getInstance().getPlayer(player.getUniqueId()).getLimitGroup().limit;
                         if (limit == -1)
