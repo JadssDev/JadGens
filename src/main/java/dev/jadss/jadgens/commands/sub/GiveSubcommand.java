@@ -1,6 +1,7 @@
 package dev.jadss.jadgens.commands.sub;
 
 import dev.jadss.jadapi.JadAPIPlugin;
+import dev.jadss.jadapi.bukkitImpl.item.ItemNBT;
 import dev.jadss.jadapi.bukkitImpl.item.JInventory;
 import dev.jadss.jadapi.bukkitImpl.item.JItemStack;
 import dev.jadss.jadapi.bukkitImpl.item.JMaterial;
@@ -45,8 +46,10 @@ public class GiveSubcommand {
                 for (LoadedMachineConfiguration machineConfiguration : API.getMachineConfigurations()) {
                     JItemStack machineItem = machineConfiguration.getSuperMachineItem()
                             .setAmount(1)
-                            .setNBTBoolean("Give_Machine", true)
-                            .setNBTString("Give_Machine_Configuration", machineConfiguration.getConfigurationName());
+                            .getNBT()
+                            .setBoolean("Give_Machine", true)
+                            .setString("Give_Machine_Configuration", machineConfiguration.getConfigurationName())
+                            .getItem();
                     giveInventory.setItem(next, machineItem);
                     next++;
                 }
@@ -54,8 +57,10 @@ public class GiveSubcommand {
                 for (LoadedFuelConfiguration fuelConfiguration : API.getFuelConfigurations()) {
                     JItemStack machineItem = fuelConfiguration.getSuperItem()
                             .setAmount(1)
-                            .setNBTBoolean("Give_Fuel", true)
-                            .setNBTString("Give_Fuel_Configuration", fuelConfiguration.getConfigurationName());
+                            .getNBT()
+                            .setBoolean("Give_Fuel", true)
+                            .setString("Give_Fuel_Configuration", fuelConfiguration.getConfigurationName())
+                            .getItem();
                     giveInventory.setItem(next, machineItem);
                     next++;
                 }
@@ -68,19 +73,20 @@ public class GiveSubcommand {
                     event.setCancelled(true);
                     if (event.getClickedInventory() != null && event.getCurrentItem() != null && event.getCurrentItem().getType() != JMaterial.getRegistryMaterials().find(JMaterial.MaterialEnum.AIR).getMaterial(JMaterial.Type.ITEM).getKey()) {
                         JItemStack itemClick = new JItemStack(event.getCurrentItem());
-                        if (itemClick.getNBTBoolean("Give_Machine")) {
-                            LoadedMachineConfiguration machine = API.getMachineConfiguration(itemClick.getNBTString("Give_Machine_Configuration"));
+                        ItemNBT<JItemStack> nbt = itemClick.getNBT();
+                        if (nbt.getBoolean("Give_Machine")) {
+                            LoadedMachineConfiguration machine = API.getMachineConfiguration(nbt.getString("Give_Machine_Configuration"));
                             if (event.getClick() == ClickType.LEFT) {
-                                player.getInventory().addItem(machine.getSuperMachineItem().setAmount(1).buildItemStack());
+                                player.getInventory().addItem(machine.getSuperMachineItem().setAmount(1).getBukkitItem());
                             } else if (event.getClick() == ClickType.RIGHT) {
-                                player.getInventory().addItem(machine.getSuperMachineItem().setAmount(64).buildItemStack());
+                                player.getInventory().addItem(machine.getSuperMachineItem().setAmount(64).getBukkitItem());
                             }
-                        } else if (itemClick.getNBTBoolean("Give_Fuel")) {
-                            LoadedFuelConfiguration fuel = API.getFuelConfiguration(itemClick.getNBTString("Give_Fuel_Configuration"));
+                        } else if (nbt.getBoolean("Give_Fuel")) {
+                            LoadedFuelConfiguration fuel = API.getFuelConfiguration(nbt.getString("Give_Fuel_Configuration"));
                             if (event.getClick() == ClickType.LEFT) {
-                                player.getInventory().addItem(fuel.getSuperItem().setAmount(1).buildItemStack());
+                                player.getInventory().addItem(fuel.getSuperItem().setAmount(1).getBukkitItem());
                             } else if (event.getClick() == ClickType.RIGHT) {
-                                player.getInventory().addItem(fuel.getSuperItem().setAmount(64).buildItemStack());
+                                player.getInventory().addItem(fuel.getSuperItem().setAmount(64).getBukkitItem());
                             }
                         }
                     }
@@ -98,7 +104,7 @@ public class GiveSubcommand {
                     JQuickEvent.getQuickEvent(id3).register(false);
                 }, -1, -1, e -> player.getUniqueId().equals(e.getPlayer().getUniqueId()), id3).register(true);
 
-                player.openInventory(giveInventory.getInventory());
+                player.openInventory(giveInventory.getBukkitInventory());
             } else {
                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&', API.getGeneralConfiguration().getMessages().globalMessages.notAPlayer));
             }
@@ -155,7 +161,7 @@ public class GiveSubcommand {
                             return;
                         }
 
-                        player.getInventory().addItem(machineConfig.getSuperMachineItem().setAmount(amount).buildItemStack());
+                        player.getInventory().addItem(machineConfig.getSuperMachineItem().setAmount(amount).getBukkitItem());
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', messages.givenMachine
                                 .replace("%amount%", "" + amount)));
                     } else {
@@ -174,7 +180,7 @@ public class GiveSubcommand {
                         sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messages.givenMachineTo
                                 .replace("%amount%", "" + amount)
                                 .replace("%to%", player.getName())));
-                        player.getInventory().addItem(machineConfig.getSuperMachineItem().setAmount(amount).buildItemStack());
+                        player.getInventory().addItem(machineConfig.getSuperMachineItem().setAmount(amount).getBukkitItem());
                     } else {
                         sender.sendMessage(ChatColor.translateAlternateColorCodes('&', API.getGeneralConfiguration().getMessages().globalMessages.playerNotFound));
                     }
@@ -188,7 +194,7 @@ public class GiveSubcommand {
                             sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messages.couldntFindId));
                             return;
                         }
-                        player.getInventory().addItem(fuelConfig.getSuperItem().setAmount(amount).buildItemStack());
+                        player.getInventory().addItem(fuelConfig.getSuperItem().setAmount(amount).getBukkitItem());
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', messages.givenMachine.replace("%amount%", "" + amount)));
                     } else {
                         sender.sendMessage("This command can only be used by a player.");
@@ -207,7 +213,7 @@ public class GiveSubcommand {
                                 .replace("%amount%", "" + amount)
                                 .replace("%to%", player.getName())));
 
-                        player.getInventory().addItem(fuelConfig.getSuperItem().setAmount(amount).buildItemStack());
+                        player.getInventory().addItem(fuelConfig.getSuperItem().setAmount(amount).getBukkitItem());
                     } else {
                         sender.sendMessage(ChatColor.translateAlternateColorCodes('&', API.getGeneralConfiguration().getMessages().globalMessages.playerNotFound));
                     }
