@@ -1,6 +1,7 @@
 package dev.jadss.jadgens.implementations;
 
 import dev.jadss.jadapi.JadAPIPlugin;
+import dev.jadss.jadapi.bukkitImpl.item.ItemNBT;
 import dev.jadss.jadapi.bukkitImpl.item.JInventory;
 import dev.jadss.jadapi.bukkitImpl.item.JItemStack;
 import dev.jadss.jadapi.bukkitImpl.item.JMaterial;
@@ -105,7 +106,9 @@ public class MenusManagerImpl implements MenusManager {
             machinesMainInventoryItem = new JItemStack(JMaterial.getRegistryMaterials().find(machinesChooseItem.itemType))
                     .setDisplayName(machinesChooseItem.displayName)
                     .setLore(machinesChooseItem.lore)
-                    .setNBTBoolean("Choose_Machines", true);
+                    .getNBT()
+                    .setBoolean("Choose_Machines", true)
+                    .getItem();
             if (machinesChooseItem.glow)
                 machinesMainInventoryItem.addEnchantment(JadGens.getInstance().getGlowEnchantment().asEnchantment(), 69);
 
@@ -116,7 +119,9 @@ public class MenusManagerImpl implements MenusManager {
             fuelsMainInventoryItem = new JItemStack(JMaterial.getRegistryMaterials().find(fuelsChooseItem.itemType))
                     .setDisplayName(fuelsChooseItem.displayName)
                     .setLore(fuelsChooseItem.lore)
-                    .setNBTBoolean("Choose_Fuels", true);
+                    .getNBT()
+                    .setBoolean("Choose_Fuels", true)
+                    .getItem();
             if (fuelsChooseItem.glow)
                 fuelsMainInventoryItem.addEnchantment(JadGens.getInstance().getGlowEnchantment().asEnchantment(), 69);
 
@@ -194,7 +199,7 @@ public class MenusManagerImpl implements MenusManager {
         if (preOpen != null)
             preOpen.run();
 
-        player.openInventory(shopInventory.getInventory());
+        player.openInventory(shopInventory.getBukkitInventory());
 
         if (postOpen != null)
             postOpen.run();
@@ -207,7 +212,8 @@ public class MenusManagerImpl implements MenusManager {
             event.setCancelled(true);
             if (event.getClickedInventory() != null && event.getCurrentItem() != null && event.getCurrentItem().getType() != Material.AIR) {
                 JItemStack item = new JItemStack(event.getCurrentItem());
-                if (item.getNBTBoolean("Choose_Machines")) {
+                ItemNBT<JItemStack> nbt = item.getNBT();
+                if (nbt.getBoolean("Choose_Machines")) {
                     JQuickEvent.getQuickEvent(quickEventId1).register(false);
                     JQuickEvent.getQuickEvent(quickEventId2).register(false);
                     JQuickEvent.getQuickEvent(quickEventId3).register(false);
@@ -220,7 +226,7 @@ public class MenusManagerImpl implements MenusManager {
                         if (postClose != null)
                             postClose.run();
                     });
-                } else if (item.getNBTBoolean("Choose_Fuels")) {
+                } else if (nbt.getBoolean("Choose_Fuels")) {
                     JQuickEvent.getQuickEvent(quickEventId1).register(false);
                     JQuickEvent.getQuickEvent(quickEventId2).register(false);
                     JQuickEvent.getQuickEvent(quickEventId3).register(false);
@@ -233,8 +239,8 @@ public class MenusManagerImpl implements MenusManager {
                         if (postClose != null)
                             postClose.run();
                     });
-                } else if (item.getNBTBoolean("Shop_Fuel_Item")) {
-                    LoadedFuelConfiguration fuel = MachinesAPI.getInstance().getFuelConfiguration(item.getNBTString("Configuration"));
+                } else if (nbt.getBoolean("Shop_Fuel_Item")) {
+                    LoadedFuelConfiguration fuel = MachinesAPI.getInstance().getFuelConfiguration(nbt.getString("Configuration"));
                     int slot = player.getInventory().firstEmpty();
                     if (slot == -1) {
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', MachinesAPI.getInstance().getGeneralConfiguration().getMessages().shopMessages.noInventorySlot));
@@ -249,8 +255,8 @@ public class MenusManagerImpl implements MenusManager {
                         player.getInventory().addItem(fuel.getItem());
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', MachinesAPI.getInstance().getGeneralConfiguration().getMessages().shopMessages.purchaseSuccessful));
                     }
-                } else if (item.getNBTBoolean("Shop_Machine_Item")) {
-                    LoadedMachineConfiguration machine = MachinesAPI.getInstance().getMachineConfiguration(item.getNBTString("Configuration"));
+                } else if (nbt.getBoolean("Shop_Machine_Item")) {
+                    LoadedMachineConfiguration machine = MachinesAPI.getInstance().getMachineConfiguration(nbt.getString("Configuration"));
                     int slot = player.getInventory().firstEmpty();
                     if (slot == -1) {
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', MachinesAPI.getInstance().getGeneralConfiguration().getMessages().shopMessages.noInventorySlot));
@@ -311,8 +317,10 @@ public class MenusManagerImpl implements MenusManager {
                 JItemStack item = drop.getMachineConfiguration().getSuperMachineItem()
                         .setAmount(itemAmount)
                         .setLore(replace(this.dropsLore, "%amount%", "" + drop.getAmount()))
-                        .setNBTBoolean("Drop_Item", true)
-                        .setNBTString("Drop_Item_Type", drop.getMachineConfiguration().getConfigurationName());
+                        .getNBT()
+                        .setBoolean("Drop_Item", true)
+                        .setString("Drop_Item_Type", drop.getMachineConfiguration().getConfigurationName())
+                        .getItem();
 
                 inventory.setItem(i, item);
             }
@@ -325,8 +333,10 @@ public class MenusManagerImpl implements MenusManager {
             JItemStack item = drop.getMachineConfiguration().getSuperMachineItem()
                     .setAmount(itemAmount)
                     .setLore(replace(this.dropsLore, "%amount%", "" + drop.getAmount()))
-                    .setNBTBoolean("Drop_Item", true)
-                    .setNBTString("Drop_Item_Type", drop.getMachineConfiguration().getConfigurationName());
+                    .getNBT()
+                    .setBoolean("Drop_Item", true)
+                    .setString("Drop_Item_Type", drop.getMachineConfiguration().getConfigurationName())
+                    .getItem();
 
             inventory.setItem(i, item);
         }
@@ -334,7 +344,7 @@ public class MenusManagerImpl implements MenusManager {
         if (preOpen != null)
             preOpen.run();
 
-        player.openInventory(inventory.getInventory());
+        player.openInventory(inventory.getBukkitInventory());
 
         if (postOpen != null)
             postOpen.run();
@@ -347,8 +357,9 @@ public class MenusManagerImpl implements MenusManager {
             e.setCancelled(true);
             if (e.getClickedInventory() != null && e.getCurrentItem() != null && e.getCurrentItem().getType() != Material.AIR) {
                 JItemStack item = new JItemStack(e.getCurrentItem());
-                if (item.getNBTBoolean("Drop_Item")) {
-                    String machineConfigurationName = item.getNBTString("Drop_Item_Type");
+                ItemNBT<JItemStack> nbt = item.getNBT();
+                if (nbt.getBoolean("Drop_Item")) {
+                    String machineConfigurationName = nbt.getString("Drop_Item_Type");
                     LoadedMachineConfiguration configuration = MachinesAPI.getInstance().getMachineConfiguration(machineConfigurationName);
                     UserMachineDrops drop = user.getDropInformation(configuration);
 
@@ -360,7 +371,9 @@ public class MenusManagerImpl implements MenusManager {
                     if (e.getClick() == ClickType.LEFT || e.getClick() == ClickType.SHIFT_LEFT) {
                         if (drop.hasAtLeast(1)) {
                             drop.removeAmount(1);
-                            HashMap<Integer, ItemStack> map = player.getInventory().addItem(configuration.getProductionConfiguration().getProduceItem().setAmount(1).buildItemStack());
+                            HashMap<Integer, ItemStack> map = player.getInventory().addItem(configuration.getProductionConfiguration().getProduceItem()
+                                    .setAmount(1)
+                                    .getBukkitItem());
                             if (!map.isEmpty()) // fail safe...
                                 drop.addAmount(1);
                             player.sendMessage(ChatColor.translateAlternateColorCodes('&', MachinesAPI.getInstance().getGeneralConfiguration().getMessages().dropsMessages.dropsCollected.replace("%amount%", "" + 1)));
@@ -369,7 +382,9 @@ public class MenusManagerImpl implements MenusManager {
                     } else if (e.getClick() == ClickType.RIGHT) {
                         if (drop.hasAtLeast(64)) {
                             drop.removeAmount(64);
-                            HashMap<Integer, ItemStack> map = player.getInventory().addItem(configuration.getProductionConfiguration().getProduceItem().setAmount(64).buildItemStack());
+                            HashMap<Integer, ItemStack> map = player.getInventory().addItem(configuration.getProductionConfiguration().getProduceItem()
+                                    .setAmount(64)
+                                    .getBukkitItem());
                             if (!map.isEmpty()) // fail safe...
                                 drop.addAmount(64);
                             player.sendMessage(ChatColor.translateAlternateColorCodes('&', MachinesAPI.getInstance().getGeneralConfiguration().getMessages().dropsMessages.dropsCollected.replace("%amount%", "" + 64)));
@@ -381,7 +396,7 @@ public class MenusManagerImpl implements MenusManager {
                             int amount = drop.getAmount() >= 64 ? 64 : (int) drop.getAmount();
                             drop.removeAmount(amount);
                             amountOfItems += amount;
-                            HashMap<Integer, ItemStack> map = player.getInventory().addItem(configuration.getProductionConfiguration().getProduceItem().setAmount(amount).buildItemStack());
+                            HashMap<Integer, ItemStack> map = player.getInventory().addItem(configuration.getProductionConfiguration().getProduceItem().setAmount(amount).getBukkitItem());
                             if (!map.isEmpty()) // fail safe...
                                 drop.addAmount(amount);
                         }
@@ -458,7 +473,7 @@ public class MenusManagerImpl implements MenusManager {
 
             JItemStack item = machines.getSuperMachineItem();
 
-            List<String> lore = item.getLore();
+            List<String> lore = item.getLoreAsList();
             switch (machines.getSuperConfiguration().shop.economyType) {
                 case ECONOMY: {
                     lore.addAll(replace(shopLoreEconomy, "%amount%", "" + machines.getSuperConfiguration().shop.cost));
@@ -476,10 +491,9 @@ public class MenusManagerImpl implements MenusManager {
                     throw new RuntimeException("Unknown economy type: " + machines.getSuperConfiguration().shop.economyType);
                 }
             }
-            item.setLore(lore);
-            item
-                    .setNBTBoolean("Shop_Machine_Item", true)
-                    .setNBTString("Configuration", machines.getConfigurationName());
+            item.setLore(lore).getNBT()
+                    .setBoolean("Shop_Machine_Item", true)
+                    .setString("Configuration", machines.getConfigurationName());
 
             inventory.setItem(machines.getSuperConfiguration().shop.slot, item);
         }
@@ -492,7 +506,7 @@ public class MenusManagerImpl implements MenusManager {
 
             JItemStack item = fuels.getSuperItem();
 
-            List<String> lore = item.getLore();
+            List<String> lore = item.getLoreAsList();
             switch (fuels.getSuperConfiguration().shop.economyType) {
                 case ECONOMY: {
                     lore.addAll(replace(shopLoreEconomy, "%amount%", "" + fuels.getSuperConfiguration().shop.cost));
@@ -510,10 +524,9 @@ public class MenusManagerImpl implements MenusManager {
                     throw new RuntimeException("Unknown economy type: " + fuels.getSuperConfiguration().shop.economyType);
                 }
             }
-            item.setLore(lore);
-            item
-                    .setNBTBoolean("Shop_Fuel_Item", true)
-                    .setNBTString("Configuration", fuels.getConfigurationName());
+            item.setLore(lore).getNBT()
+                    .setBoolean("Shop_Fuel_Item", true)
+                    .setString("Configuration", fuels.getConfigurationName());
 
             inventory.setItem(fuels.getSuperConfiguration().shop.slot, item);
         }
