@@ -3,6 +3,7 @@ package dev.jadss.jadgens.implementations.machines;
 import dev.jadss.jadapi.JadAPIPlugin;
 import dev.jadss.jadapi.bukkitImpl.enums.JParticle;
 import dev.jadss.jadapi.bukkitImpl.enums.JVersion;
+import dev.jadss.jadapi.bukkitImpl.item.ItemNBT;
 import dev.jadss.jadapi.bukkitImpl.item.JInventory;
 import dev.jadss.jadapi.bukkitImpl.item.JItemStack;
 import dev.jadss.jadapi.bukkitImpl.item.JMaterial;
@@ -102,7 +103,9 @@ public class MachineInstanceImpl implements MachineInstance {
         JItemStack statusItem = new JItemStack(JMaterial.getRegistryMaterials().find(itemConfig.itemType))
                 .setDisplayName(itemConfig.displayName)
                 .setLore(itemConfig.lore)
-                .setNBTBoolean("JadGens_Status_Item", true);
+                .getNBT()
+                .setBoolean("JadGens_Status_Item", true)
+                .getItem();
         if (itemConfig.glow)
             statusItem.addEnchantment(JadGens.getInstance().getGlowEnchantment().asEnchantment(), 69);
 
@@ -110,7 +113,9 @@ public class MachineInstanceImpl implements MachineInstance {
         JItemStack fuelItem = new JItemStack(JMaterial.getRegistryMaterials().find(menuConfig.fuelItem.itemType))
                 .setDisplayName(menuConfig.fuelItem.displayName)
                 .setLore(machine.getMachineConfiguration().getSuperConfiguration().fuels.needsFuelToProduce ? replace(replace(menuConfig.fuelItem.lore, "%remaining%", "" + this.getFuelAmount()), "%max%", String.valueOf(machine.getMachineConfiguration().getMaxFuelAmount())) : menuConfig.fuelItem.infiniteFuelLore)
-                .setNBTBoolean("JadGens_Fuel_Item", true);
+                .getNBT()
+                .setBoolean("JadGens_Fuel_Item", true)
+                .getItem();
         if (menuConfig.fuelItem.glow)
             fuelItem.addEnchantment(JadGens.getInstance().getGlowEnchantment().asEnchantment(), 69);
 
@@ -118,7 +123,9 @@ public class MachineInstanceImpl implements MachineInstance {
         JItemStack closeItem = new JItemStack(JMaterial.getRegistryMaterials().find(menuConfig.closeItem.itemType))
                 .setDisplayName(menuConfig.closeItem.displayName)
                 .setLore(menuConfig.closeItem.lore)
-                .setNBTBoolean("JadGens_Close_Item", true);
+                .getNBT()
+                .setBoolean("JadGens_Close_Item", true)
+                .getItem();
         if (menuConfig.closeItem.glow)
             fuelItem.addEnchantment(JadGens.getInstance().getGlowEnchantment().asEnchantment(), 69);
 
@@ -133,7 +140,7 @@ public class MachineInstanceImpl implements MachineInstance {
         String quickEventId2 = JQuickEvent.generateID();
         String quickEventId3 = JQuickEvent.generateID();
 
-        player.openInventory(inventory.getInventory());
+        player.openInventory(inventory.getBukkitInventory());
 
         new JQuickEvent<>(plugin, InventoryClickEvent.class, EventPriority.MONITOR, event -> {
             event.setCancelled(true);
@@ -141,13 +148,14 @@ public class MachineInstanceImpl implements MachineInstance {
             if (event.getCurrentItem() == null || event.getCurrentItem().getType() == Material.AIR)
                 return;
 
-            if (!event.getClickedInventory().equals(inventory.buildInventory()))
+            if (!event.getClickedInventory().equals(inventory.getBukkitInventory()))
                 return;
 
             JItemStack item = new JItemStack(event.getCurrentItem());
+            ItemNBT<JItemStack> nbt = item.getNBT();
 
-            if (item.getNBTBoolean("JadGens_Status_Item")) {
-                inventory.setItem(event.getSlot(), (ItemStack) null);
+            if (nbt.getBoolean("JadGens_Status_Item")) {
+                inventory.setItem(event.getSlot(), null);
 
                 MachineToggledEvent machineToggleEvent = new MachineToggledEvent(machine.getInstance(), player, !this.isEnabled());
                 Bukkit.getPluginManager().callEvent(machineToggleEvent);
@@ -166,29 +174,16 @@ public class MachineInstanceImpl implements MachineInstance {
                 JItemStack updatedStatusItem = new JItemStack(JMaterial.getRegistryMaterials().find(updatedItemConfig.itemType))
                         .setDisplayName(updatedItemConfig.displayName)
                         .setLore(updatedItemConfig.lore)
-                        .setNBTBoolean("JadGens_Status_Item", true);
+                        .getNBT()
+                        .setBoolean("JadGens_Status_Item", true)
+                        .getItem();
                 if (updatedItemConfig.glow)
                     updatedStatusItem.addEnchantment(JadGens.getInstance().getGlowEnchantment().asEnchantment(), 69);
 
                 player.sendMessage(ChatColor.translateAlternateColorCodes('&', this.isEnabled() ? MachinesAPI.getInstance().getGeneralConfiguration().getMessages().machineMessages.toggledOn : MachinesAPI.getInstance().getGeneralConfiguration().getMessages().machineMessages.toggledOff));
 
                 inventory.setItem(updatedStatusItemSlot, updatedStatusItem);
-            } else if (item.getNBTBoolean("JadGens_Fuel_Item")) { //todo: Remove this functionality, it's too buggy.
-                if (event.getCursor() != null && event.getCursor().getType() != Material.AIR) {
-                    if (MachinesAPI.getInstance().isFuel(event.getView().getCursor())) {
-                        LoadedFuelConfiguration fuel = MachinesAPI.getInstance().getFuelConfigurationByItem(event.getView().getCursor());
-
-                        int count = 0;
-                        while (this.getFuelAmount() + fuel.getFuelAmount() <= machine.getMachineConfiguration().getMaxFuelAmount() && event.getWhoClicked().getItemInHand().getType() != Material.AIR) {
-                            count++;
-
-                            this.setFuelAmount(this.getFuelAmount() + fuel.getFuelAmount());
-                            event.getView().getCursor().setAmount(event.getView().getCursor().getAmount() - 1);
-                        }
-                        event.getWhoClicked().sendMessage(ChatColor.translateAlternateColorCodes('&', MachinesAPI.getInstance().getGeneralConfiguration().getMessages().fuelMessages.usedMultipleFuels.replace("%amount%", String.valueOf(count))));
-                    }
-                }
-            } else if (item.getNBTBoolean("JadGens_Close_Item")) {
+            } else if (nbt.getBoolean("JadGens_Close_Item")) {
                 if (event.getClick() == (MachinesAPI.getInstance().getGeneralConfiguration().getMessages().machineMenu.closeItem.invertClicks ? ClickType.RIGHT : ClickType.LEFT)) {
                     event.getWhoClicked().closeInventory();
                 } else if (event.getClick() == (MachinesAPI.getInstance().getGeneralConfiguration().getMessages().machineMenu.closeItem.invertClicks ? ClickType.LEFT : ClickType.RIGHT)) {
@@ -293,7 +288,7 @@ public class MachineInstanceImpl implements MachineInstance {
         if (hologram == null) {
             Location location = this.machine.getLocation().clone().add(0.5, -2, 0.5);
             location.add(0, hologramConfiguration.getHologramYAxisOffset(), 0);
-            hologram = new JHologram(location, true, hologramConfiguration.parseHologramLines(machine));
+            hologram = new JHologram(JadAPIPlugin.get(JadGens.class), location, true, hologramConfiguration.parseHologramLines(machine));
         }
 
         if (hologramTickDelay <= 0) {
@@ -312,7 +307,7 @@ public class MachineInstanceImpl implements MachineInstance {
             return;
 
         if (hopperTicks <= 0) {
-            hopperTicks = 300;
+            hopperTicks = 10 * 20; // <=> 200 * 1 :joy:
             BlockFace[] faces = {BlockFace.UP, BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST};
             Block machineBlock = this.machine.getLocation().getBlock();
             WorldServer world = NMS.toWorldServer(machineBlock.getWorld());
@@ -334,58 +329,50 @@ public class MachineInstanceImpl implements MachineInstance {
 
             for (Block hopper : hoppers) {
                 Hopper instance = (Hopper) hopper.getState();
-                int index;
-                JItemStack[] items = Arrays.stream(instance.getInventory().getContents()).map(JItemStack::new).toArray(JItemStack[]::new);
-                check:
-                {
-                    if (items.length == 0)
-                        continue; //Next!
 
-                    JItemStack item = null;
-                    for (int i = 0; true; i++) {
-                        //Prevent sneaky IndexOutOfBoundsException.
-                        if (items.length - 1 < i)
-                            break check;
-
-                        item = items[i];
-                        if (item != null) {
-                            index = i;
-                            break;
-                        }
+                ItemStack[] hopperItems = instance.getInventory().getContents();
+                int index = -1;
+                for (int i = 0; i < hopperItems.length; i++) {
+                    ItemStack item = hopperItems[i];
+                    if (item != null && item.getType() != Material.AIR) {
+                        index = i;
+                        break;
                     }
+                }
 
-                    if (MachinesAPI.getInstance().isFuel(item.buildItemStack())) {
-                        LoadedFuelConfiguration fuel = MachinesAPI.getInstance().getFuelConfigurationByItem(item.buildItemStack());
+                if (index == -1)
+                    return; //no business  vcfd fdr xhnbg vfcdxto continue;
 
-                        //Check if this fuel is valid for this machine.
-                        if (!this.machine.getMachineConfiguration().isFuelCompatible(fuel))
-                            continue;
+                JItemStack item = new JItemStack(hopperItems[index]);
+                if (MachinesAPI.getInstance().isFuel(item.getBukkitItem())) {
+                    LoadedFuelConfiguration fuel = MachinesAPI.getInstance().getFuelConfigurationByItem(item.getBukkitItem());
 
-                        //Check if we can even add this fuel to the machine!
-                        if (fuel.getFuelAmount() + this.getFuelAmount() > this.getMachine().getMachineConfiguration().getMaxFuelAmount())
-                            continue;
+                    //Check if this fuel is valid for this machine.
+                    if (!this.machine.getMachineConfiguration().isFuelCompatible(fuel))
+                        continue;
 
-                        //Call event, see if it gets cancelled.
-                        MachineFuelByHopperEvent event = new MachineFuelByHopperEvent(this, fuel.getFuelAmount(), fuel);
-                        Bukkit.getPluginManager().callEvent(event);
-                        if (event.isCancelled())
-                            continue;
+                    //Check if we can even add this fuel to the machine!
+                    if (fuel.getFuelAmount() + this.getFuelAmount() > this.getMachine().getMachineConfiguration().getMaxFuelAmount())
+                        continue;
 
-                        //Remove fuel..
-                        if (item.buildItemStack().getAmount() == 1) {
-                            items[index] = null;
-                        } else {
-                            item.setAmount(item.buildItemStack().getAmount() - 1);
-                        }
+                    //Call event, see if it gets cancelled.
+                    MachineFuelByHopperEvent event = new MachineFuelByHopperEvent(this, fuel.getFuelAmount(), fuel);
+                    Bukkit.getPluginManager().callEvent(event);
+                    if (event.isCancelled())
+                        continue;
 
-                        //Add fuel.
-                        this.setFuelAmount(this.getFuelAmount() + fuel.getFuelAmount());
-
-                        //Update hopper.
-                        instance.getInventory().setContents(Arrays.stream(items).map(JItemStack::buildItemStack).toArray(ItemStack[]::new));
-
-                        instance.update(true, false);
+                    //Remove Fuel from hopper
+                    if (item.getAmount() == 1) {
+                        item = new JItemStack((ItemStack) null);
+                    } else {
+                        item.setAmount(item.getAmount() - 1);
                     }
+                    hopperItems[index] = item.getBukkitItem();
+
+                    //Add fuel.
+                    this.setFuelAmount(this.getFuelAmount() + fuel.getFuelAmount());
+
+                    instance.getInventory().setContents(hopperItems);
                 }
             }
         } else {
@@ -407,8 +394,7 @@ public class MachineInstanceImpl implements MachineInstance {
 
     @Override
     public int getFuelAmount() {
-        return fuelAmount;
-    }
+        return fuelAmount;    }
 
     @Override
     public void setFuelAmount(int fuelAmount) {
@@ -435,16 +421,14 @@ public class MachineInstanceImpl implements MachineInstance {
 
         MachineProduceEvent machineProduceEvent = new MachineProduceEvent(this, forcefully);
         Bukkit.getPluginManager().callEvent(machineProduceEvent);
-        if (machineProduceEvent.isCancelled()) {
-            if (!forcefully)
-                return;
-            //forcefully cannot be cancelled.
-        }
+        //forcefully cannot be cancelled.
+        if (machineProduceEvent.isCancelled() && !forcefully)
+            return;
 
         LoadedParticleConfiguration particleConfig = machine.getMachineConfiguration().getParticleConfiguration();
         if (particleConfig.isParticlesEnabled() && particleConfig.showOnProduce()) {
             JParticle particle = machine.getMachineConfiguration().getParticleConfiguration().getParticle();
-            Location location = machine.getLocation();
+            Location location = machine.getLocation().add(0D, 0.5D, 0D);
 
             for (int i = 0; i < particleConfig.getParticleRows(); i++) {
                 for (int j = 0; j < particleConfig.getParticleCount(); j++) {
@@ -485,9 +469,9 @@ public class MachineInstanceImpl implements MachineInstance {
 
         if (procConfig.producesItem()) {
             if (!procConfig.sendItemToMenu())
-                procConfig.getProduceItem().drop(this.machine.getLocation().add(0, 0, 0)).setDisplayName(procConfig.getProduceItem().buildItemStack().getItemMeta().getDisplayName());
+                procConfig.getProduceItem().drop(this.machine.getLocation().add(0, 0, 0)).setDisplayName(procConfig.getProduceItem().getDisplayName());
             else {
-                MachinesAPI.getInstance().getPlayer(machine.getOwner()).getDropInformation(machine.getMachineConfiguration()).addAmount(procConfig.getProduceItem().buildItemStack().getAmount());
+                MachinesAPI.getInstance().getPlayer(machine.getOwner()).getDropInformation(machine.getMachineConfiguration()).addAmount(procConfig.getProduceItem().getBukkitItem().getAmount());
             }
         }
     }
