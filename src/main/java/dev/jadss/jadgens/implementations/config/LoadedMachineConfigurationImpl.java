@@ -76,8 +76,9 @@ public class LoadedMachineConfigurationImpl implements LoadedMachineConfiguratio
         if (machineConfiguration.machineItem.glow)
             this.item.addEnchantment(JadGens.getInstance().getGlowEnchantment().asEnchantment(), 69); //yes funny.
 
-        this.item.setNBTBoolean("JadGens_Machine", true);
-        this.item.setNBTString("JadGens_Machine_Type", machineConfiguration.machineType);
+        this.item.getNBT()
+                .setBoolean("JadGens_Machine", true)
+                .setString("JadGens_Machine_Type", machineConfiguration.machineType);
 
         this.productionConfig = new LoadedMachineProductionConfigurationImpl(this);
         this.hologramConfiguration = new LoadedHologramConfigurationImpl(this);
@@ -159,7 +160,7 @@ public class LoadedMachineConfigurationImpl implements LoadedMachineConfiguratio
 
     @Override
     public ItemStack getMachineItem() {
-        return this.item.buildItemStack().clone();
+        return this.item.getBukkitItem().clone();
     }
 
     @Override

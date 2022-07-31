@@ -34,8 +34,9 @@ public class LoadedFuelConfigurationImpl implements LoadedFuelConfiguration {
         if (configuration.fuelItem.glow)
             this.item.addEnchantment(JadGens.getInstance().getGlowEnchantment().asEnchantment(), 69); //yes funny.
 
-        this.item.setNBTBoolean("JadGens_Fuel", true);
-        this.item.setNBTString("JadGens_Fuel_Type", configuration.fuelType);
+        this.item.getNBT()
+                .setBoolean("JadGens_Fuel", true)
+                .setString("JadGens_Fuel_Type", configuration.fuelType);
     }
 
     @Override
@@ -60,6 +61,6 @@ public class LoadedFuelConfigurationImpl implements LoadedFuelConfiguration {
 
     @Override
     public ItemStack getItem() {
-        return item.buildItemStack().clone();
+        return item.getBukkitItem().clone();
     }
 }

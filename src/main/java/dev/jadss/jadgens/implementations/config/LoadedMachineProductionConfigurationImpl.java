@@ -1,5 +1,6 @@
 package dev.jadss.jadgens.implementations.config;
 
+import dev.jadss.jadapi.bukkitImpl.item.ItemNBT;
 import dev.jadss.jadapi.bukkitImpl.item.JItemStack;
 import dev.jadss.jadapi.bukkitImpl.item.JMaterial;
 import dev.jadss.jadgens.api.config.interfaces.LoadedMachineConfiguration;
@@ -55,15 +56,15 @@ public class LoadedMachineProductionConfigurationImpl implements LoadedMachinePr
                 for (MachineNBTEntry entry : nbt.entries) {
                     switch (entry.type) {
                         case BOOLEAN: {
-                            item.setNBTBoolean(entry.key, (boolean) entry.value);
+                            item.getNBT().setBoolean(entry.key, (boolean) entry.value);
                             break;
                         }
                         case INTEGER: {
-                            item.setNBTInteger(entry.key, (int) entry.value);
+                            item.getNBT().setInteger(entry.key, (int) entry.value);
                             break;
                         }
                         case STRING: {
-                            item.setNBTString(entry.key, (String) entry.value);
+                            item.getNBT().setString(entry.key, (String) entry.value);
                             break;
                         }
                         default: {
