@@ -66,7 +66,7 @@ public class MachinesManager implements MachinesAPI, Runnable {
     private final CustomConfig<PlayerDataList> playerData;
     private final CustomConfig<MachineDataList> machineData;
 
-    private final JQuickEvent joinQuickEvent;
+    private final JQuickEvent<PlayerJoinEvent> joinQuickEvent;
 
     public MachinesManager(LoadingInformation loadingInfo) {
         Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3&lJadGens &7>> &eLoading &bManager&e! Please wait......"));
@@ -77,11 +77,11 @@ public class MachinesManager implements MachinesAPI, Runnable {
         menuManager = new MenusManagerImpl(loadingInfo.generalConfig.messages.shopMenu, loadingInfo.generalConfig.messages.dropsMenu);
 
         //Load Configuration (2 types)
-        for (MachineConfiguration machineConfiguration : loadingInfo.machineConfigs.machines)
-            loadConfiguration(machineConfiguration);
-
         for (FuelConfiguration fuelConfiguration : loadingInfo.fuelConfigs.fuels)
             loadConfiguration(fuelConfiguration);
+
+        for (MachineConfiguration machineConfiguration : loadingInfo.machineConfigs.machines)
+            loadConfiguration(machineConfiguration);
 
         Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3&lJadGens &7>> &eLoaded &b" + machineConfigurations.size() + " &3Machine Configurations&e, &b" + fuelConfigurations.size() + " &3Fuel Configurations&e!"));
 
@@ -133,8 +133,8 @@ public class MachinesManager implements MachinesAPI, Runnable {
         Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3&lJadGens &7>> &eStarting up the &3&lMachines&e! &bHere goes EVERYTHING&e!!"));
 
         //The delay is to prevent Anti-invalidation!
-        Bukkit.getScheduler().runTaskTimer(loadingInfo.plugin, this, 20*10L, 1L);
-        Bukkit.getScheduler().runTaskTimer(loadingInfo.plugin, this::save, 5 * 60 * 30, 5 * 60 * 30);
+        Bukkit.getScheduler().runTaskTimer(loadingInfo.plugin, this, 10 * 20, 1L);
+        Bukkit.getScheduler().runTaskTimer(loadingInfo.plugin, this::save, 5 * 60 * 20, 5 * 60 * 20);
 
         joinQuickEvent = new JQuickEvent<>(JadAPIPlugin.get(JadGens.class), PlayerJoinEvent.class, EventPriority.LOWEST, event -> {
             MachinesUser user = getPlayer(event.getPlayer().getUniqueId());
@@ -204,7 +204,7 @@ public class MachinesManager implements MachinesAPI, Runnable {
         if (item == null || item.getType() == JMaterial.getRegistryMaterials().find(JMaterial.MaterialEnum.AIR).getMaterial(JMaterial.Type.ITEM).getKey())
             return false;
 
-        return new JItemStack(item).getNBTBoolean("JadGens_Fuel");
+        return new JItemStack(item).getNBT().getBoolean("JadGens_Fuel");
     }
 
     @Override
@@ -212,7 +212,7 @@ public class MachinesManager implements MachinesAPI, Runnable {
         if (!isFuel(item))
             return null;
 
-        String configurationName = new JItemStack(item).getNBTString("JadGens_Fuel_Type");
+        String configurationName = new JItemStack(item).getNBT().getString("JadGens_Fuel_Type");
 
         return getFuelConfiguration(configurationName);
     }
@@ -221,7 +221,7 @@ public class MachinesManager implements MachinesAPI, Runnable {
     public boolean isMachine(ItemStack item) {
         if (item == null || item.getType() == JMaterial.getRegistryMaterials().find(JMaterial.MaterialEnum.AIR).getMaterial(JMaterial.Type.ITEM).getKey())
             return false;
-        return new JItemStack(item).getNBTBoolean("JadGens_Machine");
+        return new JItemStack(item).getNBT().getBoolean("JadGens_Machine");
     }
 
     @Override
@@ -229,7 +229,7 @@ public class MachinesManager implements MachinesAPI, Runnable {
         if (!isMachine(item))
             return null;
 
-        String configurationName = new JItemStack(item).getNBTString("JadGens_Machine_Type");
+        String configurationName = new JItemStack(item).getNBT().getString("JadGens_Machine_Type");
 
         return getMachineConfiguration(configurationName);
     }
