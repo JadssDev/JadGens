@@ -37,12 +37,13 @@ public class VaultHook implements Hook {
 
     @Override
     public boolean hook(Server server) {
-        if(triedHooking) return false;
+        if (triedHooking)
+            return false;
         triedHooking = true;
 
         if (server.getPluginManager().getPlugin("Vault") != null) {
             RegisteredServiceProvider<Economy> rsp = server.getServicesManager().getRegistration(Economy.class);
-            if(rsp != null)
+            if (rsp != null)
                 return isAvailable = rsp.getProvider() != null;
         }
 
