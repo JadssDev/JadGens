@@ -307,7 +307,7 @@ public class ConfigDefaults {
 
             MachineFuelItemConfiguration dropsItem;
             {
-                String[] lore = new String[]{"&eYour &3&lmachine &ehas:", "&b%remaining% &eout of &b%max% &3Fuel &bremaining&e!", "&e", "&eClick with the &3&lfuels &ein this &bitem &eto", "&b&lfuel &ethis &3&lmachine&e!"};
+                String[] lore = new String[]{"&eYour &3&lmachine &ehas:", "&b%remaining% &eout of &b%max% &3Fuel &bremaining&e!"};
                 String[] infiniteLore = new String[]{"&eYour &3&lmachine &ehas:", "&bInfinite &3Fuel&e!"};
                 dropsItem = new MachineFuelItemConfiguration("LIME_DYE", "&3Fuel", lore, infiniteLore, true, 7);
             }
