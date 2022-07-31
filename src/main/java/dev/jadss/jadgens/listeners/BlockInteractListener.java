@@ -1,7 +1,7 @@
 package dev.jadss.jadgens.listeners;
 
 import dev.jadss.jadapi.bukkitImpl.enums.JVersion;
-import dev.jadss.jadapi.utils.JReflection;
+import dev.jadss.jadapi.utils.reflection.reflectors.JMethodReflector;
 import dev.jadss.jadgens.api.MachinesAPI;
 import dev.jadss.jadgens.api.config.interfaces.LoadedFuelConfiguration;
 import dev.jadss.jadgens.api.machines.MachineInstance;
@@ -21,7 +21,7 @@ public class BlockInteractListener implements Listener {
     public void onInteract(PlayerInteractEvent event) {
         //Check if it's the main hand this is getting called at!
         if (JVersion.getServerVersion().isNewerOrEqual(JVersion.v1_9)) {
-            Enum<?> handEnum = ((Enum<?>) JReflection.executeMethodByName(event.getClass(), "getHand", event));
+            Enum<?> handEnum = ((Enum<?>) JMethodReflector.executeMethod(event.getClass(), "getHand", event, new Object[]{}));
 
             if (handEnum == null)
                 return;
@@ -44,7 +44,7 @@ public class BlockInteractListener implements Listener {
 
             event.setCancelled(true);
 
-            if(!machine.getMachine().getMachineConfiguration().needsFuelToProduce()) {
+            if (!machine.getMachine().getMachineConfiguration().needsFuelToProduce()) {
                 event.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', api.getGeneralConfiguration().getMessages().fuelMessages.machineHasInfiniteFuel));
                 return;
             }
@@ -52,7 +52,7 @@ public class BlockInteractListener implements Listener {
             if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
                 int fuelCount = 1; //How many fuels we will use.
                 int playerFuelCount = event.getPlayer().getItemInHand().getAmount(); //how many fuels the player has in total.
-                while (machine.getFuelAmount() + (fuel.getFuelAmount()*fuelCount) < machine.getMachine().getMachineConfiguration().getMaxFuelAmount()) {
+                while (machine.getFuelAmount() + (fuel.getFuelAmount() * fuelCount) < machine.getMachine().getMachineConfiguration().getMaxFuelAmount()) {
                     if (fuelCount == playerFuelCount)
                         break;
                     fuelCount++;
@@ -83,13 +83,13 @@ public class BlockInteractListener implements Listener {
                 if (machineFuelEvent.isCancelled())
                     return;
 
-                if(fuel.getFuelAmount() != machineFuelEvent.getFuelAmount() ||
+                if (fuel.getFuelAmount() != machineFuelEvent.getFuelAmount() ||
                         machine.getFuelAmount() + fuel.getFuelAmount() <= machine.getMachine().getMachineConfiguration().getMaxFuelAmount()) {
                     if (event.getPlayer().getItemInHand().getAmount() == 1)
                         event.getPlayer().setItemInHand(null);
                     else
                         event.getPlayer().getItemInHand().setAmount(event.getPlayer().getItemInHand().getAmount() - 1);
-                    machine.setFuelAmount(machine.getFuelAmount()+fuel.getFuelAmount());
+                    machine.setFuelAmount(machine.getFuelAmount() + fuel.getFuelAmount());
                     event.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', api.getGeneralConfiguration().getMessages().fuelMessages.usedFuel));
                 } else {
                     event.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', api.getGeneralConfiguration().getMessages().fuelMessages.reachedMaxCapacity));
@@ -98,7 +98,7 @@ public class BlockInteractListener implements Listener {
         } else if (api.getGeneralConfiguration().getMessages().machineMenu.enabled && (!api.isMachine(event.getItem()) && event.getAction() == Action.RIGHT_CLICK_BLOCK)) {
 
             MachineInstance machine = api.getMachine(event.getClickedBlock().getLocation());
-            if(machine == null)
+            if (machine == null)
                 return;
 
             event.setCancelled(true);
